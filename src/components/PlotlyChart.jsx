@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import Plotly from 'plotly.js-dist-min'
 
 export const DARK_LAYOUT = {
   paper_bgcolor: 'transparent',
@@ -29,15 +30,14 @@ export default function PlotlyChart({ data, layout = {}, config = {}, style = {}
   const plotted = useRef(false)
 
   useEffect(() => {
-    const Plotly = window.Plotly
-    if (!Plotly || !divRef.current) return
+    if (!divRef.current) return
 
     const mergedLayout = {
       ...DARK_LAYOUT,
       ...layout,
       xaxis: { ...DARK_LAYOUT.xaxis, ...(layout.xaxis || {}) },
       yaxis: { ...DARK_LAYOUT.yaxis, ...(layout.yaxis || {}) },
-      yaxis2: layout.yaxis2 ? { ...DARK_LAYOUT.yaxis, ...layout.yaxis2 } : undefined,
+      ...(layout.yaxis2 ? { yaxis2: { ...DARK_LAYOUT.yaxis, ...layout.yaxis2 } } : {}),
       font: { ...DARK_LAYOUT.font, ...(layout.font || {}) },
     }
 
@@ -60,8 +60,8 @@ export default function PlotlyChart({ data, layout = {}, config = {}, style = {}
 
   useEffect(() => {
     return () => {
-      if (window.Plotly && plotted.current && divRef.current) {
-        window.Plotly.purge(divRef.current)
+      if (plotted.current && divRef.current) {
+        Plotly.purge(divRef.current)
       }
       plotted.current = false
     }

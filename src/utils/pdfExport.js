@@ -1,12 +1,7 @@
-/**
- * PDF Report Generator using jsPDF
- * 6-page report: Title, System Model, Optimization Setup,
- * Convergence, Time Domain Results, Frequency Domain
- */
+import Plotly from 'plotly.js-dist-min'
 
 export async function generatePDF({ plant, criterion, optimizer, results }) {
   const { jsPDF } = await import('jspdf')
-  const Plotly = window.Plotly
 
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
   const W = 210, H = 297
