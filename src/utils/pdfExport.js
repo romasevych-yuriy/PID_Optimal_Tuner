@@ -6,8 +6,7 @@
 
 export async function generatePDF({ plant, criterion, optimizer, results }) {
   const { jsPDF } = await import('jspdf')
-  const plotlyMod = await import('plotly.js-dist-min')
-  const Plotly = plotlyMod.default ?? plotlyMod
+  const Plotly = window.Plotly
 
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
   const W = 210, H = 297

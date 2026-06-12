@@ -1,19 +1,5 @@
 import React, { useEffect, useRef } from 'react'
 
-// Singleton Plotly loader — load once, reuse everywhere
-let _plotly = null
-let _loadPromise = null
-function loadPlotly() {
-  if (_plotly) return Promise.resolve(_plotly)
-  if (!_loadPromise) {
-    _loadPromise = import('plotly.js-dist-min').then(mod => {
-      _plotly = mod.default ?? mod
-      return _plotly
-    })
-  }
-  return _loadPromise
-}
-
 export const DARK_LAYOUT = {
   paper_bgcolor: 'transparent',
   plot_bgcolor: '#0f1117',
@@ -42,10 +28,9 @@ export default function PlotlyChart({ data, layout = {}, config = {}, style = {}
   const divRef = useRef(null)
   const plotted = useRef(false)
 
-  // Render / update effect — fires when data or layout changes
   useEffect(() => {
-    if (!divRef.current) return
-    let alive = true
+    const Plotly = window.Plotly
+    if (!Plotly || !divRef.current) return
 
     const mergedLayout = {
       ...DARK_LAYOUT,
@@ -65,29 +50,20 @@ export default function PlotlyChart({ data, layout = {}, config = {}, style = {}
       ...config,
     }
 
-    loadPlotly().then(Plotly => {
-      if (!alive || !divRef.current) return
-      if (plotted.current) {
-        Plotly.react(divRef.current, data, mergedLayout, mergedConfig)
-      } else {
-        Plotly.newPlot(divRef.current, data, mergedLayout, mergedConfig)
-        plotted.current = true
-      }
-    })
-
-    // Cancel this render if a newer one starts — do NOT purge here
-    return () => { alive = false }
+    if (plotted.current) {
+      Plotly.react(divRef.current, data, mergedLayout, mergedConfig)
+    } else {
+      Plotly.newPlot(divRef.current, data, mergedLayout, mergedConfig)
+      plotted.current = true
+    }
   }, [data, layout, config, id])
 
-  // Purge only when the component truly unmounts
   useEffect(() => {
     return () => {
-      if (plotted.current) {
-        loadPlotly().then(Plotly => {
-          if (divRef.current) Plotly.purge(divRef.current)
-        })
-        plotted.current = false
+      if (window.Plotly && plotted.current && divRef.current) {
+        window.Plotly.purge(divRef.current)
       }
+      plotted.current = false
     }
   }, [])
 
