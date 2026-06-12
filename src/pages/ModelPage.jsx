@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useStore from '../store/useStore'
 import PlotlyChart from '../components/PlotlyChart'
-import { computeSimParams } from '../math/simulation'
+import { simulate, computeSimParams } from '../math/simulation'
 
 export default function ModelPage() {
   const navigate = useNavigate()
@@ -22,9 +22,8 @@ export default function ModelPage() {
   const [order, setOrder] = useState(plant.order)
 
   // Compute preview when TF changes
-  const computePreview = useCallback(async () => {
+  const computePreview = useCallback(() => {
     try {
-      const { simulate } = await import('../math/simulation.js')
       const { dt, T } = computeSimParams(den, delay)
       const result = simulate(num, den, delay, 0, 0, 0, { dt, T, r: 1, openLoop: true })
       setPreviewData(result)
