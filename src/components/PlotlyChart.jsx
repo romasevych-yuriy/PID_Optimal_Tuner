@@ -1,6 +1,20 @@
 import React, { useEffect, useRef } from 'react'
 
-const DARK_LAYOUT = {
+// Singleton Plotly loader — load once, reuse everywhere
+let _plotly = null
+let _loadPromise = null
+function loadPlotly() {
+  if (_plotly) return Promise.resolve(_plotly)
+  if (!_loadPromise) {
+    _loadPromise = import('plotly.js-dist-min').then(mod => {
+      _plotly = mod.default ?? mod
+      return _plotly
+    })
+  }
+  return _loadPromise
+}
+
+export const DARK_LAYOUT = {
   paper_bgcolor: 'transparent',
   plot_bgcolor: '#0f1117',
   font: { color: '#9ca3af', family: 'Inter, system-ui, sans-serif', size: 12 },
@@ -26,10 +40,12 @@ const DARK_LAYOUT = {
 
 export default function PlotlyChart({ data, layout = {}, config = {}, style = {}, id }) {
   const divRef = useRef(null)
-  const plotRef = useRef(null)
+  const plotted = useRef(false)
 
+  // Render / update effect — fires when data or layout changes
   useEffect(() => {
     if (!divRef.current) return
+    let alive = true
 
     const mergedLayout = {
       ...DARK_LAYOUT,
@@ -49,24 +65,31 @@ export default function PlotlyChart({ data, layout = {}, config = {}, style = {}
       ...config,
     }
 
-    import('plotly.js-dist-min').then(mod => {
-      const Plotly = mod.default ?? mod
-      if (plotRef.current) {
+    loadPlotly().then(Plotly => {
+      if (!alive || !divRef.current) return
+      if (plotted.current) {
         Plotly.react(divRef.current, data, mergedLayout, mergedConfig)
       } else {
         Plotly.newPlot(divRef.current, data, mergedLayout, mergedConfig)
-        plotRef.current = true
+        plotted.current = true
       }
     })
 
-    return () => {
-      import('plotly.js-dist-min').then(mod => {
-        const Plotly = mod.default ?? mod
-        if (divRef.current) Plotly.purge(divRef.current)
-        plotRef.current = false
-      })
-    }
+    // Cancel this render if a newer one starts — do NOT purge here
+    return () => { alive = false }
   }, [data, layout, config, id])
+
+  // Purge only when the component truly unmounts
+  useEffect(() => {
+    return () => {
+      if (plotted.current) {
+        loadPlotly().then(Plotly => {
+          if (divRef.current) Plotly.purge(divRef.current)
+        })
+        plotted.current = false
+      }
+    }
+  }, [])
 
   return (
     <div
@@ -76,5 +99,3 @@ export default function PlotlyChart({ data, layout = {}, config = {}, style = {}
     />
   )
 }
-
-export { DARK_LAYOUT }
