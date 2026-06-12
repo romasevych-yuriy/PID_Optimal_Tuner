@@ -1,0 +1,3579 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[    174247,       3571]
+NotebookOptionsPosition[    173856,       3556]
+NotebookOutlinePosition[    174288,       3573]
+CellTagsIndexPosition[    174245,       3570]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"PSO", "[", 
+      RowBox[{
+      "function_", ",", " ", "Arguments_", ",", " ", "DomainArgumentList_", ",",
+        "SwarmPopulation_", ",", " ", "Iterations_"}], "]"}], ":=", 
+     "\[IndentingNewLine]", 
+     RowBox[{"(", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"function", " ", "-", " ", 
+         RowBox[{"is", " ", "cost", " ", "function"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Arguments", " ", "-", " ", 
+         RowBox[{
+         "are", " ", "all", " ", "the", " ", "independent", " ", "variables", 
+          " ", "of", " ", "the", " ", "cost", " ", 
+          RowBox[{"function", ".", " ", "It"}], " ", "is", " ", "array", " ", 
+          "of", " ", "arguments"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"DomainArgumentList", " ", "-", " ", 
+         RowBox[{"is", " ", "the", " ", "search", " ", 
+          RowBox[{"domain", ".", " ", "It"}], " ", "represents", " ", "the", " ",
+           "borders", " ", "of", " ", "multivariable", " ", 
+          RowBox[{"domain", ".", " ", "It"}], " ", "is", " ", "the", " ", 
+          "array", " ", "of", " ", "the", " ", "borders"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"InitialArgumentValues", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "an", " ", "initial", " ", "values", " ", "for", " ", 
+          "each", " ", "argument"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"SwarmPopulation", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "a", " ", "number", " ", "of", " ", "the", " ", 
+          "particles", " ", "in", " ", "the", " ", "swarm"}]}], ";", 
+        "\[IndentingNewLine]", " ", 
+        RowBox[{"Iterations", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "a", " ", "number", " ", "of", " ", "the", " ", 
+          "iterations", " ", "of", " ", "the", " ", "main", " ", "cycle"}]}], 
+        ";", "\[IndentingNewLine]", 
+        RowBox[{"CostFunctionValues", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "a", " ", "array", " ", "of", " ", "the", " ", "cost", " ",
+           "function", " ", "values", " ", "during", " ", "the", " ", 
+          "optimization", " ", 
+          RowBox[{"procedure", "."}]}]}]}], " ", "\[IndentingNewLine]", 
+       "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+       "\:0417\:0410\:0414\:0410\:041d\:041d\:042f", " ", 
+        "\:0424\:0423\:041d\:041a\:0426\:0406\:0407", " ", 
+        "\:0426\:0406\:041d\:0418"}], "*)"}], "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"func", "=", "function"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"CostFunctionValues", "=", 
+        RowBox[{"List", "[", "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", "\:041c\:0410\:0421\:0418\:0412\:0423", " ", 
+         "\:0417\:041d\:0410\:0427\:0415\:041d\:042c", " ", 
+         "\:0424\:0423\:041d\:041a\:0426\:0406\:0407", " ", 
+         "\:0426\:0406\:041d\:0418"}], "*)"}], "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", 
+         "\:041f\:041e\:0427\:0410\:0422\:041a\:041e\:0412\:0418\:0425", " ", 
+         "\:0414\:0410\:041d\:0418\:0425"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"w", "=", "0.72"}], ";", 
+       RowBox[{"c2", "=", "1.19"}], ";", " ", 
+       RowBox[{"c1", "=", "c2"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", "\:0420\:041e\:042e"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Swarm", "=", 
+        RowBox[{"List", "[", "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"Do", "[", "\[IndentingNewLine]", 
+        RowBox[{"(*", 
+         RowBox[{
+         "\:041f\:041e\:0427\:0410\:0422\:041a\:041e\:0412\:0406", " ", 
+          "\:041f\:041e\:041b\:041e\:0416\:0415\:041d\:041d\:042f", " ", 
+          "\:0427\:0410\:0421\:0422\:0418\:041d\:041e\:041a"}], "*)"}], 
+        "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"ParticlePosition", "=", 
+           RowBox[{"Table", "[", 
+            RowBox[{
+             RowBox[{"RandomReal", "[", 
+              RowBox[{"DomainArgumentList", "[", 
+               RowBox[{"[", "i", "]"}], "]"}], "]"}], ",", " ", 
+             RowBox[{"{", 
+              RowBox[{"i", ",", " ", "1", ",", 
+               RowBox[{"Length", "[", "Arguments", "]"}], ",", " ", "1"}], 
+              "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "\:041f\:041e\:0427\:0410\:0422\:041a\:041e\:0412\:0406", " ", 
+            "\:0428\:0412\:0418\:0414\:041a\:041e\:0421\:0422\:0406", " ", 
+            "\:0427\:0410\:0421\:0422\:0418\:041d\:041e\:041a"}], "*)"}], 
+          "\[IndentingNewLine]", 
+          RowBox[{"ParticleVelocity", "=", 
+           RowBox[{"Table", "[", 
+            RowBox[{"0", ",", " ", 
+             RowBox[{"{", 
+              RowBox[{"i", ",", " ", "1", ",", 
+               RowBox[{"Length", "[", "Arguments", "]"}], ",", " ", "1"}], 
+              "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"ParticleCost", "=", 
+           RowBox[{"Apply", "[", 
+            RowBox[{"func", ",", "ParticlePosition"}], "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "\:0412\:0418\:0417\:041d\:0410\:0427\:0415\:041d\:041d\:042f", " ",
+             "\:041d\:0410\:0419\:041a\:0420\:0410\:0429\:0418\:0425", " ", 
+            "\:041f\:041e\:041b\:041e\:0416\:0415\:041d\:042c", " ", 
+            "\:0414\:041b\:042f", " ", "\:041a\:041e\:0416\:041d\:041e\:0407",
+             " ", "\:0427\:0410\:0421\:0422\:0418\:041d\:041a\:0418", "\[IndentingNewLine]",
+             "\:041d\:0430\:0439\:043a\:0440\:0430\:0449\:0456", " ", 
+            "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:044f", " ", 
+            "\:0441\:043f\:043e\:0447\:0430\:0442\:043a\:0443", " ", 
+            "\:0432\:0456\:0434\:043f\:043e\:0432\:0456\:0434\:0430\:044e\
+\:0442\:044c", " ", 
+            "\:043f\:043e\:0447\:0430\:0442\:043a\:043e\:0432\:0438\:043c", " ",
+             "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:044f\:043c"}],
+            "*)"}], "\[IndentingNewLine]", 
+          RowBox[{"ParticleBest", "=", "ParticlePosition"}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"ParticleBestCost", "=", "ParticleCost"}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{"k", "-", 
+            RowBox[{
+            "\:0442\:0430", " ", 
+             "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0430"}]}], "*)"}], 
+          "\[IndentingNewLine]", 
+          RowBox[{"Particle", "=", 
+           RowBox[{"List", "[", 
+            RowBox[{
+            "ParticlePosition", ",", " ", "ParticleVelocity", ",", " ", 
+             "ParticleCost", ",", " ", "ParticleBest", ",", " ", 
+             "ParticleBestCost"}], "]"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"AppendTo", "[", 
+           RowBox[{"Swarm", ",", " ", "Particle"}], "]"}]}], ",", " ", 
+         "SwarmPopulation"}], "]"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0437\:043d\:0430\:0445\:043e\:0434\:0436\:0435\:043d\:043d\:044f", 
+         " ", "\:043d\:0430\:0439\:043a\:0440\:0430\:0449\:043e\:0457", " ", 
+         "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438", " ", "\:0443", " ",
+          "\:0440\:043e\:0457"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"GlobalBestCost", "=", 
+        RowBox[{"Min", "[", 
+         RowBox[{"Table", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Swarm", "[", 
+             RowBox[{"[", "k", "]"}], "]"}], "[", 
+            RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+           RowBox[{"{", 
+            RowBox[{
+            "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", "1"}], 
+            "}"}]}], "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"BestParticleNumber", "=", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Position", "[", 
+           RowBox[{
+            RowBox[{"Table", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Swarm", "[", 
+                RowBox[{"[", "k", "]"}], "]"}], "[", 
+               RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+              RowBox[{"{", 
+               RowBox[{
+               "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", "1"}], 
+               "}"}]}], "]"}], ",", "GlobalBestCost"}], "]"}], "[", 
+          RowBox[{"[", "1", "]"}], "]"}], "[", 
+         RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0437\:0430\:043f\:043e\:0432\:043d\:0438\:043b\:0438", " ", 
+         "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\:043c", " ", 
+         "\:0432\:0435\:043b\:0438\:0447\:0438\:043d\:0438", " ", 
+         "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+         "\:0446\:0456\:043d\:0438", " ", "\:043c\:0430\:0441\:0438\:0432"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"AppendTo", "[", 
+        RowBox[{"CostFunctionValues", ",", " ", "GlobalBestCost"}], "]"}], ";",
+        "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0426\:0418\:041a\:041b", " ", 
+         "\:0420\:041e\:0417\:0420\:0410\:0425\:0423\:041d\:041a\:0423"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Monitor", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"Do", "[", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ", 
+            "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:044c", " ", 
+            "\:0442\:0430", " ", 
+            "\:0448\:0432\:0438\:0434\:043a\:043e\:0441\:0442\:0435\:0439", " ",
+             "\:0434\:043b\:044f", " ", 
+            "\:043a\:043e\:0436\:043d\:043e\:0457", " ", 
+            "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438"}], "*)"}], 
+          "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Do", "[", "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"r1", "=", 
+                RowBox[{"Table", "[", 
+                 RowBox[{
+                  RowBox[{"RandomReal", "[", 
+                   RowBox[{"{", 
+                    RowBox[{"0.", ",", "1."}], "}"}], "]"}], ",", " ", 
+                  RowBox[{"Length", "[", "Arguments", "]"}]}], "]"}]}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{"r2", "=", 
+                RowBox[{"Table", "[", 
+                 RowBox[{
+                  RowBox[{"RandomReal", "[", 
+                   RowBox[{"{", 
+                    RowBox[{"0.", ",", "1."}], "}"}], "]"}], ",", " ", 
+                  RowBox[{"Length", "[", "Arguments", "]"}]}], "]"}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "2", "]"}], "]"}], "=", 
+                RowBox[{
+                 RowBox[{"w", "*", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "2", "]"}], "]"}]}], "+", 
+                 RowBox[{"c1", "*", "r1", "*", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "4", "]"}], "]"}], "-", 
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}], "+", 
+                 "\[IndentingNewLine]", 
+                 RowBox[{"c2", "*", "r2", "*", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "BestParticleNumber", "]"}], "]"}], "[", 
+                    RowBox[{"[", "4", "]"}], "]"}], "-", 
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}]}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "1", "]"}], "]"}], "=", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "1", "]"}], "]"}], "+", 
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "2", "]"}], "]"}]}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:043f\:0435\:0440\:0435\:0432\:0456\:0440\:043a\:0430", " ",
+                  "\:0432\:0438\:0445\:043e\:0434\:0443", " ", "\:0437\:0430",
+                  " ", "\:043c\:0435\:0436\:0456", " ", 
+                 "\:0432\:0435\:0440\:0445\:043d\:044c\:043e\:0457", " ", 
+                 "\:0442\:0430", " ", 
+                 "\:043d\:0438\:0436\:043d\:044c\:043e\:0457", " ", 
+                 "\:0433\:0440\:0430\:043d\:0438\:0446\:0456"}], "*)"}], 
+               "\[IndentingNewLine]", 
+               RowBox[{"Do", "[", "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"Piecewise", "[", 
+                  RowBox[{"{", 
+                   RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", "0"}], ";", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}]}], ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "<", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}]}], "}"}], ",", " ", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", "0"}], ";", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}]}], ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], ">", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}]}], "}"}]}], "}"}], "]"}],
+                  "\[IndentingNewLine]", "\[IndentingNewLine]", ",", " ", 
+                 RowBox[{"{", 
+                  RowBox[{"j", ",", " ", "1", ",", " ", 
+                   RowBox[{"Length", "[", "Arguments", "]"}]}], "}"}]}], 
+                "]"}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ",
+                  "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+                 "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", "\:0432", 
+                 " ", "\:043d\:043e\:0432\:043e\:043c\:0443", " ", 
+                 "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:0456", " ",
+                  "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438"}], 
+                "*)"}], "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "3", "]"}], "]"}], "=", 
+                RowBox[{"Apply", "[", 
+                 RowBox[{"func", ",", " ", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "1", "]"}], "]"}]}], "]"}]}]}], 
+              "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+              RowBox[{"{", 
+               RowBox[{
+               "k", ",", " ", "1", ",", " ", "SwarmPopulation", ",", " ", 
+                "1"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ", 
+              "PersonalBest"}], "*)"}], "\[IndentingNewLine]", 
+            RowBox[{"Do", "[", 
+             RowBox[{
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "3", "]"}], "]"}], "<", 
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "5", "]"}], "]"}]}], ",", " ", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "5", "]"}], "]"}], "=", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "3", "]"}], "]"}]}], ";", "  ", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "4", "]"}], "]"}], "=", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "1", "]"}], "]"}]}]}]}], "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{
+               "k", ",", " ", "1", ",", " ", "SwarmPopulation", ",", " ", 
+                "1"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ", 
+              "GlobalBest"}], "*)"}], "\[IndentingNewLine]", 
+            RowBox[{"GlobalBestCost", "=", 
+             RowBox[{"Min", "[", 
+              RowBox[{"Table", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+                RowBox[{"{", 
+                 RowBox[{
+                 "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", "1"}], 
+                 "}"}]}], "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+            RowBox[{"BestParticleNumber", "=", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Position", "[", 
+                RowBox[{
+                 RowBox[{"Table", "[", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", 
+                    "1"}], "}"}]}], "]"}], ",", "GlobalBestCost"}], "]"}], "[", 
+               RowBox[{"[", "1", "]"}], "]"}], "[", 
+              RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:0437\:0430\:043f\:043e\:0432\:043d\:0438\:043b\:0438", " ", 
+              "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\:043c", " ", 
+              "\:0432\:0435\:043b\:0438\:0447\:0438\:043d\:0438", " ", 
+              "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+              "\:0446\:0456\:043d\:0438", " ", 
+              "\:043c\:0430\:0441\:0438\:0432"}], "*)"}], 
+            "\[IndentingNewLine]", 
+            RowBox[{"AppendTo", "[", 
+             RowBox[{"CostFunctionValues", ",", " ", "GlobalBestCost"}], 
+             "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+           RowBox[{"{", 
+            RowBox[{
+            "step", ",", " ", "2", ",", " ", "Iterations", ",", " ", "1"}], 
+            "}"}]}], "]"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+         "\[IndentingNewLine]", 
+         RowBox[{"(*", 
+          RowBox[{
+           RowBox[{
+           "\:0432\:0456\:0437\:0443\:0430\:043b\:0456\:0437\:0430\:0446\:0456\
+\:044f", " ", "\:0434\:0430\:043d\:0438\:0445", " ", 
+            "\:0406\:0422\:0415\:0420\:0410\:0426\:0406\:042f"}], "-", 
+           RowBox[{
+           "\:0417\:041d\:0410\:0427\:0415\:041d\:041d\:042f", " ", 
+            "\:0424\:0423\:041d\:041a\:0426\:0406\:0407"}]}], "*)"}], 
+         "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Round", "[", 
+             RowBox[{
+              RowBox[{
+               FractionBox["step", "Iterations"], "*", "100."}], ",", " ", 
+              "0.01"}], "]"}], " ", "\"\<% \>\""}], " ", ",", 
+           "GlobalBestCost"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                 "\:041a\:0406\:041d\:0426\:0415\:0412\:0418\:0419", " ", 
+                  "\:0420\:0415\:0417\:0423\:041b\:042c\:0422\:0410\:0422"}], 
+                 " ", "-", " ", 
+                 RowBox[{"\:0444\:0443\:043d\:043a\:0446\:0456\:044f", " ", 
+                  RowBox[{
+                  "\:043f\:043e\:0432\:0435\:0440\:0442\:0430\:0454", ":", 
+                   " ", "1"}]}]}], ")"}], " ", 
+               "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+               "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+               "\:0446\:0456\:043d\:0438"}], ";", " ", "2"}], ")"}], " ", 
+            "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+            "\:0430\:0440\:0433\:0443\:043c\:0435\:043d\:0442\:0456\:0432", " ",
+             "\:043f\:0440\:0438", " ", "\:044f\:043a\:0438\:0445", " ", 
+            "\:0432\:043e\:043d\:0430", " ", 
+            "\:0434\:043e\:0441\:044f\:0433\:0430\:0454\:0442\:044c\:0441\
+\:044f"}], ";", " ", "3"}], ")"}], " ", 
+         "\:0434\:0438\:0441\:043a\:0440\:0435\:0442\:043d\:0456", " ", 
+         "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+         "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+         "\:0446\:0456\:043d\:0438", " ", 
+         "\:043f\:0440\:043e\:0442\:044f\:0433\:043e\:043c", " ", 
+         "\:043f\:0440\:043e\:0446\:0435\:0434\:0443\:0440\:0438", " ", 
+         "\:043c\:0456\:043d\:0456\:043c\:0456\:0437\:0430\:0446\:0456\:0457"}\
+], "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"Return", "[", 
+        RowBox[{"{", 
+         RowBox[{"GlobalBestCost", ",", " ", 
+          RowBox[{
+           RowBox[{"Swarm", "[", 
+            RowBox[{"[", "BestParticleNumber", "]"}], "]"}], "[", 
+           RowBox[{"[", "4", "]"}], "]"}], ",", " ", "CostFunctionValues"}], 
+         "}"}], "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      ")"}]}], ";"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"LDWPSO", "[", 
+      RowBox[{
+      "function_", ",", " ", "Arguments_", ",", " ", "DomainArgumentList_", ",",
+        "SwarmPopulation_", ",", " ", "Iterations_"}], "]"}], ":=", 
+     "\[IndentingNewLine]", 
+     RowBox[{"(", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+       "\:0417\:0410\:0414\:0410\:041d\:041d\:042f", " ", 
+        "\:0424\:0423\:041d\:041a\:0426\:0406\:0407", " ", 
+        "\:0426\:0406\:041d\:0418"}], "*)"}], "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"func", "=", "function"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"CostFunctionValues", "=", 
+        RowBox[{"List", "[", "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", "\:041c\:0410\:0421\:0418\:0412\:0423", " ", 
+         "\:0417\:041d\:0410\:0427\:0415\:041d\:042c", " ", 
+         "\:0424\:0423\:041d\:041a\:0426\:0406\:0407", " ", 
+         "\:0426\:0406\:041d\:0418"}], "*)"}], "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", 
+         "\:041f\:041e\:0427\:0410\:0422\:041a\:041e\:0412\:0418\:0425", " ", 
+         "\:0414\:0410\:041d\:0418\:0425"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"c2", "=", "1.19"}], ";", " ", 
+       RowBox[{"c1", "=", "c2"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", "\:0420\:041e\:042e"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Swarm", "=", 
+        RowBox[{"List", "[", "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"Do", "[", "\[IndentingNewLine]", 
+        RowBox[{"(*", 
+         RowBox[{
+         "\:041f\:041e\:0427\:0410\:0422\:041a\:041e\:0412\:0406", " ", 
+          "\:041f\:041e\:041b\:041e\:0416\:0415\:041d\:041d\:042f", " ", 
+          "\:0427\:0410\:0421\:0422\:0418\:041d\:041e\:041a"}], "*)"}], 
+        "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"ParticlePosition", "=", 
+           RowBox[{"Table", "[", 
+            RowBox[{
+             RowBox[{"RandomReal", "[", 
+              RowBox[{"DomainArgumentList", "[", 
+               RowBox[{"[", "i", "]"}], "]"}], "]"}], ",", " ", 
+             RowBox[{"{", 
+              RowBox[{"i", ",", " ", "1", ",", 
+               RowBox[{"Length", "[", "Arguments", "]"}], ",", " ", "1"}], 
+              "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "\:041f\:041e\:0427\:0410\:0422\:041a\:041e\:0412\:0406", " ", 
+            "\:0428\:0412\:0418\:0414\:041a\:041e\:0421\:0422\:0406", " ", 
+            "\:0427\:0410\:0421\:0422\:0418\:041d\:041e\:041a"}], "*)"}], 
+          "\[IndentingNewLine]", 
+          RowBox[{"ParticleVelocity", "=", 
+           RowBox[{"Table", "[", 
+            RowBox[{"0", ",", " ", 
+             RowBox[{"{", 
+              RowBox[{"i", ",", " ", "1", ",", 
+               RowBox[{"Length", "[", "Arguments", "]"}], ",", " ", "1"}], 
+              "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"ParticleCost", "=", 
+           RowBox[{"Apply", "[", 
+            RowBox[{"func", ",", "ParticlePosition"}], "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "\:0412\:0418\:0417\:041d\:0410\:0427\:0415\:041d\:041d\:042f", " ",
+             "\:041d\:0410\:0419\:041a\:0420\:0410\:0429\:0418\:0425", " ", 
+            "\:041f\:041e\:041b\:041e\:0416\:0415\:041d\:042c", " ", 
+            "\:0414\:041b\:042f", " ", "\:041a\:041e\:0416\:041d\:041e\:0407",
+             " ", "\:0427\:0410\:0421\:0422\:0418\:041d\:041a\:0418", "\[IndentingNewLine]",
+             "\:041d\:0430\:0439\:043a\:0440\:0430\:0449\:0456", " ", 
+            "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:044f", " ", 
+            "\:0441\:043f\:043e\:0447\:0430\:0442\:043a\:0443", " ", 
+            "\:0432\:0456\:0434\:043f\:043e\:0432\:0456\:0434\:0430\:044e\
+\:0442\:044c", " ", 
+            "\:043f\:043e\:0447\:0430\:0442\:043a\:043e\:0432\:0438\:043c", " ",
+             "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:044f\:043c"}],
+            "*)"}], "\[IndentingNewLine]", 
+          RowBox[{"ParticleBest", "=", "ParticlePosition"}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"ParticleBestCost", "=", "ParticleCost"}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{"k", "-", 
+            RowBox[{
+            "\:0442\:0430", " ", 
+             "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0430"}]}], "*)"}], 
+          "\[IndentingNewLine]", 
+          RowBox[{"Particle", "=", 
+           RowBox[{"List", "[", 
+            RowBox[{
+            "ParticlePosition", ",", " ", "ParticleVelocity", ",", " ", 
+             "ParticleCost", ",", " ", "ParticleBest", ",", " ", 
+             "ParticleBestCost"}], "]"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"AppendTo", "[", 
+           RowBox[{"Swarm", ",", " ", "Particle"}], "]"}]}], ",", " ", 
+         "SwarmPopulation"}], "]"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0437\:043d\:0430\:0445\:043e\:0434\:0436\:0435\:043d\:043d\:044f", 
+         " ", "\:043d\:0430\:0439\:043a\:0440\:0430\:0449\:043e\:0457", " ", 
+         "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438", " ", "\:0443", " ",
+          "\:0440\:043e\:0457"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"GlobalBestCost", "=", 
+        RowBox[{"Min", "[", 
+         RowBox[{"Table", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Swarm", "[", 
+             RowBox[{"[", "k", "]"}], "]"}], "[", 
+            RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+           RowBox[{"{", 
+            RowBox[{
+            "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", "1"}], 
+            "}"}]}], "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"BestParticleNumber", "=", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Position", "[", 
+           RowBox[{
+            RowBox[{"Table", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Swarm", "[", 
+                RowBox[{"[", "k", "]"}], "]"}], "[", 
+               RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+              RowBox[{"{", 
+               RowBox[{
+               "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", "1"}], 
+               "}"}]}], "]"}], ",", "GlobalBestCost"}], "]"}], "[", 
+          RowBox[{"[", "1", "]"}], "]"}], "[", 
+         RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0437\:0430\:043f\:043e\:0432\:043d\:0438\:043b\:0438", " ", 
+         "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\:043c", " ", 
+         "\:0432\:0435\:043b\:0438\:0447\:0438\:043d\:0438", " ", 
+         "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+         "\:0446\:0456\:043d\:0438", " ", "\:043c\:0430\:0441\:0438\:0432"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"AppendTo", "[", 
+        RowBox[{"CostFunctionValues", ",", " ", "GlobalBestCost"}], "]"}], ";",
+        "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0426\:0418\:041a\:041b", " ", 
+         "\:0420\:041e\:0417\:0420\:0410\:0425\:0423\:041d\:041a\:0423"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Monitor", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"Do", "[", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"WMax", "=", "0.9"}], ";", " ", 
+            RowBox[{"WMin", "=", "0.4"}], ";", "\[IndentingNewLine]", 
+            RowBox[{"w", "=", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{"WMax", "-", "WMin"}], ")"}], "*", 
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{"(", 
+                  RowBox[{"Iterations", "-", "step"}], ")"}], "/", 
+                 "Iterations"}], ")"}]}], "+", "WMin"}]}], ";", 
+            "\[IndentingNewLine]", "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ", 
+              "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:044c", " ", 
+              "\:0442\:0430", " ", 
+              "\:0448\:0432\:0438\:0434\:043a\:043e\:0441\:0442\:0435\:0439", 
+              " ", "\:0434\:043b\:044f", " ", 
+              "\:043a\:043e\:0436\:043d\:043e\:0457", " ", 
+              "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438"}], "*)"}], 
+            "\[IndentingNewLine]", 
+            RowBox[{"Do", "[", "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"r1", "=", 
+                RowBox[{"Table", "[", 
+                 RowBox[{
+                  RowBox[{"RandomReal", "[", 
+                   RowBox[{"{", 
+                    RowBox[{"0.", ",", "1."}], "}"}], "]"}], ",", " ", 
+                  RowBox[{"Length", "[", "Arguments", "]"}]}], "]"}]}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{"r2", "=", 
+                RowBox[{"Table", "[", 
+                 RowBox[{
+                  RowBox[{"RandomReal", "[", 
+                   RowBox[{"{", 
+                    RowBox[{"0.", ",", "1."}], "}"}], "]"}], ",", " ", 
+                  RowBox[{"Length", "[", "Arguments", "]"}]}], "]"}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "2", "]"}], "]"}], "=", 
+                RowBox[{
+                 RowBox[{"w", "*", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "2", "]"}], "]"}]}], "+", 
+                 RowBox[{"c1", "*", "r1", "*", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "4", "]"}], "]"}], "-", 
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}], "+", 
+                 "\[IndentingNewLine]", 
+                 RowBox[{"c2", "*", "r2", "*", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "BestParticleNumber", "]"}], "]"}], "[", 
+                    RowBox[{"[", "4", "]"}], "]"}], "-", 
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}]}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "1", "]"}], "]"}], "=", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "1", "]"}], "]"}], "+", 
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "2", "]"}], "]"}]}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:043f\:0435\:0440\:0435\:0432\:0456\:0440\:043a\:0430", " ",
+                  "\:0432\:0438\:0445\:043e\:0434\:0443", " ", "\:0437\:0430",
+                  " ", "\:043c\:0435\:0436\:0456", " ", 
+                 "\:0432\:0435\:0440\:0445\:043d\:044c\:043e\:0457", " ", 
+                 "\:0442\:0430", " ", 
+                 "\:043d\:0438\:0436\:043d\:044c\:043e\:0457", " ", 
+                 "\:0433\:0440\:0430\:043d\:0438\:0446\:0456"}], "*)"}], 
+               "\[IndentingNewLine]", 
+               RowBox[{"Do", "[", "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"Piecewise", "[", 
+                  RowBox[{"{", 
+                   RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", "0"}], ";", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}]}], ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "<", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}]}], "}"}], ",", " ", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", "0"}], ";", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}]}], ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], ">", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}]}], "}"}]}], "}"}], "]"}],
+                  "\[IndentingNewLine]", "\[IndentingNewLine]", ",", " ", 
+                 RowBox[{"{", 
+                  RowBox[{"j", ",", " ", "1", ",", " ", 
+                   RowBox[{"Length", "[", "Arguments", "]"}]}], "}"}]}], 
+                "]"}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ",
+                  "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+                 "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", "\:0432", 
+                 " ", "\:043d\:043e\:0432\:043e\:043c\:0443", " ", 
+                 "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:0456", " ",
+                  "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438"}], 
+                "*)"}], "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "3", "]"}], "]"}], "=", 
+                RowBox[{"Apply", "[", 
+                 RowBox[{"func", ",", " ", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "1", "]"}], "]"}]}], "]"}]}]}], 
+              "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+              RowBox[{"{", 
+               RowBox[{
+               "k", ",", " ", "1", ",", " ", "SwarmPopulation", ",", " ", 
+                "1"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ", 
+              "PersonalBest"}], "*)"}], "\[IndentingNewLine]", 
+            RowBox[{"Do", "[", 
+             RowBox[{
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "3", "]"}], "]"}], "<", 
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "5", "]"}], "]"}]}], ",", " ", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "5", "]"}], "]"}], "=", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "3", "]"}], "]"}]}], ";", "  ", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "4", "]"}], "]"}], "=", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "1", "]"}], "]"}]}]}]}], "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{
+               "k", ",", " ", "1", ",", " ", "SwarmPopulation", ",", " ", 
+                "1"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ", 
+              "GlobalBest"}], "*)"}], "\[IndentingNewLine]", 
+            RowBox[{"GlobalBestCost", "=", 
+             RowBox[{"Min", "[", 
+              RowBox[{"Table", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+                RowBox[{"{", 
+                 RowBox[{
+                 "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", "1"}], 
+                 "}"}]}], "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+            RowBox[{"BestParticleNumber", "=", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Position", "[", 
+                RowBox[{
+                 RowBox[{"Table", "[", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", 
+                    "1"}], "}"}]}], "]"}], ",", "GlobalBestCost"}], "]"}], "[", 
+               RowBox[{"[", "1", "]"}], "]"}], "[", 
+              RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:0437\:0430\:043f\:043e\:0432\:043d\:0438\:043b\:0438", " ", 
+              "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\:043c", " ", 
+              "\:0432\:0435\:043b\:0438\:0447\:0438\:043d\:0438", " ", 
+              "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+              "\:0446\:0456\:043d\:0438", " ", 
+              "\:043c\:0430\:0441\:0438\:0432"}], "*)"}], 
+            "\[IndentingNewLine]", 
+            RowBox[{"AppendTo", "[", 
+             RowBox[{"CostFunctionValues", ",", " ", "GlobalBestCost"}], 
+             "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+           RowBox[{"{", 
+            RowBox[{
+            "step", ",", " ", "2", ",", " ", "Iterations", ",", " ", "1"}], 
+            "}"}]}], "]"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+         "\[IndentingNewLine]", 
+         RowBox[{"(*", 
+          RowBox[{
+           RowBox[{
+           "\:0432\:0456\:0437\:0443\:0430\:043b\:0456\:0437\:0430\:0446\:0456\
+\:044f", " ", "\:0434\:0430\:043d\:0438\:0445", " ", 
+            "\:0406\:0422\:0415\:0420\:0410\:0426\:0406\:042f"}], "-", 
+           RowBox[{
+           "\:0417\:041d\:0410\:0427\:0415\:041d\:041d\:042f", " ", 
+            "\:0424\:0423\:041d\:041a\:0426\:0406\:0407"}]}], "*)"}], 
+         "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Round", "[", 
+             RowBox[{
+              RowBox[{
+               FractionBox["step", "Iterations"], "*", "100."}], ",", " ", 
+              "0.01"}], "]"}], " ", "\"\<% \>\""}], " ", ",", 
+           "GlobalBestCost"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                 "\:041a\:0406\:041d\:0426\:0415\:0412\:0418\:0419", " ", 
+                  "\:0420\:0415\:0417\:0423\:041b\:042c\:0422\:0410\:0422"}], 
+                 " ", "-", " ", 
+                 RowBox[{"\:0444\:0443\:043d\:043a\:0446\:0456\:044f", " ", 
+                  RowBox[{
+                  "\:043f\:043e\:0432\:0435\:0440\:0442\:0430\:0454", ":", 
+                   " ", "1"}]}]}], ")"}], " ", 
+               "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+               "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+               "\:0446\:0456\:043d\:0438"}], ";", " ", "2"}], ")"}], " ", 
+            "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+            "\:0430\:0440\:0433\:0443\:043c\:0435\:043d\:0442\:0456\:0432", " ",
+             "\:043f\:0440\:0438", " ", "\:044f\:043a\:0438\:0445", " ", 
+            "\:0432\:043e\:043d\:0430", " ", 
+            "\:0434\:043e\:0441\:044f\:0433\:0430\:0454\:0442\:044c\:0441\
+\:044f"}], ";", " ", "3"}], ")"}], " ", 
+         "\:0434\:0438\:0441\:043a\:0440\:0435\:0442\:043d\:0456", " ", 
+         "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+         "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+         "\:0446\:0456\:043d\:0438", " ", 
+         "\:043f\:0440\:043e\:0442\:044f\:0433\:043e\:043c", " ", 
+         "\:043f\:0440\:043e\:0446\:0435\:0434\:0443\:0440\:0438", " ", 
+         "\:043c\:0456\:043d\:0456\:043c\:0456\:0437\:0430\:0446\:0456\:0457"}\
+], "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"Return", "[", 
+        RowBox[{"{", 
+         RowBox[{"GlobalBestCost", ",", " ", 
+          RowBox[{
+           RowBox[{"Swarm", "[", 
+            RowBox[{"[", "BestParticleNumber", "]"}], "]"}], "[", 
+           RowBox[{"[", "4", "]"}], "]"}], ",", " ", "CostFunctionValues"}], 
+         "}"}], "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      ")"}]}], ";"}], "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"VCTPSO", "[", 
+      RowBox[{
+      "function_", ",", " ", "Arguments_", ",", " ", "DomainArgumentList_", ",",
+        "SwarmPopulation_", ",", " ", "Iterations_"}], "]"}], ":=", 
+     "\[IndentingNewLine]", 
+     RowBox[{"(", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"function", " ", "-", " ", 
+         RowBox[{"is", " ", "cost", " ", "function"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Arguments", " ", "-", " ", 
+         RowBox[{
+         "are", " ", "all", " ", "the", " ", "independent", " ", "variables", 
+          " ", "of", " ", "the", " ", "cost", " ", 
+          RowBox[{"function", ".", " ", "It"}], " ", "is", " ", "array", " ", 
+          "of", " ", "arguments"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"DomainArgumentList", " ", "-", " ", 
+         RowBox[{"is", " ", "the", " ", "search", " ", 
+          RowBox[{"domain", ".", " ", "It"}], " ", "represents", " ", "the", " ",
+           "borders", " ", "of", " ", "multivariable", " ", 
+          RowBox[{"domain", ".", " ", "It"}], " ", "is", " ", "the", " ", 
+          "array", " ", "of", " ", "the", " ", "borders"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"InitialArgumentValues", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "an", " ", "initial", " ", "values", " ", "for", " ", 
+          "each", " ", "argument"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"SwarmPopulation", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "a", " ", "number", " ", "of", " ", "the", " ", 
+          "particles", " ", "in", " ", "the", " ", "swarm"}]}], ";", 
+        "\[IndentingNewLine]", " ", 
+        RowBox[{"Iterations", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "a", " ", "number", " ", "of", " ", "the", " ", 
+          "iterations", " ", "of", " ", "the", " ", "main", " ", "cycle"}]}], 
+        ";", "\[IndentingNewLine]", 
+        RowBox[{"CostFunctionValues", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "a", " ", "array", " ", "of", " ", "the", " ", "cost", " ",
+           "function", " ", "values", " ", "during", " ", "the", " ", 
+          "optimization", " ", 
+          RowBox[{"procedure", "."}]}]}]}], " ", "\[IndentingNewLine]", 
+       "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"RC", "=", "5"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0417\:0410\:0414\:0410\:041d\:041d\:042f", " ", 
+         "\:0424\:0423\:041d\:041a\:0426\:0406\:0407", " ", 
+         "\:0426\:0406\:041d\:0418"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"func", "=", "function"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"CostFunctionValues", "=", 
+        RowBox[{"List", "[", "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", "\:041c\:0410\:0421\:0418\:0412\:0423", " ", 
+         "\:0417\:041d\:0410\:0427\:0415\:041d\:042c", " ", 
+         "\:0424\:0423\:041d\:041a\:0426\:0406\:0407", " ", 
+         "\:0426\:0406\:041d\:0418"}], "*)"}], "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", 
+         "\:041f\:041e\:0427\:0410\:0422\:041a\:041e\:0412\:0418\:0425", " ", 
+         "\:0414\:0410\:041d\:0418\:0425"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"w", "=", "0.72"}], ";", 
+       RowBox[{"c2", "=", "1.19"}], ";", " ", 
+       RowBox[{"c1", "=", "c2"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", "\:0420\:041e\:042e"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Swarm", "=", 
+        RowBox[{"List", "[", "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"Do", "[", "\[IndentingNewLine]", 
+        RowBox[{"(*", 
+         RowBox[{
+         "\:041f\:041e\:0427\:0410\:0422\:041a\:041e\:0412\:0406", " ", 
+          "\:041f\:041e\:041b\:041e\:0416\:0415\:041d\:041d\:042f", " ", 
+          "\:0427\:0410\:0421\:0422\:0418\:041d\:041e\:041a"}], "*)"}], 
+        "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"ParticlePosition", "=", 
+           RowBox[{"Table", "[", 
+            RowBox[{
+             RowBox[{"RandomReal", "[", 
+              RowBox[{"DomainArgumentList", "[", 
+               RowBox[{"[", "i", "]"}], "]"}], "]"}], ",", " ", 
+             RowBox[{"{", 
+              RowBox[{"i", ",", " ", "1", ",", 
+               RowBox[{"Length", "[", "Arguments", "]"}], ",", " ", "1"}], 
+              "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "\:041f\:041e\:0427\:0410\:0422\:041a\:041e\:0412\:0406", " ", 
+            "\:0428\:0412\:0418\:0414\:041a\:041e\:0421\:0422\:0406", " ", 
+            "\:0427\:0410\:0421\:0422\:0418\:041d\:041e\:041a"}], "*)"}], 
+          "\[IndentingNewLine]", 
+          RowBox[{"ParticleVelocity", "=", 
+           RowBox[{"Table", "[", 
+            RowBox[{"0", ",", " ", 
+             RowBox[{"{", 
+              RowBox[{"i", ",", " ", "1", ",", 
+               RowBox[{"Length", "[", "Arguments", "]"}], ",", " ", "1"}], 
+              "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"ParticleCost", "=", 
+           RowBox[{"Apply", "[", 
+            RowBox[{"func", ",", "ParticlePosition"}], "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "\:0412\:0418\:0417\:041d\:0410\:0427\:0415\:041d\:041d\:042f", " ",
+             "\:041d\:0410\:0419\:041a\:0420\:0410\:0429\:0418\:0425", " ", 
+            "\:041f\:041e\:041b\:041e\:0416\:0415\:041d\:042c", " ", 
+            "\:0414\:041b\:042f", " ", "\:041a\:041e\:0416\:041d\:041e\:0407",
+             " ", "\:0427\:0410\:0421\:0422\:0418\:041d\:041a\:0418", "\[IndentingNewLine]",
+             "\:041d\:0430\:0439\:043a\:0440\:0430\:0449\:0456", " ", 
+            "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:044f", " ", 
+            "\:0441\:043f\:043e\:0447\:0430\:0442\:043a\:0443", " ", 
+            "\:0432\:0456\:0434\:043f\:043e\:0432\:0456\:0434\:0430\:044e\
+\:0442\:044c", " ", 
+            "\:043f\:043e\:0447\:0430\:0442\:043a\:043e\:0432\:0438\:043c", " ",
+             "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:044f\:043c"}],
+            "*)"}], "\[IndentingNewLine]", 
+          RowBox[{"ParticleBest", "=", "ParticlePosition"}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"ParticleBestCost", "=", "ParticleCost"}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{"k", "-", 
+            RowBox[{
+            "\:0442\:0430", " ", 
+             "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0430"}]}], "*)"}], 
+          "\[IndentingNewLine]", 
+          RowBox[{"Particle", "=", 
+           RowBox[{"List", "[", 
+            RowBox[{
+            "ParticlePosition", ",", " ", "ParticleVelocity", ",", " ", 
+             "ParticleCost", ",", " ", "ParticleBest", ",", " ", 
+             "ParticleBestCost"}], "]"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"AppendTo", "[", 
+           RowBox[{"Swarm", ",", " ", "Particle"}], "]"}]}], ",", " ", 
+         "SwarmPopulation"}], "]"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0437\:043d\:0430\:0445\:043e\:0434\:0436\:0435\:043d\:043d\:044f", 
+         " ", "\:043d\:0430\:0439\:043a\:0440\:0430\:0449\:043e\:0457", " ", 
+         "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438", " ", "\:0443", " ",
+          "\:0440\:043e\:0457"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"GlobalBestCost", "=", 
+        RowBox[{"Min", "[", 
+         RowBox[{"Table", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Swarm", "[", 
+             RowBox[{"[", "k", "]"}], "]"}], "[", 
+            RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+           RowBox[{"{", 
+            RowBox[{
+            "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", "1"}], 
+            "}"}]}], "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"BestParticleNumber", "=", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Position", "[", 
+           RowBox[{
+            RowBox[{"Table", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Swarm", "[", 
+                RowBox[{"[", "k", "]"}], "]"}], "[", 
+               RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+              RowBox[{"{", 
+               RowBox[{
+               "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", "1"}], 
+               "}"}]}], "]"}], ",", "GlobalBestCost"}], "]"}], "[", 
+          RowBox[{"[", "1", "]"}], "]"}], "[", 
+         RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0437\:0430\:043f\:043e\:0432\:043d\:0438\:043b\:0438", " ", 
+         "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\:043c", " ", 
+         "\:0432\:0435\:043b\:0438\:0447\:0438\:043d\:0438", " ", 
+         "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+         "\:0446\:0456\:043d\:0438", " ", "\:043c\:0430\:0441\:0438\:0432"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"AppendTo", "[", 
+        RowBox[{"CostFunctionValues", ",", " ", "GlobalBestCost"}], "]"}], ";",
+        "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0426\:0418\:041a\:041b", " ", 
+         "\:0420\:041e\:0417\:0420\:0410\:0425\:0423\:041d\:041a\:0423"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Monitor", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"Do", "[", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ", 
+            "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:044c", " ", 
+            "\:0442\:0430", " ", 
+            "\:0448\:0432\:0438\:0434\:043a\:043e\:0441\:0442\:0435\:0439", " ",
+             "\:0434\:043b\:044f", " ", 
+            "\:043a\:043e\:0436\:043d\:043e\:0457", " ", 
+            "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438"}], "*)"}], 
+          "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Do", "[", "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"r1", "=", 
+                RowBox[{"Table", "[", 
+                 RowBox[{
+                  RowBox[{"RandomReal", "[", 
+                   RowBox[{"{", 
+                    RowBox[{"0.", ",", "1."}], "}"}], "]"}], ",", " ", 
+                  RowBox[{"Length", "[", "Arguments", "]"}]}], "]"}]}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{"r2", "=", 
+                RowBox[{"Table", "[", 
+                 RowBox[{
+                  RowBox[{"RandomReal", "[", 
+                   RowBox[{"{", 
+                    RowBox[{"0.", ",", "1."}], "}"}], "]"}], ",", " ", 
+                  RowBox[{"Length", "[", "Arguments", "]"}]}], "]"}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{
+                  "\:0446\:044f", " ", "\:0443\:043c\:043e\:0432\:0430"}], 
+                  " ", "-", " ", 
+                  "\:043f\:0435\:0440\:0435\:0432\:0456\:0440\:043a\:0430"}], 
+                 ",", " ", 
+                 RowBox[{
+                 "\:0449\:043e", " ", "\:0434\:0430\:043d\:0438\:0439", " ", 
+                  "\:043d\:043e\:043c\:0435\:0440", " ", 
+                  "\:0456\:0442\:0435\:0440\:0430\:0446\:0456\:0457", " ", 
+                  "\:0454", " ", "\:043a\:0440\:0430\:0442\:043d\:0438\:043c",
+                   " ", 
+                  RowBox[{"RC", ".", " ", "\:042f\:043a\:0449\:043e"}], " ", 
+                  "\:0442\:0430\:043a"}], ",", " ", 
+                 RowBox[{
+                 "\:0442\:043e", " ", 
+                  "\:0432\:0438\:043a\:043e\:043d\:0443\:0454\:0442\:044c\
+\:0441\:044f", " ", "\:0437\:0430\:043c\:0456\:043d\:0430", " ", 
+                  "\:043d\:043e\:043c\:0435\:0440\:0430", " ", 
+                  "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438", " ", 
+                  "\:0443", " ", 
+                  "\:043a\:043e\:0433\:043d\:0456\:0442\:0438\:0432\:043d\
+\:0456\:0439", " ", "\:0441\:043a\:043b\:0430\:0434\:043e\:0432\:0456\:0439", 
+                  " ", "\:043d\:0430", " ", 
+                  "\:0432\:0438\:043f\:0430\:0434\:043a\:043e\:0432\:0438\
+\:0439"}], ",", " ", 
+                 RowBox[{
+                  RowBox[{"\:044f\:043a\:0449\:043e", " ", "\:043d\:0456"}], 
+                  " ", "-", " ", 
+                  RowBox[{
+                  "\:0442\:043e", " ", "\:043d\:043e\:043c\:0435\:0440", " ", 
+                   "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438", " ", 
+                   "\:043d\:0435", " ", 
+                   "\:0437\:043c\:0456\:043d\:044e\:0454\:0442\:044c\:0441\
+\:044f"}]}]}], "*)"}], "\[IndentingNewLine]", 
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{"Element", "[", 
+                  RowBox[{
+                   FractionBox["step", "RC"], ",", "Integers"}], "]"}], ",", 
+                 " ", 
+                 RowBox[{"CognitiveNumber", "=", 
+                  RowBox[{"RandomInteger", "[", 
+                   RowBox[{"{", 
+                    RowBox[{"1", ",", "SwarmPopulation"}], "}"}], "]"}]}], ",",
+                  "  ", 
+                 RowBox[{"CognitiveNumber", "=", "k"}]}], "]"}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "2", "]"}], "]"}], "=", 
+                RowBox[{
+                 RowBox[{"w", "*", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "2", "]"}], "]"}]}], "+", 
+                 RowBox[{"c1", "*", "r1", "*", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "CognitiveNumber", "]"}], "]"}], "[", 
+                    RowBox[{"[", "4", "]"}], "]"}], "-", 
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}], "+", 
+                 "\[IndentingNewLine]", 
+                 RowBox[{"c2", "*", "r2", "*", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "BestParticleNumber", "]"}], "]"}], "[", 
+                    RowBox[{"[", "4", "]"}], "]"}], "-", 
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}]}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "1", "]"}], "]"}], "=", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "1", "]"}], "]"}], "+", 
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "2", "]"}], "]"}]}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:043f\:0435\:0440\:0435\:0432\:0456\:0440\:043a\:0430", " ",
+                  "\:0432\:0438\:0445\:043e\:0434\:0443", " ", "\:0437\:0430",
+                  " ", "\:043c\:0435\:0436\:0456", " ", 
+                 "\:0432\:0435\:0440\:0445\:043d\:044c\:043e\:0457", " ", 
+                 "\:0442\:0430", " ", 
+                 "\:043d\:0438\:0436\:043d\:044c\:043e\:0457", " ", 
+                 "\:0433\:0440\:0430\:043d\:0438\:0446\:0456"}], "*)"}], 
+               "\[IndentingNewLine]", 
+               RowBox[{"Do", "[", "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"Piecewise", "[", 
+                  RowBox[{"{", 
+                   RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", "0"}], ";", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}]}], ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "<", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}]}], "}"}], ",", " ", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", "0"}], ";", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}]}], ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], ">", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}]}], "}"}]}], "}"}], "]"}],
+                  "\[IndentingNewLine]", "\[IndentingNewLine]", ",", " ", 
+                 RowBox[{"{", 
+                  RowBox[{"j", ",", " ", "1", ",", " ", 
+                   RowBox[{"Length", "[", "Arguments", "]"}]}], "}"}]}], 
+                "]"}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ",
+                  "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+                 "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", "\:0432", 
+                 " ", "\:043d\:043e\:0432\:043e\:043c\:0443", " ", 
+                 "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:0456", " ",
+                  "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438"}], 
+                "*)"}], "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "3", "]"}], "]"}], "=", 
+                RowBox[{"Apply", "[", 
+                 RowBox[{"func", ",", " ", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "1", "]"}], "]"}]}], "]"}]}]}], 
+              "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+              RowBox[{"{", 
+               RowBox[{
+               "k", ",", " ", "1", ",", " ", "SwarmPopulation", ",", " ", 
+                "1"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ", 
+              "PersonalBest"}], "*)"}], "\[IndentingNewLine]", 
+            RowBox[{"Do", "[", 
+             RowBox[{
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "3", "]"}], "]"}], "<", 
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "5", "]"}], "]"}]}], ",", " ", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "5", "]"}], "]"}], "=", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "3", "]"}], "]"}]}], ";", "  ", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "4", "]"}], "]"}], "=", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "1", "]"}], "]"}]}]}]}], "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{
+               "k", ",", " ", "1", ",", " ", "SwarmPopulation", ",", " ", 
+                "1"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ", 
+              "GlobalBest"}], "*)"}], "\[IndentingNewLine]", 
+            RowBox[{"GlobalBestCost", "=", 
+             RowBox[{"Min", "[", 
+              RowBox[{"Table", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+                RowBox[{"{", 
+                 RowBox[{
+                 "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", "1"}], 
+                 "}"}]}], "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+            RowBox[{"BestParticleNumber", "=", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Position", "[", 
+                RowBox[{
+                 RowBox[{"Table", "[", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", 
+                    "1"}], "}"}]}], "]"}], ",", "GlobalBestCost"}], "]"}], "[", 
+               RowBox[{"[", "1", "]"}], "]"}], "[", 
+              RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:0437\:0430\:043f\:043e\:0432\:043d\:0438\:043b\:0438", " ", 
+              "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\:043c", " ", 
+              "\:0432\:0435\:043b\:0438\:0447\:0438\:043d\:0438", " ", 
+              "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+              "\:0446\:0456\:043d\:0438", " ", 
+              "\:043c\:0430\:0441\:0438\:0432"}], "*)"}], 
+            "\[IndentingNewLine]", 
+            RowBox[{"AppendTo", "[", 
+             RowBox[{"CostFunctionValues", ",", " ", "GlobalBestCost"}], 
+             "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+           RowBox[{"{", 
+            RowBox[{
+            "step", ",", " ", "1", ",", " ", "Iterations", ",", " ", "1"}], 
+            "}"}]}], "]"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+         "\[IndentingNewLine]", 
+         RowBox[{"(*", 
+          RowBox[{
+           RowBox[{
+           "\:0432\:0456\:0437\:0443\:0430\:043b\:0456\:0437\:0430\:0446\:0456\
+\:044f", " ", "\:0434\:0430\:043d\:0438\:0445", " ", 
+            "\:0406\:0422\:0415\:0420\:0410\:0426\:0406\:042f"}], "-", 
+           RowBox[{
+           "\:0417\:041d\:0410\:0427\:0415\:041d\:041d\:042f", " ", 
+            "\:0424\:0423\:041d\:041a\:0426\:0406\:0407"}]}], "*)"}], 
+         "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Round", "[", 
+             RowBox[{
+              RowBox[{
+               FractionBox["step", "Iterations"], "*", "100."}], ",", " ", 
+              "0.01"}], "]"}], " ", "\"\<% \>\""}], " ", ",", 
+           "GlobalBestCost"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                 "\:041a\:0406\:041d\:0426\:0415\:0412\:0418\:0419", " ", 
+                  "\:0420\:0415\:0417\:0423\:041b\:042c\:0422\:0410\:0422"}], 
+                 " ", "-", " ", 
+                 RowBox[{"\:0444\:0443\:043d\:043a\:0446\:0456\:044f", " ", 
+                  RowBox[{
+                  "\:043f\:043e\:0432\:0435\:0440\:0442\:0430\:0454", ":", 
+                   " ", "1"}]}]}], ")"}], " ", 
+               "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+               "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+               "\:0446\:0456\:043d\:0438"}], ";", " ", "2"}], ")"}], " ", 
+            "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+            "\:0430\:0440\:0433\:0443\:043c\:0435\:043d\:0442\:0456\:0432", " ",
+             "\:043f\:0440\:0438", " ", "\:044f\:043a\:0438\:0445", " ", 
+            "\:0432\:043e\:043d\:0430", " ", 
+            "\:0434\:043e\:0441\:044f\:0433\:0430\:0454\:0442\:044c\:0441\
+\:044f"}], ";", " ", "3"}], ")"}], " ", 
+         "\:0434\:0438\:0441\:043a\:0440\:0435\:0442\:043d\:0456", " ", 
+         "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+         "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+         "\:0446\:0456\:043d\:0438", " ", 
+         "\:043f\:0440\:043e\:0442\:044f\:0433\:043e\:043c", " ", 
+         "\:043f\:0440\:043e\:0446\:0435\:0434\:0443\:0440\:0438", " ", 
+         "\:043c\:0456\:043d\:0456\:043c\:0456\:0437\:0430\:0446\:0456\:0457"}\
+], "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"Return", "[", 
+        RowBox[{"{", 
+         RowBox[{"GlobalBestCost", ",", " ", 
+          RowBox[{
+           RowBox[{"Swarm", "[", 
+            RowBox[{"[", "BestParticleNumber", "]"}], "]"}], "[", 
+           RowBox[{"[", "4", "]"}], "]"}], ",", " ", "CostFunctionValues"}], 
+         "}"}], "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      ")"}]}], ";"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"RingPSO", "[", 
+      RowBox[{
+      "function_", ",", " ", "Arguments_", ",", " ", "DomainArgumentList_", ",",
+        "SwarmPopulation_", ",", " ", "Iterations_"}], "]"}], ":=", 
+     "\[IndentingNewLine]", 
+     RowBox[{"(", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+       "\:0417\:0410\:0414\:0410\:041d\:041d\:042f", " ", 
+        "\:0424\:0423\:041d\:041a\:0426\:0406\:0407", " ", 
+        "\:0426\:0406\:041d\:0418"}], "*)"}], "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"func", "=", "function"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"CostFunctionValues", "=", 
+        RowBox[{"List", "[", "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", "\:041c\:0410\:0421\:0418\:0412\:0423", " ", 
+         "\:0417\:041d\:0410\:0427\:0415\:041d\:042c", " ", 
+         "\:0424\:0423\:041d\:041a\:0426\:0406\:0407", " ", 
+         "\:0426\:0406\:041d\:0418"}], "*)"}], "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", 
+         "\:041f\:041e\:0427\:0410\:0422\:041a\:041e\:0412\:0418\:0425", " ", 
+         "\:0414\:0410\:041d\:0418\:0425"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"w", "=", "0.72"}], ";", 
+       RowBox[{"c2", "=", "1.19"}], ";", " ", 
+       RowBox[{"c1", "=", "c2"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", "\:0420\:041e\:042e"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Swarm", "=", 
+        RowBox[{"List", "[", "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"Do", "[", "\[IndentingNewLine]", 
+        RowBox[{"(*", 
+         RowBox[{
+         "\:041f\:041e\:0427\:0410\:0422\:041a\:041e\:0412\:0406", " ", 
+          "\:041f\:041e\:041b\:041e\:0416\:0415\:041d\:041d\:042f", " ", 
+          "\:0427\:0410\:0421\:0422\:0418\:041d\:041e\:041a"}], "*)"}], 
+        "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"ParticlePosition", "=", 
+           RowBox[{"Table", "[", 
+            RowBox[{
+             RowBox[{"RandomReal", "[", 
+              RowBox[{"DomainArgumentList", "[", 
+               RowBox[{"[", "i", "]"}], "]"}], "]"}], ",", " ", 
+             RowBox[{"{", 
+              RowBox[{"i", ",", " ", "1", ",", 
+               RowBox[{"Length", "[", "Arguments", "]"}], ",", " ", "1"}], 
+              "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "\:041f\:041e\:0427\:0410\:0422\:041a\:041e\:0412\:0406", " ", 
+            "\:0428\:0412\:0418\:0414\:041a\:041e\:0421\:0422\:0406", " ", 
+            "\:0427\:0410\:0421\:0422\:0418\:041d\:041e\:041a"}], "*)"}], 
+          "\[IndentingNewLine]", 
+          RowBox[{"ParticleVelocity", "=", 
+           RowBox[{"Table", "[", 
+            RowBox[{"0", ",", " ", 
+             RowBox[{"{", 
+              RowBox[{"i", ",", " ", "1", ",", 
+               RowBox[{"Length", "[", "Arguments", "]"}], ",", " ", "1"}], 
+              "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"ParticleCost", "=", 
+           RowBox[{"Apply", "[", 
+            RowBox[{"func", ",", "ParticlePosition"}], "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "\:0412\:0418\:0417\:041d\:0410\:0427\:0415\:041d\:041d\:042f", " ",
+             "\:041d\:0410\:0419\:041a\:0420\:0410\:0429\:0418\:0425", " ", 
+            "\:041f\:041e\:041b\:041e\:0416\:0415\:041d\:042c", " ", 
+            "\:0414\:041b\:042f", " ", "\:041a\:041e\:0416\:041d\:041e\:0407",
+             " ", "\:0427\:0410\:0421\:0422\:0418\:041d\:041a\:0418", "\[IndentingNewLine]",
+             "\:041d\:0430\:0439\:043a\:0440\:0430\:0449\:0456", " ", 
+            "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:044f", " ", 
+            "\:0441\:043f\:043e\:0447\:0430\:0442\:043a\:0443", " ", 
+            "\:0432\:0456\:0434\:043f\:043e\:0432\:0456\:0434\:0430\:044e\
+\:0442\:044c", " ", 
+            "\:043f\:043e\:0447\:0430\:0442\:043a\:043e\:0432\:0438\:043c", " ",
+             "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:044f\:043c"}],
+            "*)"}], "\[IndentingNewLine]", 
+          RowBox[{"ParticleBest", "=", "ParticlePosition"}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"ParticleBestCost", "=", "ParticleCost"}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{"k", "-", 
+            RowBox[{
+            "\:0442\:0430", " ", 
+             "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0430"}]}], "*)"}], 
+          "\[IndentingNewLine]", 
+          RowBox[{"Particle", "=", 
+           RowBox[{"List", "[", 
+            RowBox[{
+            "ParticlePosition", ",", " ", "ParticleVelocity", ",", " ", 
+             "ParticleCost", ",", " ", "ParticleBest", ",", " ", 
+             "ParticleBestCost"}], "]"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"AppendTo", "[", 
+           RowBox[{"Swarm", ",", " ", "Particle"}], "]"}]}], ",", " ", 
+         "SwarmPopulation"}], "]"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0437\:043d\:0430\:0445\:043e\:0434\:0436\:0435\:043d\:043d\:044f", 
+         " ", "\:043d\:0430\:0439\:043a\:0440\:0430\:0449\:043e\:0457", " ", 
+         "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438", " ", "\:0443", " ",
+          "\:0440\:043e\:0457"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"GlobalBestCost", "=", 
+        RowBox[{"Min", "[", 
+         RowBox[{"Table", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Swarm", "[", 
+             RowBox[{"[", "k", "]"}], "]"}], "[", 
+            RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+           RowBox[{"{", 
+            RowBox[{
+            "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", "1"}], 
+            "}"}]}], "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"BestParticleNumber", "=", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Position", "[", 
+           RowBox[{
+            RowBox[{"Table", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Swarm", "[", 
+                RowBox[{"[", "k", "]"}], "]"}], "[", 
+               RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+              RowBox[{"{", 
+               RowBox[{
+               "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", "1"}], 
+               "}"}]}], "]"}], ",", "GlobalBestCost"}], "]"}], "[", 
+          RowBox[{"[", "1", "]"}], "]"}], "[", 
+         RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0437\:0430\:043f\:043e\:0432\:043d\:0438\:043b\:0438", " ", 
+         "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\:043c", " ", 
+         "\:0432\:0435\:043b\:0438\:0447\:0438\:043d\:0438", " ", 
+         "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+         "\:0446\:0456\:043d\:0438", " ", "\:043c\:0430\:0441\:0438\:0432"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"AppendTo", "[", 
+        RowBox[{"CostFunctionValues", ",", " ", "GlobalBestCost"}], "]"}], ";",
+        "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0426\:0418\:041a\:041b", " ", 
+         "\:0420\:041e\:0417\:0420\:0410\:0425\:0423\:041d\:041a\:0423"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Monitor", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"Do", "[", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ", 
+            "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:044c", " ", 
+            "\:0442\:0430", " ", 
+            "\:0448\:0432\:0438\:0434\:043a\:043e\:0441\:0442\:0435\:0439", " ",
+             "\:0434\:043b\:044f", " ", 
+            "\:043a\:043e\:0436\:043d\:043e\:0457", " ", 
+            "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438"}], "*)"}], 
+          "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Do", "[", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+             RowBox[{"(*", 
+              RowBox[{
+              "\:0437\:043d\:0430\:0445\:043e\:0434\:0436\:0435\:043d\:043d\
+\:044f", " ", "\:043d\:0430\:0439\:043a\:0440\:0430\:0449\:043e\:0457", " ", 
+               "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438", " ", 
+               "\:0443", " ", 
+               "\:043b\:043e\:043a\:0430\:043b\:044c\:043d\:043e\:043c\:0443",
+                " ", "\:0440\:043e\:0457"}], "*)"}], "\[IndentingNewLine]", 
+             RowBox[{"(*", 
+              RowBox[{
+              "\:043f\:0435\:0440\:0448\:0430", " ", 
+               "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0430"}], "*)"}], 
+             "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{"k", "\[Equal]", "1"}], " ", ",", " ", 
+                 RowBox[{"LocalBestCost", "=", 
+                  RowBox[{"Min", "[", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"-", "1"}], "]"}], "]"}], "[", 
+                    RowBox[{"[", "5", "]"}], "]"}], ",", 
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"k", "+", "1"}], "]"}], "]"}], "[", 
+                    RowBox[{"[", "5", "]"}], "]"}]}], "]"}]}]}], "]"}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:043e\:0441\:0442\:0430\:043d\:043d\:044f", " ", 
+                 "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0430"}], "*)"}],
+                "\[IndentingNewLine]", 
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{"k", "\[Equal]", "SwarmPopulation"}], ",", " ", 
+                 RowBox[{"LocalBestCost", "=", 
+                  RowBox[{"Min", "[", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"k", "-", "1"}], "]"}], "]"}], "[", 
+                    RowBox[{"[", "5", "]"}], "]"}], ",", 
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "5", "]"}], "]"}]}], "]"}]}]}], "]"}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{"SwarmPopulation", ">", "k", ">", "1"}], ",", " ", 
+                 RowBox[{"LocalBestCost", "=", 
+                  RowBox[{"Min", "[", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"k", "-", "1"}], "]"}], "]"}], "[", 
+                    RowBox[{"[", "5", "]"}], "]"}], ",", 
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"k", "+", "1"}], "]"}], "]"}], "[", 
+                    RowBox[{"[", "5", "]"}], "]"}]}], "]"}]}]}], "]"}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:0437\:043d\:0430\:0445\:043e\:0434\:0436\:0435\:043d\:043d\
+\:044f", " ", "\:043d\:043e\:043c\:0435\:0440\:0430", " ", 
+                 "\:043b\:043e\:043a\:0430\:043b\:044c\:043d\:043e", " ", 
+                 "\:043d\:0430\:0439\:043a\:0440\:0430\:0449\:043e\:0457", " ",
+                  "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438"}], 
+                "*)"}], "\[IndentingNewLine]", 
+               RowBox[{"LocalBestParticleNumber", "=", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Position", "[", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Transpose", "[", "Swarm", "]"}], "[", 
+                    RowBox[{"[", "5", "]"}], "]"}], ",", "LocalBestCost"}], 
+                   "]"}], "[", 
+                  RowBox[{"[", "1", "]"}], "]"}], "[", 
+                 RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]",
+                "\[IndentingNewLine]", 
+               RowBox[{"r1", "=", 
+                RowBox[{"Table", "[", 
+                 RowBox[{
+                  RowBox[{"RandomReal", "[", 
+                   RowBox[{"{", 
+                    RowBox[{"0.", ",", "1."}], "}"}], "]"}], ",", " ", 
+                  RowBox[{"Length", "[", "Arguments", "]"}]}], "]"}]}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{"r2", "=", 
+                RowBox[{"Table", "[", 
+                 RowBox[{
+                  RowBox[{"RandomReal", "[", 
+                   RowBox[{"{", 
+                    RowBox[{"0.", ",", "1."}], "}"}], "]"}], ",", " ", 
+                  RowBox[{"Length", "[", "Arguments", "]"}]}], "]"}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "2", "]"}], "]"}], "=", 
+                RowBox[{
+                 RowBox[{"w", "*", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "2", "]"}], "]"}]}], "+", 
+                 RowBox[{"c1", "*", "r1", "*", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "4", "]"}], "]"}], "-", 
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}], "+", 
+                 "\[IndentingNewLine]", 
+                 RowBox[{"c2", "*", "r2", "*", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "LocalBestParticleNumber", "]"}], "]"}], "[", 
+                    RowBox[{"[", "4", "]"}], "]"}], "-", 
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], ")"}]}]}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "1", "]"}], "]"}], "=", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "1", "]"}], "]"}], "+", 
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "2", "]"}], "]"}]}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:043f\:0435\:0440\:0435\:0432\:0456\:0440\:043a\:0430", " ",
+                  "\:0432\:0438\:0445\:043e\:0434\:0443", " ", "\:0437\:0430",
+                  " ", "\:043c\:0435\:0436\:0456", " ", 
+                 "\:0432\:0435\:0440\:0445\:043d\:044c\:043e\:0457", " ", 
+                 "\:0442\:0430", " ", 
+                 "\:043d\:0438\:0436\:043d\:044c\:043e\:0457", " ", 
+                 "\:0433\:0440\:0430\:043d\:0438\:0446\:0456"}], "*)"}], 
+               "\[IndentingNewLine]", 
+               RowBox[{"Do", "[", "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"Piecewise", "[", 
+                  RowBox[{"{", 
+                   RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", "0"}], ";", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}]}], ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "<", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}]}], "}"}], ",", " ", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", "0"}], ";", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "=", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}]}], ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], ">", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "j", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}]}], "}"}]}], "}"}], "]"}],
+                  "\[IndentingNewLine]", "\[IndentingNewLine]", ",", " ", 
+                 RowBox[{"{", 
+                  RowBox[{"j", ",", " ", "1", ",", " ", 
+                   RowBox[{"Length", "[", "Arguments", "]"}]}], "}"}]}], 
+                "]"}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ",
+                  "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+                 "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", "\:0432", 
+                 " ", "\:043d\:043e\:0432\:043e\:043c\:0443", " ", 
+                 "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:0456", " ",
+                  "\:0447\:0430\:0441\:0442\:0438\:043d\:043a\:0438"}], 
+                "*)"}], "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "3", "]"}], "]"}], "=", 
+                RowBox[{"Apply", "[", 
+                 RowBox[{"func", ",", " ", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "1", "]"}], "]"}]}], "]"}]}]}], 
+              "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+              RowBox[{"{", 
+               RowBox[{
+               "k", ",", " ", "1", ",", " ", "SwarmPopulation", ",", " ", 
+                "1"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ", 
+              "PersonalBest"}], "*)"}], "\[IndentingNewLine]", 
+            RowBox[{"Do", "[", 
+             RowBox[{
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "3", "]"}], "]"}], "<", 
+                 RowBox[{
+                  RowBox[{"Swarm", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "[", 
+                  RowBox[{"[", "5", "]"}], "]"}]}], ",", " ", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "5", "]"}], "]"}], "=", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "3", "]"}], "]"}]}], ";", "  ", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "4", "]"}], "]"}], "=", 
+                  RowBox[{
+                   RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                   RowBox[{"[", "1", "]"}], "]"}]}]}]}], "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{
+               "k", ",", " ", "1", ",", " ", "SwarmPopulation", ",", " ", 
+                "1"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ", 
+              "GlobalBest"}], "*)"}], "\[IndentingNewLine]", 
+            RowBox[{"GlobalBestCost", "=", 
+             RowBox[{"Min", "[", 
+              RowBox[{"Table", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"Swarm", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}], "[", 
+                 RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+                RowBox[{"{", 
+                 RowBox[{
+                 "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", "1"}], 
+                 "}"}]}], "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+            RowBox[{"BestParticleNumber", "=", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Position", "[", 
+                RowBox[{
+                 RowBox[{"Table", "[", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"Swarm", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "5", "]"}], "]"}], ",", " ", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    "k", ",", "1", ",", " ", "SwarmPopulation", ",", " ", 
+                    "1"}], "}"}]}], "]"}], ",", "GlobalBestCost"}], "]"}], "[", 
+               RowBox[{"[", "1", "]"}], "]"}], "[", 
+              RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:0437\:0430\:043f\:043e\:0432\:043d\:0438\:043b\:0438", " ", 
+              "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\:043c", " ", 
+              "\:0432\:0435\:043b\:0438\:0447\:0438\:043d\:0438", " ", 
+              "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+              "\:0446\:0456\:043d\:0438", " ", 
+              "\:043c\:0430\:0441\:0438\:0432"}], "*)"}], 
+            "\[IndentingNewLine]", 
+            RowBox[{"AppendTo", "[", 
+             RowBox[{"CostFunctionValues", ",", " ", "GlobalBestCost"}], 
+             "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+           RowBox[{"{", 
+            RowBox[{
+            "step", ",", " ", "2", ",", " ", "Iterations", ",", " ", "1"}], 
+            "}"}]}], "]"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+         "\[IndentingNewLine]", 
+         RowBox[{"(*", 
+          RowBox[{
+           RowBox[{
+           "\:0432\:0456\:0437\:0443\:0430\:043b\:0456\:0437\:0430\:0446\:0456\
+\:044f", " ", "\:0434\:0430\:043d\:0438\:0445", " ", 
+            "\:0406\:0422\:0415\:0420\:0410\:0426\:0406\:042f"}], "-", 
+           RowBox[{
+           "\:0417\:041d\:0410\:0427\:0415\:041d\:041d\:042f", " ", 
+            "\:0424\:0423\:041d\:041a\:0426\:0406\:0407"}]}], "*)"}], 
+         "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Round", "[", 
+             RowBox[{
+              RowBox[{
+               FractionBox["step", "Iterations"], "*", "100."}], ",", " ", 
+              "0.01"}], "]"}], " ", "\"\<% \>\""}], " ", ",", 
+           "GlobalBestCost"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                 "\:041a\:0406\:041d\:0426\:0415\:0412\:0418\:0419", " ", 
+                  "\:0420\:0415\:0417\:0423\:041b\:042c\:0422\:0410\:0422"}], 
+                 " ", "-", " ", 
+                 RowBox[{"\:0444\:0443\:043d\:043a\:0446\:0456\:044f", " ", 
+                  RowBox[{
+                  "\:043f\:043e\:0432\:0435\:0440\:0442\:0430\:0454", ":", 
+                   " ", "1"}]}]}], ")"}], " ", 
+               "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+               "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+               "\:0446\:0456\:043d\:0438"}], ";", " ", "2"}], ")"}], " ", 
+            "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+            "\:0430\:0440\:0433\:0443\:043c\:0435\:043d\:0442\:0456\:0432", " ",
+             "\:043f\:0440\:0438", " ", "\:044f\:043a\:0438\:0445", " ", 
+            "\:0432\:043e\:043d\:0430", " ", 
+            "\:0434\:043e\:0441\:044f\:0433\:0430\:0454\:0442\:044c\:0441\
+\:044f"}], ";", " ", "3"}], ")"}], " ", 
+         "\:0434\:0438\:0441\:043a\:0440\:0435\:0442\:043d\:0456", " ", 
+         "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+         "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+         "\:0446\:0456\:043d\:0438", " ", 
+         "\:043f\:0440\:043e\:0442\:044f\:0433\:043e\:043c", " ", 
+         "\:043f\:0440\:043e\:0446\:0435\:0434\:0443\:0440\:0438", " ", 
+         "\:043c\:0456\:043d\:0456\:043c\:0456\:0437\:0430\:0446\:0456\:0457"}\
+], "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"Return", "[", 
+        RowBox[{"{", 
+         RowBox[{"GlobalBestCost", ",", " ", 
+          RowBox[{
+           RowBox[{"Swarm", "[", 
+            RowBox[{"[", "BestParticleNumber", "]"}], "]"}], "[", 
+           RowBox[{"[", "4", "]"}], "]"}], ",", " ", "CostFunctionValues"}], 
+         "}"}], "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      ")"}]}], ";"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"DEBest", "[", 
+      RowBox[{
+      "function_", ",", " ", "Arguments_", ",", " ", "DomainArgumentList_", ",",
+        "Population_", ",", " ", "IterationNumber_"}], "]"}], ":=", 
+     "\[IndentingNewLine]", 
+     RowBox[{"(", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"function", " ", "-", " ", 
+         RowBox[{"is", " ", "cost", " ", "function"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Arguments", " ", "-", " ", 
+         RowBox[{
+         "are", " ", "all", " ", "the", " ", "independent", " ", "variables", 
+          " ", "of", " ", "the", " ", "cost", " ", 
+          RowBox[{"function", ".", " ", "It"}], " ", "is", " ", "array", " ", 
+          "of", " ", "arguments"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"DomainArgumentList", " ", "-", " ", 
+         RowBox[{"is", " ", "the", " ", "search", " ", 
+          RowBox[{"domain", ".", " ", "It"}], " ", "represents", " ", "the", " ",
+           "borders", " ", "of", " ", "multivariable", " ", 
+          RowBox[{"domain", ".", " ", "It"}], " ", "is", " ", "the", " ", 
+          "array", " ", "of", " ", "the", " ", "borders"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"InitialArgumentValues", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "an", " ", "initial", " ", "values", " ", "for", " ", 
+          "each", " ", "argument"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"Population", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "a", " ", "number", " ", "of", " ", "the", " ", "points", 
+          " ", "in", " ", "a", " ", 
+          RowBox[{"generation", ".", " ", "It"}], " ", "must", " ", "be", " ",
+           "bigger", " ", "that", " ", "4"}]}], ";", "\[IndentingNewLine]", 
+        " ", 
+        RowBox[{"Iterations", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "a", " ", "number", " ", "of", " ", "the", " ", 
+          "iterations", " ", "of", " ", "the", " ", "main", " ", "cycle"}]}], 
+        ";", "\[IndentingNewLine]", 
+        RowBox[{"CostFunctionValues", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "a", " ", "array", " ", "of", " ", "the", " ", "cost", " ",
+           "function", " ", "values", " ", "during", " ", "the", " ", 
+          "optimization", " ", 
+          RowBox[{"procedure", "."}]}]}]}], " ", "\[IndentingNewLine]", 
+       "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+       "\:0417\:0430\:0434\:0430\:043d\:043d\:044f", " ", 
+        "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+        "\:0446\:0456\:043d\:0438"}], "*)"}], "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"func", "=", "function"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:043d\:0456\:0446\:0456\:0430\:043b\:0456\:0437\:0430\:0446\
+\:0456\:044f", " ", "\:043c\:0430\:0441\:0438\:0432\:0443", " ", 
+         "\:0437\:043d\:0430\:0447\:0435\:043d\:044c", " ", 
+         "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+         "\:0446\:0456\:043d\:0438"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"CostFunctionValues", "=", 
+        RowBox[{"List", "[", "]"}]}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:043d\:0456\:0446\:0456\:0430\:043b\:0456\:0437\:0430\:0446\
+\:0456\:044f", " ", 
+         "\:043f\:0430\:0440\:0430\:043c\:0435\:0442\:0440\:0456\:0432", " ", 
+         "\:043c\:0435\:0442\:043e\:0434\:0443"}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"CR", "=", "0.5"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"SF", "=", "0.6"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:043d\:0456\:0446\:0456\:0430\:043b\:0456\:0437\:0430\:0446\
+\:0456\:044f", " ", "\:043f\:043e\:043f\:0443\:043b\:044f\:0446\:0456\:0457", 
+         " ", "\:043f\:0435\:0440\:0448\:043e\:0457", " ", 
+         "\:043f\:043e\:043a\:043e\:043b\:0456\:043d\:043d\:044f", " ", 
+         RowBox[{
+         "\:0442\:043e\:0447\:043e\:043a", ".", " ", 
+          "\:0407\:0445\:043d\:0456"}], " ", 
+         "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:044f", " ", 
+         "\:0454", " ", 
+         "\:0432\:0438\:043f\:0430\:0434\:043a\:043e\:0432\:0438\:043c\:0438"}\
+], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Generation", "=", 
+        RowBox[{"Table", "[", 
+         RowBox[{
+          RowBox[{"Table", "[", 
+           RowBox[{
+            RowBox[{"RandomReal", "[", 
+             RowBox[{"DomainArgumentList", "[", 
+              RowBox[{"[", "i", "]"}], "]"}], "]"}], ",", " ", 
+            RowBox[{"{", 
+             RowBox[{"i", ",", " ", "1", ",", 
+              RowBox[{"Length", "[", "Arguments", "]"}], ",", " ", "1"}], 
+             "}"}]}], "]"}], ",", " ", "Population"}], "]"}]}], ";", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0412\:0438\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+         "\:0437\:043d\:0430\:0447\:0435\:043d\:044c", " ", 
+         "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+         "\:0446\:0456\:043d\:0438", " ", "\:0434\:043b\:044f", " ", 
+         "\:043f\:0435\:0440\:0448\:043e\:0433\:043e", " ", 
+         "\:043f\:043e\:043a\:043e\:043b\:0456\:043d\:043d\:044f", " ", 
+         "\:0442\:043e\:0447\:043e\:043a"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"GenerationCosts", "=", 
+        RowBox[{"Table", "[", 
+         RowBox[{
+          RowBox[{"Apply", "[", 
+           RowBox[{"func", ",", " ", 
+            RowBox[{"Generation", "[", 
+             RowBox[{"[", "k", "]"}], "]"}]}], "]"}], ",", " ", 
+          RowBox[{"{", 
+           RowBox[{"k", ",", " ", "1", ",", " ", "Population"}], "}"}]}], 
+         "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0417\:043d\:0430\:0445\:043e\:0434\:0436\:0435\:043d\:043d\:044f", 
+         " ", "\:043d\:0430\:0439\:043a\:0440\:0430\:0449\:043e\:0457", " ", 
+         "\:0442\:043e\:0447\:043a\:0438", " ", "\:0443", " ", 
+         "\:043f\:0435\:0440\:0448\:043e\:0433\:043e", " ", 
+         "\:043f\:043e\:043a\:043e\:043b\:0456\:043d\:043d\:044f", " ", 
+         "\:0442\:043e\:0447\:043e\:043a"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"GenerationBestCost", "=", 
+        RowBox[{"Min", "[", "GenerationCosts", "]"}]}], ";", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0417\:0430\:043f\:043e\:0432\:043d\:0438\:043b\:0438", " ", 
+         "\:043a\:0440\:0430\:0449\:0438\:043c", " ", 
+         "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\:043c", " ", 
+         "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+         "\:0446\:0456\:043d\:0438", " ", "\:043c\:0430\:0441\:0438\:0432"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"AppendTo", "[", 
+        RowBox[{"CostFunctionValues", ",", " ", "GenerationBestCost"}], "]"}],
+        ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0417\:043d\:0430\:0445\:043e\:0434\:0436\:0435\:043d\:043d\:044f", 
+         " ", "\:043d\:043e\:043c\:0435\:0440\:0430", " ", 
+         "\:043d\:0430\:0439\:043a\:0440\:0430\:0449\:043e\:0457", " ", 
+         "\:0442\:043e\:0447\:043a\:0438", " ", "\:0443", " ", 
+         "\:043f\:0435\:0440\:0448\:043e\:043c\:0443", " ", 
+         "\:043f\:043e\:043a\:043e\:043b\:0456\:043d\:043d\:0456", " ", 
+         "\:0442\:043e\:0447\:043e\:043a"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"BestDotNumber", "=", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Position", "[", 
+           RowBox[{"GenerationCosts", ",", "GenerationBestCost"}], "]"}], "[", 
+          RowBox[{"[", "1", "]"}], "]"}], "[", 
+         RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0426\:0418\:041a\:041b", " ", 
+         "\:0420\:041e\:0417\:0420\:0410\:0425\:0423\:041d\:041a\:0423"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Monitor", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"Do", "[", "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "\:0412\:0438\:043a\:043e\:043d\:0430\:043d\:043d\:044f", " ", 
+            "\:0456\:0442\:0435\:0440\:0430\:0446\:0456\:0439"}], "*)"}], 
+          "\[IndentingNewLine]", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Do", "[", "\[IndentingNewLine]", 
+             RowBox[{"(*", " ", 
+              RowBox[{
+               RowBox[{
+               "\:0420\:043e\:0437\:0440\:0430\:0445\:0443\:043d\:043e\:043a",
+                 " ", "\:043d\:043e\:0432\:043e\:0433\:043e", " ", 
+                "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:044f", " ",
+                 "\:0434\:043b\:044f", " ", "k"}], "-", 
+               RowBox[{
+               "\:0442\:043e\:0457", " ", 
+                "\:0442\:043e\:0447\:043a\:0438"}]}], "*)"}], 
+             "\[IndentingNewLine]", "\[IndentingNewLine]", 
+             RowBox[{"(*", 
+              RowBox[{
+               RowBox[{
+               "\:0417\:0430\:0434\:0430\:0454\:043c\:043e", " ", 
+                "\:0446\:0456\:043b\:0456", " ", 
+                "\:0447\:0438\:0441\:043b\:0430"}], ",", " ", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                 "\:044f\:043a\:0438\:043c", " ", 
+                  "\:0432\:0456\:0434\:043f\:043e\:0432\:0456\:0434\:0430\
+\:0442\:0438\:043c\:0443\:0442\:044c", " ", 
+                  "\:0432\:0435\:043a\:0442\:043e\:0440\:0430\:043c", " ", 
+                  "\:0434\:043b\:044f", " ", 
+                  "\:0444\:043e\:0440\:043c\:0443\:0432\:0430\:043d\:043d\
+\:044f", " ", "\:0434\:043e\:043d\:043e\:0440\:043d\:043e\:0433\:043e", " ", 
+                  "\:0432\:0435\:043a\:0442\:043e\:0440\:0430", "\[IndentingNewLine]",
+                   "AllIndexes"}], "=", 
+                 RowBox[{"Range", "[", "Population", "]"}]}], ";"}]}], 
+              "\[IndentingNewLine]", "*)"}], "\[IndentingNewLine]", 
+             "\[IndentingNewLine]", 
+             RowBox[{"(*", 
+              RowBox[{
+              "\:0411\:0443\:0434\:0435\:043c\:043e", " ", 
+               "\:0434\:043e\:0441\:043b\:0456\:0434\:0436\:0443\:0432\:0430\
+\:0442\:0438", " ", "\:0442\:0440\:0438", " ", 
+               "\:0432\:0430\:0440\:0456\:0430\:043d\:0442\:0430"}], "*)"}], 
+             "\[IndentingNewLine]", "\[IndentingNewLine]", 
+             RowBox[{"(*", " ", 
+              RowBox[{"\:0412\:0430\:0440\:0456\:0430\:043d\:0442", " ", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"DE", "/", "best"}], "/", "1"}], "/", "bin"}]}], " ",
+               "*)"}], "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"AllIndexes", "=", 
+                RowBox[{"Range", "[", "Population", "]"}]}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{"i1", "=", "BestDotNumber"}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"ReducedIndexes", "=", 
+                RowBox[{"Cases", "[", 
+                 RowBox[{"AllIndexes", ",", 
+                  RowBox[{"Except", "[", "i1", "]"}]}], "]"}]}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{"i2", "=", 
+                RowBox[{"RandomChoice", "[", "ReducedIndexes", "]"}]}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{"ReducedReducedIndexes", "=", 
+                RowBox[{"Cases", "[", 
+                 RowBox[{"ReducedIndexes", ",", 
+                  RowBox[{"Except", "[", "i2", "]"}]}], "]"}]}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{"i3", "=", 
+                RowBox[{"RandomChoice", "[", "ReducedReducedIndexes", "]"}]}],
+                ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"DonorVector", "=", 
+                RowBox[{
+                 RowBox[{"Generation", "[", 
+                  RowBox[{"[", "i1", "]"}], "]"}], "+", 
+                 RowBox[{"SF", "*", 
+                  RowBox[{"(", 
+                   RowBox[{
+                    RowBox[{"Generation", "[", 
+                    RowBox[{"[", "i2", "]"}], "]"}], "-", 
+                    RowBox[{"Generation", "[", 
+                    RowBox[{"[", "i3", "]"}], "]"}]}], ")"}]}]}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:041f\:0435\:0440\:0435\:0432\:0456\:0440\:043a\:0430", " ",
+                  "\:0432\:0438\:0445\:043e\:0434\:0443", " ", 
+                 "\:043a\:043e\:043c\:043f\:043e\:043d\:0435\:043d\:0442\:0456\
+\:0432", " ", "\:0434\:043e\:043d\:043e\:0440\:043d\:043e\:0433\:043e", " ", 
+                 "\:0432\:0435\:043a\:0442\:043e\:0440\:0430", " ", 
+                 "\:0437\:0430", " ", "\:043c\:0435\:0436\:0456", " ", 
+                 "\:0432\:0435\:0440\:0445\:043d\:044c\:043e\:0457", " ", 
+                 "\:0442\:0430", " ", 
+                 "\:043d\:0438\:0436\:043d\:044c\:043e\:0457", " ", 
+                 "\:0433\:0440\:0430\:043d\:0438\:0446\:0456"}], "*)"}], 
+               "\[IndentingNewLine]", 
+               RowBox[{"Do", "[", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"DonorVector", "[", 
+                   RowBox[{"[", "i", "]"}], "]"}], "=", 
+                  RowBox[{"Piecewise", "[", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"DonorVector", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "\[LessEqual]", 
+                    RowBox[{"DonorVector", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "\[LessEqual]", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}]}], "}"}], ",", " ", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], ",", " ", 
+                    RowBox[{
+                    RowBox[{"DonorVector", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "<", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}]}], "}"}], ",", " ", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}], ",", " ", 
+                    RowBox[{
+                    RowBox[{"DonorVector", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], ">", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}]}], "}"}]}], "}"}], 
+                   "]"}]}], "\[IndentingNewLine]", ",", " ", 
+                 RowBox[{"{", 
+                  RowBox[{"i", ",", " ", "1", ",", " ", 
+                   RowBox[{"Length", "[", "Arguments", "]"}]}], "}"}]}], 
+                "]"}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:0421\:0442\:0432\:043e\:0440\:0435\:043d\:043d\:044f", " ",
+                  "\:043f\:0440\:043e\:0431\:043d\:043e\:0433\:043e", " ", 
+                 "\:0432\:0435\:043a\:0442\:043e\:0440\:0430", " ", 
+                 "TrialVector"}], "*)"}], "\[IndentingNewLine]", 
+               RowBox[{"TrialVector", "=", 
+                RowBox[{"List", "[", "]"}]}], ";", "\[IndentingNewLine]", 
+               RowBox[{"Do", "[", "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"iRand", "=", 
+                   RowBox[{"RandomChoice", "[", "AllIndexes", "]"}]}], ";", 
+                  "\[IndentingNewLine]", 
+                  RowBox[{"If", "[", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"RandomReal", "[", "]"}], "\[LessEqual]", "CR"}], 
+                    "||", 
+                    RowBox[{"iRand", "\[Equal]", "i"}]}], ",", " ", 
+                    RowBox[{"AppendTo", "[", 
+                    RowBox[{"TrialVector", ",", " ", 
+                    RowBox[{"DonorVector", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}]}], "]"}], ",", "  ", 
+                    RowBox[{"AppendTo", "[", 
+                    RowBox[{"TrialVector", ",", " ", 
+                    RowBox[{
+                    RowBox[{"Generation", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}], "[", 
+                    RowBox[{"[", "i", "]"}], "]"}]}], "]"}]}], "]"}]}], 
+                 "\[IndentingNewLine]", ",", " ", 
+                 RowBox[{"{", 
+                  RowBox[{"i", ",", " ", "1", ",", " ", 
+                   RowBox[{"Length", "[", "Arguments", "]"}]}], "}"}]}], 
+                "]"}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                 RowBox[{
+                 "\:041f\:0435\:0440\:0435\:0432\:0456\:0440\:043a\:0430", " ",
+                   "\:0447\:0438", " ", 
+                  "\:043f\:0440\:043e\:0431\:043d\:0438\:0439", " ", 
+                  "\:0432\:0435\:043a\:0442\:043e\:0440", " ", "TrialVector", 
+                  " ", "\:043a\:0440\:0430\:0449\:0438\:0439"}], ",", " ", 
+                 RowBox[{
+                 "\:043d\:0456\:0436", " ", "\:0442\:043e\:0447\:043a\:0430", 
+                  " ", "\:0437\:0456", " ", 
+                  "\:0441\:0442\:0430\:0440\:043e\:0433\:043e", " ", 
+                  "\:043f\:043e\:043a\:043e\:043b\:0456\:043d\:043d\:044f"}]}]\
+, "*)"}], "\[IndentingNewLine]", 
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Apply", "[", 
+                   RowBox[{"func", ",", " ", "TrialVector"}], "]"}], "<", 
+                  RowBox[{"Apply", "[", 
+                   RowBox[{"func", ",", " ", 
+                    RowBox[{"Generation", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}]}], "]"}]}], ",", " ", 
+                 RowBox[{
+                  RowBox[{"Generation", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "=", "TrialVector"}]}], 
+                "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+              RowBox[{"{", 
+               RowBox[{
+               "k", ",", " ", "1", ",", " ", "Population", ",", " ", "1"}], 
+               "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:0412\:0438\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ",
+               "\:0437\:043d\:0430\:0447\:0435\:043d\:044c", " ", 
+              "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+              "\:0446\:0456\:043d\:0438", " ", "\:0434\:043b\:044f", " ", 
+              "\:043d\:043e\:0432\:043e\:0433\:043e", " ", 
+              "\:043f\:043e\:043a\:043e\:043b\:0456\:043d\:043d\:044f", " ", 
+              "\:0442\:043e\:0447\:043e\:043a"}], "*)"}], 
+            "\[IndentingNewLine]", 
+            RowBox[{"GenerationCosts", "=", 
+             RowBox[{"Table", "[", 
+              RowBox[{
+               RowBox[{"Apply", "[", 
+                RowBox[{"func", ",", " ", 
+                 RowBox[{"Generation", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}]}], "]"}], ",", " ", 
+               RowBox[{"{", 
+                RowBox[{"k", ",", " ", "1", ",", " ", "Population"}], "}"}]}],
+               "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:0417\:043d\:0430\:0445\:043e\:0434\:0436\:0435\:043d\:043d\
+\:044f", " ", "\:043a\:0440\:0430\:0449\:043e\:0433\:043e", " ", 
+              "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+              "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+              "\:0446\:0456\:043d\:0438", " ", "\:0443", " ", 
+              "\:043d\:043e\:0432\:043e\:043c\:0443", " ", 
+              "\:043f\:043e\:043a\:043e\:043b\:0456\:043d\:043d\:0456", " ", 
+              "\:0442\:043e\:0447\:043e\:043a"}], "*)"}], 
+            "\[IndentingNewLine]", 
+            RowBox[{"GenerationBestCost", "=", 
+             RowBox[{"Min", "[", "GenerationCosts", "]"}]}], ";", 
+            "\[IndentingNewLine]", "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:0417\:043d\:0430\:0445\:043e\:0434\:0436\:0435\:043d\:043d\
+\:044f", " ", "\:043d\:043e\:043c\:0435\:0440\:0430", " ", 
+              "\:043d\:0430\:0439\:043a\:0440\:0430\:0449\:043e\:0457", " ", 
+              "\:0442\:043e\:0447\:043a\:0438", " ", "\:0443", " ", 
+              "\:043d\:043e\:0432\:043e\:043c\:0443", " ", 
+              "\:043f\:043e\:043a\:043e\:043b\:0456\:043d\:043d\:0456", " ", 
+              "\:0442\:043e\:0447\:043e\:043a"}], "*)"}], 
+            "\[IndentingNewLine]", 
+            RowBox[{"BestDotNumber", "=", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Position", "[", 
+                RowBox[{"GenerationCosts", ",", "GenerationBestCost"}], "]"}],
+                "[", 
+               RowBox[{"[", "1", "]"}], "]"}], "[", 
+              RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:0417\:0430\:043f\:043e\:0432\:043d\:0438\:043b\:0438", " ", 
+              "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\:043c", " ", 
+              "\:0432\:0435\:043b\:0438\:0447\:0438\:043d\:0438", " ", 
+              "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+              "\:0446\:0456\:043d\:0438", " ", 
+              "\:043c\:0430\:0441\:0438\:0432"}], "*)"}], 
+            "\[IndentingNewLine]", 
+            RowBox[{"AppendTo", "[", 
+             RowBox[{"CostFunctionValues", ",", " ", "GenerationBestCost"}], 
+             "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+           RowBox[{"{", 
+            RowBox[{
+            "step", ",", " ", "2", ",", " ", "IterationNumber", ",", " ", 
+             "1"}], "}"}]}], "]"}], "\[IndentingNewLine]", 
+         "\[IndentingNewLine]", "\[IndentingNewLine]", 
+         RowBox[{"(*", 
+          RowBox[{
+           RowBox[{
+           "\:0432\:0456\:0437\:0443\:0430\:043b\:0456\:0437\:0430\:0446\:0456\
+\:044f", " ", "\:0434\:0430\:043d\:0438\:0445", " ", 
+            "\:0406\:0422\:0415\:0420\:0410\:0426\:0406\:042f"}], "-", 
+           RowBox[{
+           "\:0417\:041d\:0410\:0427\:0415\:041d\:041d\:042f", " ", 
+            "\:0424\:0423\:041d\:041a\:0426\:0406\:0407"}]}], "*)"}], 
+         "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Round", "[", 
+             RowBox[{
+              RowBox[{
+               FractionBox["step", "IterationNumber"], "*", "100."}], ",", 
+              " ", "0.01"}], "]"}], " ", "\"\<% \>\""}], " ", ",", 
+           "GenerationBestCost"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]",
+        "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                 "\:041a\:0406\:041d\:0426\:0415\:0412\:0418\:0419", " ", 
+                  "\:0420\:0415\:0417\:0423\:041b\:042c\:0422\:0410\:0422"}], 
+                 " ", "-", " ", 
+                 RowBox[{"\:0444\:0443\:043d\:043a\:0446\:0456\:044f", " ", 
+                  RowBox[{
+                  "\:043f\:043e\:0432\:0435\:0440\:0442\:0430\:0454", ":", 
+                   " ", "1"}]}]}], ")"}], " ", 
+               "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+               "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+               "\:0446\:0456\:043d\:0438"}], ";", " ", "2"}], ")"}], " ", 
+            "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+            "\:0430\:0440\:0433\:0443\:043c\:0435\:043d\:0442\:0456\:0432", " ",
+             "\:043f\:0440\:0438", " ", "\:044f\:043a\:0438\:0445", " ", 
+            "\:0432\:043e\:043d\:0430", " ", 
+            "\:0434\:043e\:0441\:044f\:0433\:0430\:0454\:0442\:044c\:0441\
+\:044f"}], ";", " ", "3"}], ")"}], " ", 
+         "\:0434\:0438\:0441\:043a\:0440\:0435\:0442\:043d\:0456", " ", 
+         "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+         "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+         "\:0446\:0456\:043d\:0438", " ", 
+         "\:043f\:0440\:043e\:0442\:044f\:0433\:043e\:043c", " ", 
+         "\:043f\:0440\:043e\:0446\:0435\:0434\:0443\:0440\:0438", " ", 
+         "\:043c\:0456\:043d\:0456\:043c\:0456\:0437\:0430\:0446\:0456\:0457"}\
+], "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"Return", "[", 
+        RowBox[{"{", 
+         RowBox[{"GenerationBestCost", ",", " ", 
+          RowBox[{"Generation", "[", 
+           RowBox[{"[", "BestDotNumber", "]"}], "]"}], ",", " ", 
+          "CostFunctionValues"}], "}"}], "]"}]}], "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", ")"}]}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"GWO", "[", 
+      RowBox[{
+      "function_", ",", " ", "Arguments_", ",", " ", "DomainArgumentList_", ",",
+        "PopulationSize_", ",", " ", "Iterations_"}], "]"}], ":=", 
+     "\[IndentingNewLine]", 
+     RowBox[{"(", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"function", " ", "-", " ", 
+         RowBox[{"is", " ", "cost", " ", "function"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Arguments", " ", "-", " ", 
+         RowBox[{
+         "are", " ", "all", " ", "the", " ", "independent", " ", "variables", 
+          " ", "of", " ", "the", " ", "cost", " ", 
+          RowBox[{"function", ".", " ", "It"}], " ", "is", " ", "array", " ", 
+          "of", " ", "arguments"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"DomainArgumentList", " ", "-", " ", 
+         RowBox[{"is", " ", "the", " ", "search", " ", 
+          RowBox[{"domain", ".", " ", "It"}], " ", "represents", " ", "the", " ",
+           "borders", " ", "of", " ", "multivariable", " ", 
+          RowBox[{"domain", ".", " ", "It"}], " ", "is", " ", "the", " ", 
+          "array", " ", "of", " ", "the", " ", "borders"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"InitialArgumentValues", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "an", " ", "initial", " ", "values", " ", "for", " ", 
+          "each", " ", "argument"}]}], ";", "\[IndentingNewLine]", 
+        RowBox[{"PopulationSize", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "a", " ", "number", " ", "of", " ", "the", " ", 
+          "fireflies"}]}], ";", "\[IndentingNewLine]", " ", 
+        RowBox[{"Iterations", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "a", " ", "number", " ", "of", " ", "the", " ", 
+          "iterations", " ", "of", " ", "the", " ", "main", " ", "cycle"}]}], 
+        ";", "\[IndentingNewLine]", 
+        RowBox[{"CostFunctionValues", " ", "-", " ", 
+         RowBox[{
+         "is", " ", "a", " ", "array", " ", "of", " ", "the", " ", "cost", " ",
+           "function", " ", "values", " ", "during", " ", "the", " ", 
+          "optimization", " ", 
+          RowBox[{"procedure", "."}]}]}]}], " ", "\[IndentingNewLine]", 
+       "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+       "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", 
+        "\:041f\:0410\:0420\:0410\:041c\:0415\:0422\:0420\:0406\:0412", " ", 
+        "\:041c\:0415\:0422\:041e\:0414\:0423"}], "*)"}], 
+      "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+       "\:0417\:0410\:0414\:0410\:041d\:041d\:042f", " ", 
+        "\:0424\:0423\:041d\:041a\:0426\:0406\:0407", " ", 
+        "\:0426\:0406\:041d\:0418"}], "*)"}], "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"func", "=", "function"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", "\:041c\:0410\:0421\:0418\:0412\:0423", " ", 
+         "\:0417\:041d\:0410\:0427\:0415\:041d\:042c", " ", 
+         "\:0424\:0423\:041d\:041a\:0426\:0406\:0407", " ", 
+         "\:0426\:0406\:041d\:0418"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"CostFunctionValues", "=", 
+        RowBox[{"List", "[", "]"}]}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0406\:041d\:0406\:0426\:0406\:0410\:041b\:0406\:0417\:0410\:0426\
+\:0406\:042f", " ", 
+         "\:0421\:0412\:0406\:0422\:041b\:042f\:0427\:041a\:0406\:0412"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Wolves", "=", 
+        RowBox[{"Table", "[", 
+         RowBox[{
+          RowBox[{"Table", "[", 
+           RowBox[{
+            RowBox[{"RandomReal", "[", 
+             RowBox[{"DomainArgumentList", "[", 
+              RowBox[{"[", "i", "]"}], "]"}], "]"}], ",", " ", 
+            RowBox[{"{", 
+             RowBox[{"i", ",", " ", "1", ",", 
+              RowBox[{"Length", "[", "Arguments", "]"}], ",", " ", "1"}], 
+             "}"}]}], "]"}], ",", " ", "PopulationSize"}], "]"}]}], ";", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"WolvesCosts", "=", 
+        RowBox[{"Table", "[", 
+         RowBox[{
+          RowBox[{"Apply", "[", 
+           RowBox[{"func", ",", " ", 
+            RowBox[{"Wolves", "[", 
+             RowBox[{"[", "k", "]"}], "]"}]}], "]"}], ",", " ", 
+          RowBox[{"{", 
+           RowBox[{
+           "k", ",", " ", "1", ",", " ", "PopulationSize", ",", " ", "1"}], 
+           "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{
+         "\:0437\:043d\:0430\:0445\:043e\:0434\:0436\:0435\:043d\:043d\:044f",
+           " ", "\[Alpha]"}], "-", "\:0441\:0430\:043c\:0446\:044f"}], "*)"}],
+        "\[IndentingNewLine]", 
+       RowBox[{"BestWolvesCost", "=", 
+        RowBox[{"Min", "[", "WolvesCosts", "]"}]}], ";", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0437\:0430\:043f\:043e\:0432\:043d\:0438\:043b\:0438", " ", 
+         "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\:043c", " ", 
+         "\:0432\:0435\:043b\:0438\:0447\:0438\:043d\:0438", " ", 
+         "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+         "\:0446\:0456\:043d\:0438", " ", "\:043c\:0430\:0441\:0438\:0432"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"AppendTo", "[", 
+        RowBox[{"CostFunctionValues", ",", " ", "BestWolvesCost"}], "]"}], ";",
+        "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "\:0426\:0418\:041a\:041b", " ", 
+         "\:0420\:041e\:0417\:0420\:0410\:0425\:0423\:041d\:041a\:0423"}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Monitor", "[", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"Do", "[", "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ", 
+            "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:044c", " ", 
+            "\:0434\:043b\:044f", " ", "\:0432\:0441\:0456\:0445", " ", 
+            RowBox[{
+            "\:0432\:043e\:0432\:043a\:0456\:0432", ".", " ", 
+             "\:0426\:0435"}], " ", "\:043e\:0434\:043d\:0430", " ", 
+            "\:0456\:0442\:0435\:0440\:0430\:0446\:0456\:044f"}], "*)"}], 
+          "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"a", "=", 
+             RowBox[{"2", "-", 
+              RowBox[{"2", "*", 
+               RowBox[{"(", 
+                FractionBox["step", "Iterations"], ")"}]}]}]}], ";", 
+            "\[IndentingNewLine]", "\[IndentingNewLine]", 
+            RowBox[{"Do", "[", "\[IndentingNewLine]", 
+             RowBox[{"(*", 
+              RowBox[{
+               RowBox[{
+               "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ", 
+                "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:044f", " ",
+                 "\:0434\:043b\:044f", " ", 
+                "\:043e\:0434\:043d\:043e\:0433\:043e", " ", "k"}], "-", 
+               RowBox[{
+               "\:0442\:043e\:0433\:043e", " ", 
+                "\:0432\:043e\:0432\:043a\:0430"}]}], "*)"}], 
+             "\[IndentingNewLine]", 
+             RowBox[{"(*", " ", 
+              RowBox[{
+               RowBox[{
+               "\:0412\:0438\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f",
+                 " ", "X\[Alpha]"}], ",", " ", "X\[Beta]", ",", " ", 
+               "X\[Delta]"}], " ", "*)"}], "\[IndentingNewLine]", 
+             "\[IndentingNewLine]", 
+             RowBox[{"(*", 
+              RowBox[{
+              "\:0432\:0438\:0437\:043d\:0430\:0447\:0438\:043b\:0438", " ", 
+               "\:0442\:0440\:0438", " ", 
+               "\:043d\:0430\:0439\:043a\:0440\:0430\:0449\:0456", " ", 
+               "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+               "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+               "\:0446\:0456\:043d\:0438"}], " ", "*)"}], 
+             "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"\[Alpha]\[Beta]\[Delta]Costs", "=", 
+                RowBox[{"TakeSmallest", "[", 
+                 RowBox[{"WolvesCosts", ",", "3"}], "]"}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                 RowBox[{
+                 "\:0412\:0438\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\
+", " ", "\:043d\:043e\:043c\:0435\:0440\:0430", " ", "\[Alpha]"}], "-", 
+                 "\:0441\:0430\:043c\:0446\:044f"}], "*)"}], 
+               "\[IndentingNewLine]", 
+               RowBox[{"\[Alpha]WolvesNumber", "=", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Position", "[", 
+                   RowBox[{"WolvesCosts", ",", 
+                    RowBox[{"\[Alpha]\[Beta]\[Delta]Costs", "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}], "]"}], "[", 
+                  RowBox[{"[", "1", "]"}], "]"}], "[", 
+                 RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+               RowBox[{"X\[Alpha]", "=", 
+                RowBox[{"Wolves", "[", 
+                 RowBox[{"[", "\[Alpha]WolvesNumber", "]"}], "]"}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                 RowBox[{
+                 "\:0412\:0438\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\
+", " ", "\:043d\:043e\:043c\:0435\:0440\:0430", " ", "\[Beta]"}], "-", 
+                 "\:0441\:0430\:043c\:0446\:044f"}], "*)"}], 
+               "\[IndentingNewLine]", 
+               RowBox[{"\[Beta]WolvesNumber", "=", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Position", "[", 
+                   RowBox[{"WolvesCosts", ",", 
+                    RowBox[{"\[Alpha]\[Beta]\[Delta]Costs", "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}], "]"}], "[", 
+                  RowBox[{"[", "1", "]"}], "]"}], "[", 
+                 RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+               RowBox[{"X\[Beta]", "=", 
+                RowBox[{"Wolves", "[", 
+                 RowBox[{"[", "\[Beta]WolvesNumber", "]"}], "]"}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                 RowBox[{
+                 "\:0412\:0438\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\
+", " ", "\:043d\:043e\:043c\:0435\:0440\:0430", " ", "\[Delta]"}], "-", 
+                 "\:0441\:0430\:043c\:0446\:044f"}], "*)"}], 
+               "\[IndentingNewLine]", 
+               RowBox[{"\[Delta]WolvesNumber", "=", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Position", "[", 
+                   RowBox[{"WolvesCosts", ",", 
+                    RowBox[{"\[Alpha]\[Beta]\[Delta]Costs", "[", 
+                    RowBox[{"[", "3", "]"}], "]"}]}], "]"}], "[", 
+                  RowBox[{"[", "1", "]"}], "]"}], "[", 
+                 RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+               RowBox[{"X\[Delta]", "=", 
+                RowBox[{"Wolves", "[", 
+                 RowBox[{"[", "\[Delta]WolvesNumber", "]"}], "]"}]}], ";", 
+               "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:0412\:0438\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\
+", " ", "A1"}], "*)"}], "\[IndentingNewLine]", 
+               RowBox[{"A1", "=", 
+                RowBox[{
+                 RowBox[{"2", "*", "a", "*", 
+                  RowBox[{"Table", "[", 
+                   RowBox[{
+                    RowBox[{"RandomReal", "[", "]"}], ",", " ", 
+                    RowBox[{"Length", "[", "Arguments", "]"}]}], "]"}]}], "-",
+                  "a"}]}], ";", "\[IndentingNewLine]", 
+               RowBox[{"C1", "=", 
+                RowBox[{"2", "*", 
+                 RowBox[{"Table", "[", 
+                  RowBox[{
+                   RowBox[{"RandomReal", "[", "]"}], ",", " ", 
+                   RowBox[{"Length", "[", "Arguments", "]"}]}], "]"}]}]}], ";",
+                "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:0412\:0438\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\
+", " ", "A2"}], "*)"}], "\[IndentingNewLine]", 
+               RowBox[{"A2", "=", 
+                RowBox[{
+                 RowBox[{"2", "*", "a", "*", 
+                  RowBox[{"Table", "[", 
+                   RowBox[{
+                    RowBox[{"RandomReal", "[", "]"}], ",", " ", 
+                    RowBox[{"Length", "[", "Arguments", "]"}]}], "]"}]}], "-",
+                  "a"}]}], ";", "\[IndentingNewLine]", 
+               RowBox[{"C2", "=", 
+                RowBox[{"2", "*", 
+                 RowBox[{"Table", "[", 
+                  RowBox[{
+                   RowBox[{"RandomReal", "[", "]"}], ",", " ", 
+                   RowBox[{"Length", "[", "Arguments", "]"}]}], "]"}]}]}], ";",
+                "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:0412\:0438\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\
+", " ", "A3"}], "*)"}], "\[IndentingNewLine]", 
+               RowBox[{"A3", "=", 
+                RowBox[{
+                 RowBox[{"2", "*", "a", "*", 
+                  RowBox[{"Table", "[", 
+                   RowBox[{
+                    RowBox[{"RandomReal", "[", "]"}], ",", " ", 
+                    RowBox[{"Length", "[", "Arguments", "]"}]}], "]"}]}], "-",
+                  "a"}]}], ";", "\[IndentingNewLine]", 
+               RowBox[{"C3", "=", 
+                RowBox[{"2", "*", 
+                 RowBox[{"Table", "[", 
+                  RowBox[{
+                   RowBox[{"RandomReal", "[", "]"}], ",", " ", 
+                   RowBox[{"Length", "[", "Arguments", "]"}]}], "]"}]}]}], ";",
+                "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:0412\:0438\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\
+", " ", "\:04251"}], "*)"}], "\[IndentingNewLine]", 
+               RowBox[{"D1", "=", 
+                RowBox[{"Abs", "[", 
+                 RowBox[{
+                  RowBox[{"C1", "*", "X\[Alpha]"}], "-", 
+                  RowBox[{"Wolves", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}]}], "]"}]}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{"X1", "=", 
+                RowBox[{"X\[Alpha]", "-", 
+                 RowBox[{"A1", "*", "D1"}]}]}], ";", "\[IndentingNewLine]", 
+               "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:0412\:0438\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\
+", " ", "\:04252"}], "*)"}], "\[IndentingNewLine]", 
+               RowBox[{"D2", "=", 
+                RowBox[{"Abs", "[", 
+                 RowBox[{
+                  RowBox[{"C2", "*", "X\[Beta]"}], "-", 
+                  RowBox[{"Wolves", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}]}], "]"}]}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{"X2", "=", 
+                RowBox[{"X\[Beta]", "-", 
+                 RowBox[{"A2", "*", "D2"}]}]}], ";", "\[IndentingNewLine]", 
+               "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:0412\:0438\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\
+", " ", "\:04253"}], "*)"}], "\[IndentingNewLine]", 
+               RowBox[{"D3", "=", 
+                RowBox[{"Abs", "[", 
+                 RowBox[{
+                  RowBox[{"C3", "*", "X\[Delta]"}], "-", 
+                  RowBox[{"Wolves", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}]}], "]"}]}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{"X3", "=", 
+                RowBox[{"X\[Delta]", "-", 
+                 RowBox[{"A3", "*", "D3"}]}]}], ";", "\[IndentingNewLine]", 
+               "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:0420\:043e\:0437\:0440\:0430\:0445\:0443\:043d\:043e\:043a\
+", " ", "\:043d\:043e\:0432\:043e\:0433\:043e", " ", 
+                 "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:044f", " ",
+                  "\:0432\:043e\:0432\:043a\:0430"}], "*)"}], 
+               "\[IndentingNewLine]", 
+               RowBox[{"NewWolfPosition", "=", 
+                RowBox[{"Mean", "[", 
+                 RowBox[{"{", 
+                  RowBox[{"X1", ",", " ", "X2", ",", " ", "X3"}], "}"}], 
+                 "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:041f\:0435\:0440\:0435\:0432\:0456\:0440\:043a\:0430", " ",
+                  "\:0432\:0438\:0445\:043e\:0434\:0443", " ", 
+                 "\:043a\:043e\:043c\:043f\:043e\:043d\:0435\:043d\:0442\:0456\
+\:0432", " ", "\:0440\:0443\:0445\:0443", " ", 
+                 "\:0432\:043e\:0432\:043a\:0430", " ", "\:0437\:0430", " ", 
+                 "\:043c\:0435\:0436\:0456", " ", 
+                 "\:0432\:0435\:0440\:0445\:043d\:044c\:043e\:0457", " ", 
+                 "\:0442\:0430", " ", 
+                 "\:043d\:0438\:0436\:043d\:044c\:043e\:0457", " ", 
+                 "\:0433\:0440\:0430\:043d\:0438\:0446\:0456"}], "*)"}], 
+               "\[IndentingNewLine]", 
+               RowBox[{"Do", "[", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"NewWolfPosition", "[", 
+                   RowBox[{"[", "i", "]"}], "]"}], "=", 
+                  RowBox[{"Piecewise", "[", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"NewWolfPosition", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "\[LessEqual]", 
+                    RowBox[{"NewWolfPosition", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "\[LessEqual]", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}]}], "}"}], ",", " ", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], ",", " ", 
+                    RowBox[{
+                    RowBox[{"NewWolfPosition", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "<", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}]}]}], "}"}], ",", " ", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}], ",", " ", 
+                    RowBox[{
+                    RowBox[{"NewWolfPosition", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], ">", 
+                    RowBox[{
+                    RowBox[{"DomainArgumentList", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}]}], "}"}]}], "}"}], 
+                   "]"}]}], "\[IndentingNewLine]", ",", " ", 
+                 RowBox[{"{", 
+                  RowBox[{"i", ",", " ", "1", ",", " ", 
+                   RowBox[{"Length", "[", "Arguments", "]"}]}], "}"}]}], 
+                "]"}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+               "\[IndentingNewLine]", 
+               RowBox[{"(*", 
+                RowBox[{
+                "\:043e\:043d\:043e\:0432\:043b\:0435\:043d\:043d\:044f", " ",
+                  "\:043f\:043e\:043b\:043e\:0436\:0435\:043d\:043d\:044f", " ", 
+                 RowBox[{
+                 "\:0432\:043e\:0432\:043a\:0430", ".", " ", 
+                  "\:0416\:0430\:0434\:0456\:0431\:043d\:0438\:0439"}], " ", 
+                 "\:0430\:043b\:0433\:043e\:0440\:0438\:0442\:043c"}], "*)"}],
+                "\[IndentingNewLine]", 
+               RowBox[{"If", "[", 
+                RowBox[{
+                 RowBox[{
+                  RowBox[{"Apply", "[", 
+                   RowBox[{"func", ",", " ", "NewWolfPosition"}], "]"}], "<", 
+                  RowBox[{"Apply", "[", 
+                   RowBox[{"func", ",", " ", 
+                    RowBox[{"Wolves", "[", 
+                    RowBox[{"[", "k", "]"}], "]"}]}], "]"}]}], ",", " ", 
+                 RowBox[{
+                  RowBox[{"Wolves", "[", 
+                   RowBox[{"[", "k", "]"}], "]"}], "=", "NewWolfPosition"}]}],
+                 "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+              RowBox[{"{", 
+               RowBox[{
+               "k", ",", " ", "1", ",", " ", "PopulationSize", ",", " ", 
+                "1"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", "\[IndentingNewLine]", 
+            RowBox[{"WolvesCosts", "=", 
+             RowBox[{"Table", "[", 
+              RowBox[{
+               RowBox[{"Apply", "[", 
+                RowBox[{"func", ",", " ", 
+                 RowBox[{"Wolves", "[", 
+                  RowBox[{"[", "k", "]"}], "]"}]}], "]"}], ",", " ", 
+               RowBox[{"{", 
+                RowBox[{
+                "k", ",", " ", "1", ",", " ", "PopulationSize", ",", " ", 
+                 "1"}], "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+              RowBox[{
+              "\:0437\:043d\:0430\:0445\:043e\:0434\:0436\:0435\:043d\:043d\
+\:044f", " ", "\[Alpha]"}], "-", "\:0441\:0430\:043c\:0446\:044f"}], "*)"}], 
+            "\[IndentingNewLine]", 
+            RowBox[{"BestWolvesCost", "=", 
+             RowBox[{"Min", "[", "WolvesCosts", "]"}]}], ";", 
+            "\[IndentingNewLine]", "\[IndentingNewLine]", 
+            RowBox[{"(*", 
+             RowBox[{
+             "\:0437\:0430\:043f\:043e\:0432\:043d\:0438\:043b\:0438", " ", 
+              "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f\:043c", " ", 
+              "\:0432\:0435\:043b\:0438\:0447\:0438\:043d\:0438", " ", 
+              "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+              "\:0446\:0456\:043d\:0438", " ", 
+              "\:043c\:0430\:0441\:0438\:0432"}], "*)"}], 
+            "\[IndentingNewLine]", 
+            RowBox[{"AppendTo", "[", 
+             RowBox[{"CostFunctionValues", ",", " ", "BestWolvesCost"}], 
+             "]"}], ";"}], "\[IndentingNewLine]", "\[IndentingNewLine]", ",", 
+           RowBox[{"{", 
+            RowBox[{
+            "step", ",", " ", "2", ",", " ", "Iterations", ",", " ", "1"}], 
+            "}"}]}], "]"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+         "\[IndentingNewLine]", 
+         RowBox[{"(*", 
+          RowBox[{
+           RowBox[{
+           
+           "\:0432\:0456\:0437\:0443\:0430\:043b\:0456\:0437\:0430\:0446\:0456\
+\:044f", " ", "\:0434\:0430\:043d\:0438\:0445", " ", 
+            "\:0406\:0422\:0415\:0420\:0410\:0426\:0406\:042f"}], "-", 
+           RowBox[{
+           "\:0417\:041d\:0410\:0427\:0415\:041d\:041d\:042f", " ", 
+            "\:0424\:0423\:041d\:041a\:0426\:0406\:0407"}]}], "*)"}], 
+         "\[IndentingNewLine]", ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Round", "[", 
+             RowBox[{
+              RowBox[{
+               FractionBox["step", "Iterations"], "*", "100."}], ",", " ", 
+              "0.01"}], "]"}], " ", "\"\<% \>\""}], " ", ",", 
+           "BestWolvesCost"}], "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{
+         "\:0412\:0438\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+          "\:043d\:043e\:043c\:0435\:0440\:0430", " ", "\[Alpha]"}], "-", 
+         "\:0441\:0430\:043c\:0446\:044f"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"BestWolvesNumber", "=", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Position", "[", 
+           RowBox[{"WolvesCosts", ",", "BestWolvesCost"}], "]"}], "[", 
+          RowBox[{"[", "1", "]"}], "]"}], "[", 
+         RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{
+             RowBox[{
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                 RowBox[{
+                 "\:041a\:0406\:041d\:0426\:0415\:0412\:0418\:0419", " ", 
+                  "\:0420\:0415\:0417\:0423\:041b\:042c\:0422\:0410\:0422"}], 
+                 " ", "-", " ", 
+                 RowBox[{"\:0444\:0443\:043d\:043a\:0446\:0456\:044f", " ", 
+                  RowBox[{
+                  "\:043f\:043e\:0432\:0435\:0440\:0442\:0430\:0454", ":", 
+                   " ", "1"}]}]}], ")"}], " ", 
+               "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+               "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+               "\:0446\:0456\:043d\:0438"}], ";", " ", "2"}], ")"}], " ", 
+            "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+            "\:0430\:0440\:0433\:0443\:043c\:0435\:043d\:0442\:0456\:0432", " ",
+             "\:043f\:0440\:0438", " ", "\:044f\:043a\:0438\:0445", " ", 
+            "\:0432\:043e\:043d\:0430", " ", 
+            "\:0434\:043e\:0441\:044f\:0433\:0430\:0454\:0442\:044c\:0441\
+\:044f"}], ";", " ", "3"}], ")"}], " ", 
+         "\:0434\:0438\:0441\:043a\:0440\:0435\:0442\:043d\:0456", " ", 
+         "\:0437\:043d\:0430\:0447\:0435\:043d\:043d\:044f", " ", 
+         "\:0444\:0443\:043d\:043a\:0446\:0456\:0457", " ", 
+         "\:0446\:0456\:043d\:0438", " ", 
+         "\:043f\:0440\:043e\:0442\:044f\:0433\:043e\:043c", " ", 
+         "\:043f\:0440\:043e\:0446\:0435\:0434\:0443\:0440\:0438", " ", 
+         "\:043c\:0456\:043d\:0456\:043c\:0456\:0437\:0430\:0446\:0456\:0457"}\
+], "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"Return", "[", 
+        RowBox[{"{", 
+         RowBox[{"BestWolvesCost", ",", 
+          RowBox[{"Wolves", "[", 
+           RowBox[{"[", "BestWolvesNumber", "]"}], "]"}], ",", " ", 
+          "CostFunctionValues"}], "}"}], "]"}]}], "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", ")"}]}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]"}]}]], "Input",
+ CellChangeTimes->{
+  3.943023042240297*^9, 3.9430231245146437`*^9, {3.943023171777433*^9, 
+   3.943023206699182*^9}, {3.944971202763262*^9, 3.9449712097097626`*^9}, {
+   3.944971290856125*^9, 3.9449714452899723`*^9}, {3.944971648376585*^9, 
+   3.944971713829852*^9}, {3.9449717621874485`*^9, 3.944971869720255*^9}, {
+   3.9449719706596546`*^9, 3.944971996708189*^9}, {3.9449720660049067`*^9, 
+   3.9449721629264345`*^9}, {3.944972202761989*^9, 3.9449722054807596`*^9}, {
+   3.944972236451414*^9, 3.9449722457224474`*^9}, {3.944972419838296*^9, 
+   3.9449724259938784`*^9}, {3.9449724792374783`*^9, 
+   3.9449724806593637`*^9}, {3.944972522140699*^9, 3.9449725702345653`*^9}, {
+   3.9449727911412363`*^9, 3.94497284847652*^9}, {3.9449729441823535`*^9, 
+   3.9449731592573977`*^9}, {3.9449731915883045`*^9, 3.944973197014954*^9}, {
+   3.9449732395262012`*^9, 3.944973241785105*^9}, {3.9449732809544306`*^9, 
+   3.9449733352139177`*^9}, {3.944973380923954*^9, 3.9449735498520217`*^9}, {
+   3.944973585661699*^9, 3.944973637967312*^9}, {3.944973678833666*^9, 
+   3.944973686286235*^9}, 3.9449738855932827`*^9, {3.944974087195278*^9, 
+   3.9449741297724686`*^9}, 3.9449745664408817`*^9, {3.9479919136105623`*^9, 
+   3.947991922476997*^9}, {3.9479921040934935`*^9, 3.9479921240152235`*^9}, {
+   3.9479926636326237`*^9, 3.9479926815103655`*^9}, {3.9479927159359426`*^9, 
+   3.9479927800405717`*^9}, {3.947993281074192*^9, 3.947993300639104*^9}, {
+   3.947993357444028*^9, 3.9479933784032593`*^9}, {3.9479934138950057`*^9, 
+   3.9479935118077755`*^9}, 3.9479938974374485`*^9, {3.9479939872757025`*^9, 
+   3.9479939900385265`*^9}, 3.9479941508802958`*^9, 3.9479942023130217`*^9, {
+   3.94799427008777*^9, 3.94799428874953*^9}, {3.9479943787988048`*^9, 
+   3.947994389262136*^9}, 3.9479944900707245`*^9, {3.9479945976628804`*^9, 
+   3.9479945984058294`*^9}, {3.947994863457967*^9, 3.947994864216922*^9}, {
+   3.9479949716791096`*^9, 3.9479949737210007`*^9}, {3.9479950400597324`*^9, 
+   3.947995048677183*^9}, {3.9479951405193896`*^9, 3.947995187231591*^9}, 
+   3.9479952453798695`*^9, {3.9479954387975655`*^9, 3.947995451431782*^9}, {
+   3.9480821241067076`*^9, 3.948082133646098*^9}, {3.9480821675349426`*^9, 
+   3.948082190045514*^9}, 3.9480822884762764`*^9, 3.9480824988704095`*^9, {
+   3.948082690130595*^9, 3.948082713881529*^9}, {3.9480827469811773`*^9, 
+   3.948082799066002*^9}, {3.9480829418555393`*^9, 3.948082945372418*^9}, {
+   3.948083072147594*^9, 3.9480831055304213`*^9}, {3.9480831944877615`*^9, 
+   3.9480832109297156`*^9}, 3.9480832552439475`*^9, {3.9480832971042843`*^9, 
+   3.948083301056981*^9}, {3.948083414930736*^9, 3.948083456227112*^9}, {
+   3.9480838292902775`*^9, 3.9480838380137196`*^9}, 3.9480842380982685`*^9, {
+   3.948085687575491*^9, 3.9480856886684213`*^9}, 3.948086690642804*^9, {
+   3.948086733759061*^9, 3.9480867384887905`*^9}, {3.9480868230273843`*^9, 
+   3.948086827974067*^9}, {3.948087076702243*^9, 3.948087078690116*^9}, {
+   3.9523118790249815`*^9, 3.9523118890418243`*^9}, {3.952312040902974*^9, 
+   3.952312052531187*^9}, {3.952312097740403*^9, 3.95231220523765*^9}, {
+   3.9523122457572565`*^9, 3.9523125633433*^9}, 3.952312615864002*^9, 
+   3.9523127935593424`*^9, {3.9523128725156918`*^9, 3.95231288775144*^9}, 
+   3.9523129200034666`*^9, 3.952312970731685*^9, 3.9523130088477635`*^9, 
+   3.952313042303588*^9, 3.9523130887949705`*^9, 3.952313133550802*^9, {
+   3.9523132102908945`*^9, 3.952313236249177*^9}, {3.9523132683155603`*^9, 
+   3.952313269174913*^9}, 3.9523133323550825`*^9, {3.9523133918147635`*^9, 
+   3.9523134037550464`*^9}, {3.9523135345338593`*^9, 3.952313536205693*^9}, {
+   3.952313593806961*^9, 3.952313597900612*^9}, {3.9523137539676256`*^9, 
+   3.952313759373743*^9}, {3.9523138440549145`*^9, 3.95231386193268*^9}, {
+   3.9523142126567297`*^9, 3.952314215187913*^9}, {3.958812533887267*^9, 
+   3.958812562007251*^9}, {3.958814077332988*^9, 3.9588141651401*^9}, {
+   3.958814275604908*^9, 3.9588143207501307`*^9}, {3.9588143976299624`*^9, 
+   3.9588144267581296`*^9}, {3.958814517859868*^9, 3.958814529288916*^9}, {
+   3.9844800179633102`*^9, 3.9844801657227917`*^9}, {3.9844802000585213`*^9, 
+   3.9844803052491207`*^9}, {3.9844803466736298`*^9, 3.984480403414032*^9}, {
+   3.9844804418950405`*^9, 3.984480484230301*^9}, {3.984480654133564*^9, 
+   3.9844807175222282`*^9}, {3.984481507379854*^9, 3.9844816127100163`*^9}, {
+   3.984481787577873*^9, 3.9844817912007008`*^9}, {3.984481824557886*^9, 
+   3.984481850188492*^9}, {3.9844820343778343`*^9, 3.9844820469606743`*^9}, {
+   3.984482832435112*^9, 3.9844828399386616`*^9}, {3.9844829202815742`*^9, 
+   3.984482953270458*^9}, {3.984483130873762*^9, 3.9844831350615253`*^9}, {
+   3.9844832821268883`*^9, 3.984483282714409*^9}, {3.98448376133584*^9, 
+   3.984483770642786*^9}, {3.9844838207790604`*^9, 3.984483840299301*^9}, {
+   3.984484369222189*^9, 3.984484380321581*^9}, {3.9844845952085705`*^9, 
+   3.984484601234728*^9}, {3.9844846835803223`*^9, 3.9844846844112988`*^9}, {
+   3.9844849091063213`*^9, 3.984484935516058*^9}, {3.984484978048502*^9, 
+   3.984484986903015*^9}, {3.984485310377878*^9, 3.984485323295912*^9}, {
+   3.9844854666102505`*^9, 3.9844854720823994`*^9}, {3.984485562188843*^9, 
+   3.98448556637533*^9}, {3.9844856232854443`*^9, 3.9844856779521465`*^9}, {
+   3.984485730337757*^9, 3.9844858257576504`*^9}, {3.9844862543077717`*^9, 
+   3.984486282797491*^9}, {3.9844889965895977`*^9, 3.9844890637601147`*^9}, {
+   3.9844893074848576`*^9, 3.9844893222894764`*^9}, {3.984489531331558*^9, 
+   3.9844895339424534`*^9}, {3.9844896024511547`*^9, 
+   3.9844896055719223`*^9}, {3.9844897013129387`*^9, 3.984489824196888*^9}, 
+   3.984489984506447*^9, {3.9844900334441605`*^9, 3.9844900567228127`*^9}, {
+   3.9844900875492535`*^9, 3.9844900997391586`*^9}, {3.9844909286981144`*^9, 
+   3.984490986432581*^9}, {3.98449114412764*^9, 3.9844912313552837`*^9}, {
+   3.984491273285038*^9, 3.9844913302956123`*^9}, {3.9844913834080544`*^9, 
+   3.9844913849473896`*^9}, {3.9844931781076317`*^9, 3.984493181852129*^9}, {
+   3.984493225163534*^9, 3.9844932574500885`*^9}, {3.9844933013763275`*^9, 
+   3.9844933021604366`*^9}, {3.9844934588016605`*^9, 3.984493582844612*^9}, {
+   3.9844936345814266`*^9, 3.9844936658900566`*^9}, 3.9844938264210606`*^9, {
+   3.9844940528786335`*^9, 3.984494055187561*^9}, {3.9844940853980007`*^9, 
+   3.9844940945797176`*^9}, {3.9844941355302563`*^9, 3.984494141430998*^9}, {
+   3.9844941843870544`*^9, 3.9844942132222996`*^9}, {3.9845566079253273`*^9, 
+   3.984556699860943*^9}, {3.98455676647818*^9, 3.9845567674621735`*^9}, {
+   3.9845569164428616`*^9, 3.984556936497219*^9}, {3.9845574476956215`*^9, 
+   3.9845574614254227`*^9}, {3.9845575135897255`*^9, 3.984557537281044*^9}, {
+   3.984557579265604*^9, 3.984557616479599*^9}, {3.9845576557902737`*^9, 
+   3.984557656591255*^9}, {3.9845577259630795`*^9, 3.9845577803800316`*^9}, {
+   3.984557821393791*^9, 3.98455784816798*^9}, {3.9845578784826584`*^9, 
+   3.984557882827385*^9}, {3.9845579384533043`*^9, 3.984557951952976*^9}, {
+   3.9845580057644997`*^9, 3.9845580308419514`*^9}, 3.9845580614830112`*^9, {
+   3.984558120087162*^9, 3.984558120906418*^9}, {3.984558195946417*^9, 
+   3.9845581999121666`*^9}, {3.9845582345134697`*^9, 3.984558237066925*^9}, 
+   3.9845582678862457`*^9, {3.984558335850771*^9, 3.9845583463721104`*^9}, {
+   3.9845583779661293`*^9, 3.9845584049961967`*^9}, {3.9845771669997635`*^9, 
+   3.9845771686946087`*^9}, {3.9845774279030437`*^9, 
+   3.9845774293985367`*^9}, {3.98457746062862*^9, 3.984577461214779*^9}, {
+   3.984577494100197*^9, 3.9845774946804924`*^9}, 3.9845775579475994`*^9, 
+   3.984577744138071*^9, {3.9845779213576126`*^9, 3.984577972423897*^9}, {
+   3.9845780988047314`*^9, 3.9845781042233753`*^9}, {3.984578341374998*^9, 
+   3.9845783617700214`*^9}, {3.9845784521405735`*^9, 
+   3.9845784964281063`*^9}, {3.984578537390726*^9, 3.984578540542759*^9}, {
+   3.9845786107067432`*^9, 3.984578623911022*^9}, {3.9845786730905056`*^9, 
+   3.984578765814665*^9}, {3.9845788320492306`*^9, 3.984578857838665*^9}, 
+   3.984578970042801*^9, {3.9845813755359383`*^9, 3.984581379491377*^9}, {
+   3.9845814439677944`*^9, 3.9845814456637726`*^9}, {3.984581479840206*^9, 
+   3.984581498080271*^9}, {3.984581532843172*^9, 3.9845815407309933`*^9}, {
+   3.984581579486912*^9, 3.9845816037323627`*^9}, {3.9845816484849625`*^9, 
+   3.984581664940857*^9}, {3.984581703466604*^9, 3.984581712037405*^9}, {
+   3.9845817513980675`*^9, 3.9845817556231556`*^9}, {3.984581803922962*^9, 
+   3.9845820333900757`*^9}, {3.9845820942854805`*^9, 3.9845821036967697`*^9}, 
+   3.984582142291607*^9, {3.984582195302368*^9, 3.9845821986546707`*^9}, {
+   3.9845822373405685`*^9, 3.9845822505764217`*^9}, {3.984582319854969*^9, 
+   3.984582321895626*^9}, {3.9845824141993847`*^9, 3.984582420677044*^9}, {
+   3.984749850415781*^9, 3.984749880006687*^9}, {3.9847503504763603`*^9, 
+   3.984750377191305*^9}, {3.984750634612709*^9, 3.9847506356817436`*^9}, {
+   3.9847508701097584`*^9, 3.9847509533267136`*^9}, 3.984751120383892*^9, {
+   3.984793709426161*^9, 3.9847937433230724`*^9}, {3.9847937824584827`*^9, 
+   3.984793785430271*^9}, {3.9848794359094925`*^9, 3.984879468287384*^9}, {
+   3.9848795042231045`*^9, 3.98487955968478*^9}, {3.984879602947422*^9, 
+   3.9848796104023323`*^9}, {3.984879645158676*^9, 3.984879646697445*^9}, {
+   3.984879690129406*^9, 3.984879723408268*^9}, {3.984879874876381*^9, 
+   3.9848798873358383`*^9}, {3.9848799781293316`*^9, 3.984880015067341*^9}, 
+   3.9848800997963104`*^9, {3.984880278203636*^9, 3.984880300905987*^9}, {
+   3.9848804843736324`*^9, 3.984880490484911*^9}, {3.984880548356827*^9, 
+   3.9848805496489983`*^9}, 3.9848805817809105`*^9, {3.9848806163318787`*^9, 
+   3.9848806170444603`*^9}, {3.984880894095913*^9, 3.984880925821106*^9}, {
+   3.9848809909799175`*^9, 3.984880993252823*^9}, {3.9854488776364326`*^9, 
+   3.9854488915915623`*^9}, {3.9854490260761166`*^9, 
+   3.9854490650828114`*^9}, {3.985449103383581*^9, 3.9854491124422016`*^9}, 
+   3.9854491877814426`*^9, {3.985449353514578*^9, 3.985449354212763*^9}, {
+   3.9854496528237705`*^9, 3.9854496556001453`*^9}, {3.9854497679948463`*^9, 
+   3.98544977418186*^9}, {3.990201920472067*^9, 3.9902019293098373`*^9}, 
+   3.990201962307352*^9, {3.9902020625225143`*^9, 3.990202076791891*^9}, {
+   3.990202110310343*^9, 
+   3.9902021480747395`*^9}},ExpressionUUID->"2fe3b710-e8cb-457e-97c5-\
+5024c8db5979"]
+},
+WindowSize->{1012.5, 501.75},
+WindowMargins->{{-6, Automatic}, {Automatic, 0}},
+Magnification:>0.9 Inherited,
+FrontEndVersion->"14.3 for Microsoft Windows (64-bit) (July 8, 2025)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"f648e53d-6d17-4fc3-8b56-ccf11f76380b"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 173294, 3534, 14140, "Input",ExpressionUUID->"2fe3b710-e8cb-457e-97c5-5024c8db5979"]
+}
+]
+*)
+

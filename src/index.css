@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-dark-bg text-gray-100 font-sans;
+    min-height: 100vh;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-dark-bg;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-dark-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-dark-card border border-dark-border rounded-xl p-6;
+  }
+
+  .btn-primary {
+    @apply bg-accent-blue hover:bg-blue-500 text-white font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-dark-border hover:bg-dark-hover text-gray-200 font-semibold px-6 py-2.5 rounded-lg transition-all duration-200;
+  }
+
+  .btn-success {
+    @apply bg-accent-green hover:bg-emerald-400 text-white font-semibold px-6 py-2.5 rounded-lg transition-all duration-200;
+  }
+
+  .btn-danger {
+    @apply bg-accent-red hover:bg-red-400 text-white font-semibold px-6 py-2.5 rounded-lg transition-all duration-200;
+  }
+
+  .input-field {
+    @apply bg-dark-bg border border-dark-border rounded-lg px-3 py-2 text-gray-100 text-sm focus:outline-none focus:border-accent-blue transition-colors duration-200 w-full;
+  }
+
+  .label {
+    @apply text-gray-400 text-sm font-medium mb-1 block;
+  }
+
+  .section-title {
+    @apply text-xl font-bold text-gray-100 mb-2;
+  }
+
+  .section-subtitle {
+    @apply text-gray-400 text-sm mb-6;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .tab-active {
+    @apply bg-accent-blue text-white;
+  }
+
+  .tab-inactive {
+    @apply text-gray-400 hover:text-gray-200 hover:bg-dark-border;
+  }
+
+  .metric-card {
+    @apply bg-dark-bg border border-dark-border rounded-lg p-4 text-center;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-accent-blue to-accent-cyan bg-clip-text text-transparent;
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+
+  .glow-green {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+}
+
+/* Plotly overrides for dark theme */
+.js-plotly-plot .plotly .bg {
+  fill: transparent !important;
+}
+
+/* Range input styling */
+input[type="range"] {
+  @apply appearance-none h-2 rounded-lg bg-dark-border cursor-pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  @apply appearance-none w-4 h-4 rounded-full bg-accent-blue cursor-pointer;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+}
+
+input[type="range"]::-moz-range-thumb {
+  @apply w-4 h-4 rounded-full bg-accent-blue cursor-pointer border-0;
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+  @apply w-4 h-4 rounded border-dark-border bg-dark-bg text-accent-blue cursor-pointer;
+  accent-color: #3b82f6;
+}
+
+/* Animation for progress bar */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #2a3040 25%, #3b4560 50%, #2a3040 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}

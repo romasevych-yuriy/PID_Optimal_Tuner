@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Read(//usr/local/bin/**)",
+      "Read(//usr/bin/**)",
+      "Read(//c/Users/Юрій/.nvm/versions/**)",
+      "Read(//c/Program Files/**)",
+      "Read(//c/Program Files \\(x86\\)/**)",
+      "Read(//c/Users/Юрій/AppData/Roaming/**)",
+      "Read(//c/Users/Юрій/AppData/Local/Programs//**)",
+      "Bash(ls \"/c/Program Files/nodejs/npm.cmd\" 2>/dev/null || echo \"not found\"; find \"/c/\" -name \"npm.cmd\" 2>/dev/null | head -5; find \"/c/\" -name \"node.exe\" 2>/dev/null | head -3)",
+      "Read(//c//**)",
+      "Bash(cmd /c \"where node 2>&1 && where npm 2>&1\")",
+      "Bash(cmd /c \"node --version 2>&1\")"
+    ]
+  }
+}
