@@ -39,11 +39,11 @@ export default function HomePage() {
         <h2 className="section-title text-center">PID + Plant Architecture</h2>
         <p className="text-gray-500 text-center text-sm mb-6">Parallel PID form implemented in this tool</p>
 
-        <div className="flex items-center justify-center p-4 rounded-lg bg-white/60">
+        <div className="p-2 rounded-lg bg-white/60">
           <img
             src="PID+Plant_Formula.jpg"
             alt="PID Controller + Plant Block Diagram with Formula"
-            className="max-w-full object-contain rounded-md border border-dark-border"
+            className="w-full object-contain rounded-md border border-dark-border"
           />
         </div>
       </section>
