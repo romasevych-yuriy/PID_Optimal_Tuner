@@ -21,7 +21,7 @@ export default function Layout() {
             href="https://ko-fi.com/yurii1"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 bg-yellow-400/20 hover:bg-yellow-400/35 text-yellow-600 font-semibold px-4 py-1.5 rounded-lg transition-colors text-sm"
+            className="inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-bold px-6 py-2.5 rounded-xl transition-colors text-base shadow-md"
           >
             ☕ Support on Ko-fi
           </a>

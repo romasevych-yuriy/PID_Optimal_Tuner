@@ -40,20 +40,20 @@ export default function HomePage() {
         <p className="text-gray-500 text-center text-sm mb-6">Parallel PID form implemented in this tool</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="flex items-center justify-center p-4 rounded-lg bg-white/60" style={{ minHeight: 400 }}>
+          <div className="flex items-center justify-center p-4 rounded-lg bg-white/60" style={{ minHeight: 500 }}>
             <img
               src="pid-plant.jpg"
               alt="PID Controller + Plant Block Diagram"
               className="max-w-full object-contain rounded-md border border-dark-border"
-              style={{ maxHeight: 420 }}
+              style={{ maxHeight: 630 }}
             />
           </div>
-          <div className="flex items-center justify-center p-4 rounded-lg bg-white/60" style={{ minHeight: 400 }}>
+          <div className="flex items-center justify-center p-4 rounded-lg bg-white/60" style={{ minHeight: 500 }}>
             <img
               src="pid-formula.jpg"
               alt="PID Controller Formula"
               className="max-w-full object-contain rounded-md"
-              style={{ maxHeight: 420 }}
+              style={{ maxHeight: 220 }}
             />
           </div>
         </div>
