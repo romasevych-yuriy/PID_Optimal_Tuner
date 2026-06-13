@@ -12,7 +12,7 @@ export default {
           bg: '#0f1117',
           card: '#1a1f2e',
           border: '#2a3040',
-          hover: '#232938',
+          hover: '#252b3d',
         },
         accent: {
           blue: '#3b82f6',
