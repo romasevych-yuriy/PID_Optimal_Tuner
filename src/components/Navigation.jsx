@@ -1,12 +1,13 @@
 import React from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
+import { Home, FunctionSquare, Target, Cpu, BarChart2 } from 'lucide-react'
 
 const steps = [
-  { path: '/',          label: 'Home',        short: '1', icon: '🏠' },
-  { path: '/model',     label: 'Model',       short: '2', icon: '⚙️' },
-  { path: '/criterion', label: 'Criterion',   short: '3', icon: '🎯' },
-  { path: '/optimizer', label: 'Optimizer',   short: '4', icon: '🔬' },
-  { path: '/results',   label: 'Results',     short: '5', icon: '📊' },
+  { path: '/',          label: 'Home',      short: '1', Icon: Home           },
+  { path: '/model',     label: 'Model',     short: '2', Icon: FunctionSquare },
+  { path: '/criterion', label: 'Criterion', short: '3', Icon: Target         },
+  { path: '/optimizer', label: 'Optimizer', short: '4', Icon: Cpu            },
+  { path: '/results',   label: 'Results',   short: '5', Icon: BarChart2      },
 ]
 
 export default function Navigation() {
@@ -29,23 +30,22 @@ export default function Navigation() {
               const isActive = location.pathname === step.path
               const isDone = idx < currentIdx
               return (
-                <React.Fragment key={step.path}>
-                  <NavLink
-                    to={step.path}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                      isActive
-                        ? 'bg-accent-blue text-white shadow-lg glow-blue'
-                        : isDone
-                        ? 'text-accent-blue hover:bg-dark-hover'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-dark-hover'
-                    }`}
-                  >
-                    <span className="hidden lg:block">{step.icon}</span>
-                    <span className="hidden md:block">{step.label}</span>
-                    <span className="md:hidden text-xs">{step.short}</span>
-                    {isDone && <span className="text-accent-green text-xs">✓</span>}
-                  </NavLink>
-                </React.Fragment>
+                <NavLink
+                  key={step.path}
+                  to={step.path}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? 'bg-accent-blue text-white shadow-lg glow-blue'
+                      : isDone
+                      ? 'text-accent-blue hover:bg-dark-hover'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-dark-hover'
+                  }`}
+                >
+                  <step.Icon size={15} strokeWidth={1.75} className="hidden lg:block" />
+                  <span className="hidden md:block">{step.label}</span>
+                  <span className="md:hidden text-xs">{step.short}</span>
+                  {isDone && <span className="text-accent-green text-xs">✓</span>}
+                </NavLink>
               )
             })}
           </div>
