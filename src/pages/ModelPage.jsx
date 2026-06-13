@@ -15,8 +15,8 @@ export default function ModelPage() {
   const [previewData, setPreviewData] = useState(null)
   const [previewError, setPreviewError] = useState('')
 
-  // Transfer function coefficients
-  const [num, setNum] = useState(plant.num)
+  // Transfer function coefficients (numerator max 1st order: b₀, b₁)
+  const [num, setNum] = useState([(plant.num[0] ?? 0), (plant.num[1] ?? 0)])
   const [den, setDen] = useState(plant.den)
   const [delay, setDelay] = useState(plant.delay)
   const [order, setOrder] = useState(plant.order)
@@ -156,6 +156,13 @@ export default function ModelPage() {
           <div className="card space-y-5">
             <h2 className="font-semibold text-gray-900">Transfer Function G(s)</h2>
 
+            {/* TF reference image */}
+            <img
+              src="TF.jpg"
+              alt="Transfer Function structure"
+              className="w-full rounded-lg border border-dark-border object-contain"
+            />
+
             {/* System order */}
             <div>
               <label className="label">Denominator Order (1–4)</label>
@@ -172,45 +179,54 @@ export default function ModelPage() {
               </div>
             </div>
 
-            {/* Numerator */}
+            {/* Numerator — b₀, b₁ only */}
             <div>
-              <label className="label">Numerator coefficients (b₀ + b₁s + b₂s²)</label>
-              <div className="grid grid-cols-3 gap-2">
-                {[0, 1, 2].map(i => (
-                  <div key={i}>
-                    <label className="text-gray-500 text-xs mb-1 block">b{i} (s^{i})</label>
+              <label className="label">Numerator</label>
+              <div className="space-y-2">
+                {[{ i: 0, label: 'B₀' }, { i: 1, label: 'B₁' }].map(({ i, label }) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <span className="text-gray-600 text-sm w-7 shrink-0">{label}</span>
                     <input
                       type="number"
                       value={num[i] ?? 0}
                       onChange={e => handleNumChange(i, e.target.value)}
                       className="input-field"
-                      step="any"
+                      style={{ maxWidth: 120 }}
+                      step="0.01"
                     />
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Denominator */}
+            {/* Denominator — always show A₀–A₄, grey out beyond order */}
             <div>
-              <label className="label">Denominator coefficients (a₀ + a₁s + … + aₙsⁿ)</label>
-              <div className="grid grid-cols-2 gap-2">
-                {Array.from({ length: order + 1 }, (_, i) => (
-                  <div key={i}>
-                    <label className="text-gray-500 text-xs mb-1 block">a{i} (s^{i})</label>
-                    <input
-                      type="number"
-                      value={den[i] ?? 0}
-                      onChange={e => handleDenChange(i, e.target.value)}
-                      className="input-field"
-                      step="any"
-                    />
-                  </div>
-                ))}
+              <label className="label">Denominator</label>
+              <div className="space-y-2">
+                {[
+                  { i: 0, label: 'A₀' },
+                  { i: 1, label: 'A₁' },
+                  { i: 2, label: 'A₂' },
+                  { i: 3, label: 'A₃' },
+                  { i: 4, label: 'A₄' },
+                ].map(({ i, label }) => {
+                  const active = i <= order
+                  return (
+                    <div key={i} className="flex items-center gap-4">
+                      <span className={`text-sm w-7 shrink-0 ${active ? 'text-gray-600' : 'text-gray-400'}`}>{label}</span>
+                      <input
+                        type="number"
+                        value={active ? (den[i] ?? 0) : 0}
+                        onChange={e => active && handleDenChange(i, e.target.value)}
+                        disabled={!active}
+                        className={`input-field ${!active ? 'opacity-40 cursor-not-allowed' : ''}`}
+                        style={{ maxWidth: 120 }}
+                        step="0.01"
+                      />
+                    </div>
+                  )
+                })}
               </div>
-              <p className="text-gray-600 text-xs mt-2">
-                If using lower order, set higher-order coefficients to zero.
-              </p>
             </div>
 
             {/* Delay */}
@@ -221,6 +237,7 @@ export default function ModelPage() {
                 value={delay}
                 onChange={e => setDelay(parseFloat(e.target.value) || 0)}
                 className="input-field"
+                style={{ maxWidth: 120 }}
                 min="0"
                 step="0.01"
               />
