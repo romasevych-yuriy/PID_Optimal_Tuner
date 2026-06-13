@@ -159,7 +159,7 @@ export default function ModelPage() {
             {/* TF reference image */}
             <div className="rounded-lg border border-dark-border overflow-hidden bg-white">
               <img
-                src="TF.jpg"
+                src="TF_No_L.png"
                 alt="Transfer Function structure"
                 className="w-full object-contain block"
               />
