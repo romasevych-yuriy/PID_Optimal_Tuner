@@ -18,7 +18,7 @@ export default function HomePage() {
     <div className="animate-fade-in space-y-12">
 
       {/* Hero — 75 vh */}
-      <section className="flex flex-col items-center justify-center text-center min-h-[75vh] py-20">
+      <section className="flex flex-col items-center justify-center text-center min-h-[75vh] pt-16 pb-4">
         <h1 className="text-5xl md:text-6xl font-bold mb-8 leading-tight">
           <span className="text-gradient">PID Optimal Tuner</span>
         </h1>
@@ -40,20 +40,20 @@ export default function HomePage() {
         <p className="text-gray-500 text-center text-sm mb-6">Parallel PID form implemented in this tool</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="flex items-center justify-center p-4 rounded-lg bg-white/60" style={{ minHeight: 280 }}>
+          <div className="flex items-center justify-center p-4 rounded-lg bg-white/60" style={{ minHeight: 400 }}>
             <img
               src="pid-plant.jpg"
               alt="PID Controller + Plant Block Diagram"
               className="max-w-full object-contain rounded-md border border-dark-border"
-              style={{ maxHeight: 260 }}
+              style={{ maxHeight: 420 }}
             />
           </div>
-          <div className="flex items-center justify-center p-4 rounded-lg bg-white/60" style={{ minHeight: 280 }}>
+          <div className="flex items-center justify-center p-4 rounded-lg bg-white/60" style={{ minHeight: 400 }}>
             <img
               src="pid-formula.jpg"
               alt="PID Controller Formula"
               className="max-w-full object-contain rounded-md"
-              style={{ maxHeight: 260 }}
+              style={{ maxHeight: 420 }}
             />
           </div>
         </div>

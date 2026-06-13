@@ -9,12 +9,23 @@ export default function Layout() {
       <main className="flex-1 container mx-auto px-4 py-6 max-w-7xl">
         <Outlet />
       </main>
-      <footer className="border-t border-dark-border py-4 text-center text-gray-600 text-xs">
-        <span>PID Optimal Tuner v1.0 &nbsp;·&nbsp; </span>
-        <span>Author: Yuriy Romasevych &nbsp;·&nbsp; </span>
-        <a href="mailto:romasevichyuriy@ukr.net" className="hover:text-accent-blue transition-colors">romasevichyuriy@ukr.net</a>
-        <span> &nbsp;·&nbsp; </span>
-        <a href="https://ko-fi.com/yurii1" target="_blank" rel="noopener noreferrer" className="hover:text-accent-yellow transition-colors">☕ Ko-fi</a>
+      <footer className="border-t border-dark-border py-5 text-center text-gray-700 text-sm">
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
+          <span className="font-medium">PID Optimal Tuner v1.0</span>
+          <span className="text-gray-400">·</span>
+          <span>Author: Yuriy Romasevych</span>
+          <span className="text-gray-400">·</span>
+          <a href="mailto:romasevichyuriy@ukr.net" className="hover:text-accent-blue transition-colors">romasevichyuriy@ukr.net</a>
+          <span className="text-gray-400">·</span>
+          <a
+            href="https://ko-fi.com/yurii1"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 bg-yellow-400/20 hover:bg-yellow-400/35 text-yellow-600 font-semibold px-4 py-1.5 rounded-lg transition-colors text-sm"
+          >
+            ☕ Support on Ko-fi
+          </a>
+        </div>
       </footer>
     </div>
   )
