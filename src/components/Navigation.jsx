@@ -45,9 +45,6 @@ export default function Navigation() {
                     <span className="md:hidden text-xs">{step.short}</span>
                     {isDone && <span className="text-accent-green text-xs">✓</span>}
                   </NavLink>
-                  {idx < steps.length - 1 && (
-                    <span className="text-gray-400 text-xs hidden sm:block">›</span>
-                  )}
                 </React.Fragment>
               )
             })}

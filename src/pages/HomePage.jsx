@@ -1,13 +1,14 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { SlidersHorizontal, Cpu, BarChart2, Lock, Activity, FileText } from 'lucide-react'
 
 const features = [
-  { icon: '📥', title: 'Two Ways of Plant Specification', desc: 'Import step-response data or specify a transfer function directly.' },
-  { icon: '🧬', title: 'Solid Metaheuristic Optimization', desc: 'Six state-of-the-art optimizers: PSO, LDWPSO, VCTPSO, RingPSO, DE/best/bin, GWO.' },
-  { icon: '🎯', title: 'Wide Range of Optimization Indicators', desc: 'ITAE, IAE, ISE, ITSE, Overshoot, Rise Time, Settling Time, Steady-state error.' },
-  { icon: '🔒', title: 'Tuning Under Constraints', desc: 'Constrain overshoot and control signal bounds simultaneously.' },
-  { icon: '📊', title: 'Rich Visualizations', desc: 'Step response, Bode plot, gain/phase margins — all interactive.' },
-  { icon: '📄', title: 'PDF Report Generation', desc: 'Export a complete 6-page PDF report with charts, tables, and parameters.' },
+  { Icon: SlidersHorizontal, title: 'Two Ways of Plant Specification',       desc: 'Import step-response data or specify a transfer function directly.' },
+  { Icon: Cpu,               title: 'Solid Metaheuristic Optimization',      desc: 'Six state-of-the-art optimizers: PSO, LDWPSO, VCTPSO, RingPSO, DE/best/bin, GWO.' },
+  { Icon: BarChart2,         title: 'Wide Range of Optimization Indicators', desc: 'ITAE, IAE, ISE, ITSE, Overshoot, Rise Time, Settling Time, Steady-state error.' },
+  { Icon: Lock,              title: 'Tuning Under Constraints',              desc: 'Constrain overshoot and control signal bounds simultaneously.' },
+  { Icon: Activity,          title: 'Rich Visualizations',                   desc: 'Step response, Bode plot, gain/phase margins — all interactive.' },
+  { Icon: FileText,          title: 'PDF Report Generation',                 desc: 'Export a complete 6-page PDF report with charts, tables, and parameters.' },
 ]
 
 export default function HomePage() {
@@ -15,91 +16,78 @@ export default function HomePage() {
 
   return (
     <div className="animate-fade-in space-y-12">
-      {/* Hero */}
-      <section className="text-center pt-8 pb-4">
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+
+      {/* Hero — 75 vh */}
+      <section className="flex flex-col items-center justify-center text-center min-h-[75vh] py-20">
+        <h1 className="text-5xl md:text-6xl font-bold mb-8 leading-tight">
           <span className="text-gradient">PID Optimal Tuner</span>
         </h1>
-        <p className="text-gray-700 text-2xl max-w-3xl mx-auto mb-8 leading-relaxed">
+        <p className="text-gray-700 text-2xl max-w-3xl mx-auto mb-12 leading-relaxed">
           Tune PID controllers optimally using state-of-the-art metaheuristic algorithms.
           Designed for process control, embedded systems, robotics and automation engineers.
         </p>
-        <div className="flex flex-wrap gap-3 justify-center">
-          <button
-            onClick={() => navigate('/model')}
-            className="btn-primary px-8 py-3 text-base glow-blue"
-          >
-            Start Tuning →
-          </button>
-          <a
-            href="mailto:romasevichyuriy@ukr.net"
-            className="btn-secondary px-8 py-3 text-base flex items-center gap-2"
-          >
-            ✉️ Contact
-          </a>
-          <a
-            href="https://ko-fi.com/yurii1"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 font-semibold px-6 py-3 rounded-lg transition-all duration-200 text-base"
-          >
-            ☕ Support on Ko-fi
-          </a>
-        </div>
+        <button
+          onClick={() => navigate('/model')}
+          className="btn-primary px-12 py-4 text-lg glow-blue"
+        >
+          Start Tuning →
+        </button>
       </section>
 
-      {/* PID Block Diagram + Formula */}
+      {/* PID Block Diagram + Formula — equal-height columns */}
       <section className="card">
         <h2 className="section-title text-center">PID + Plant Architecture</h2>
-        <p className="text-gray-500 text-center text-sm mb-5">Parallel PID form implemented in this tool</p>
+        <p className="text-gray-500 text-center text-sm mb-6">Parallel PID form implemented in this tool</p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-          <div className="flex justify-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="flex items-center justify-center p-4 rounded-lg bg-white/60" style={{ minHeight: 280 }}>
             <img
               src="pid-plant.jpg"
               alt="PID Controller + Plant Block Diagram"
-              className="max-w-full rounded-lg border border-dark-border"
-              style={{ maxHeight: 340 }}
+              className="max-w-full object-contain rounded-md border border-dark-border"
+              style={{ maxHeight: 260 }}
             />
           </div>
-          <div className="flex justify-center items-center">
+          <div className="flex items-center justify-center p-4 rounded-lg bg-white/60" style={{ minHeight: 280 }}>
             <img
               src="pid-formula.jpg"
               alt="PID Controller Formula"
-              className="max-w-full rounded-lg"
-              style={{ maxHeight: 280 }}
+              className="max-w-full object-contain rounded-md"
+              style={{ maxHeight: 260 }}
             />
           </div>
         </div>
       </section>
 
-      {/* Features */}
+      {/* Key Features */}
       <section>
         <h2 className="section-title text-center mb-8">Key Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {features.map((f, i) => (
+          {features.map(({ Icon, title, desc }, i) => (
             <div
               key={i}
               className="card hover:border-accent-blue/40 transition-all duration-300 hover:-translate-y-1 group animate-slide-up"
               style={{ animationDelay: `${i * 60}ms` }}
             >
-              <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-200">{f.icon}</div>
-              <h3 className="font-semibold text-gray-700 mb-2 text-base">{f.title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
+              <div className="mb-4 group-hover:scale-110 transition-transform duration-200 w-fit">
+                <Icon size={32} className="text-accent-blue" strokeWidth={1.5} />
+              </div>
+              <h3 className="font-semibold text-gray-700 mb-2 text-base">{title}</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Workflow Steps */}
+      {/* How It Works */}
       <section className="card">
         <h2 className="section-title text-center mb-8">How It Works</h2>
         <div className="flex flex-col md:flex-row gap-6 items-center justify-center">
           {[
-            { step: '1', label: 'Model', desc: 'Define or identify your plant transfer function', color: 'bg-accent-blue' },
-            { step: '2', label: 'Criterion', desc: 'Choose optimization criteria and set constraints', color: 'bg-accent-purple' },
-            { step: '3', label: 'Optimize', desc: 'Run a metaheuristic optimizer (25 agents, 200 iter)', color: 'bg-accent-cyan' },
-            { step: '4', label: 'Analyze', desc: 'Inspect step response, Bode plot, export PDF', color: 'bg-accent-green' },
+            { step: '1', label: 'Model',    desc: 'Define or identify your plant transfer function',    color: 'bg-accent-blue' },
+            { step: '2', label: 'Criterion',desc: 'Choose optimization criteria and set constraints',   color: 'bg-accent-purple' },
+            { step: '3', label: 'Optimize', desc: 'Run a metaheuristic optimizer (25 agents, 200 iter)',color: 'bg-accent-cyan' },
+            { step: '4', label: 'Analyze',  desc: 'Inspect step response, Bode plot, export PDF',       color: 'bg-accent-green' },
           ].map((s, i) => (
             <React.Fragment key={s.step}>
               <div className="flex flex-col items-center text-center max-w-[180px]">
@@ -113,18 +101,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Call to action */}
+      {/* Bottom CTA */}
       <section className="text-center pb-8">
         <button
           onClick={() => navigate('/model')}
           className="btn-primary px-10 py-4 text-lg glow-blue"
         >
-          Get Started — Define Your Plant →
+          Start Tuning →
         </button>
         <p className="text-gray-500 text-xs mt-4">
           All computations run in your browser. No data is sent to any server.
         </p>
       </section>
+
     </div>
   )
 }
