@@ -151,7 +151,7 @@ export default function ModelPage() {
       </div>
 
       {tab === 'tf' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-slide-up">
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-6 animate-slide-up">
           {/* TF Input */}
           <div className="card space-y-5">
             <h2 className="font-semibold text-gray-900">Transfer Function G(s)</h2>
@@ -261,7 +261,7 @@ export default function ModelPage() {
           {/* Preview */}
           <div className="card">
             <h2 className="font-semibold text-gray-900 mb-1">Step Response Preview</h2>
-            <div className="text-gray-500 text-xs mb-3 font-mono border border-dark-border rounded p-2 bg-dark-bg">
+            <div className="text-gray-600 text-xl mb-4 font-mono border border-dark-border rounded p-4 bg-dark-bg leading-relaxed">
               G(s) = [{numStr}] / [{denStr}]{delay > 0 ? ` · e^(-${delay}s)` : ''}
             </div>
             {previewError && <p className="text-red-400 text-sm mb-3">{previewError}</p>}
