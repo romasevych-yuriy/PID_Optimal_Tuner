@@ -157,23 +157,30 @@ export default function ModelPage() {
             <h2 className="font-semibold text-gray-900">Transfer Function G(s)</h2>
 
             {/* TF reference image */}
-            <img
-              src="TF.jpg"
-              alt="Transfer Function structure"
-              className="w-full rounded-lg border border-dark-border object-contain"
-            />
+            <div className="rounded-lg border border-dark-border overflow-hidden bg-white">
+              <img
+                src="TF.jpg"
+                alt="Transfer Function structure"
+                className="w-full object-contain block"
+              />
+            </div>
 
             {/* System order */}
             <div>
-              <label className="label">Denominator Order (1–4)</label>
-              <div className="flex gap-2">
-                {[1, 2, 3, 4].map(o => (
+              <label className="label text-base font-semibold">Set System Order (1–4)</label>
+              <div className="flex gap-2 mt-1">
+                {[
+                  { o: 1, label: '1st' },
+                  { o: 2, label: '2nd' },
+                  { o: 3, label: '3rd' },
+                  { o: 4, label: '4th' },
+                ].map(({ o, label }) => (
                   <button
                     key={o}
                     onClick={() => handleOrderChange(o)}
-                    className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${order === o ? 'bg-accent-blue text-white' : 'bg-dark-bg border border-dark-border text-gray-700 hover:text-gray-900'}`}
+                    className={`flex-1 py-2.5 rounded-lg text-base font-semibold transition-all ${order === o ? 'bg-accent-blue text-white' : 'bg-dark-bg border border-dark-border text-gray-700 hover:text-gray-900'}`}
                   >
-                    {o}
+                    {label}
                   </button>
                 ))}
               </div>
@@ -181,17 +188,17 @@ export default function ModelPage() {
 
             {/* Numerator — b₀, b₁ only */}
             <div>
-              <label className="label">Numerator</label>
-              <div className="space-y-2">
+              <p className="text-gray-700 text-lg font-semibold mb-2">Numerator</p>
+              <div className="space-y-3">
                 {[{ i: 0, label: 'B₀' }, { i: 1, label: 'B₁' }].map(({ i, label }) => (
                   <div key={i} className="flex items-center gap-4">
-                    <span className="text-gray-600 text-sm w-7 shrink-0">{label}</span>
+                    <span className="text-gray-600 text-lg font-medium w-9 shrink-0">{label}</span>
                     <input
                       type="number"
                       value={num[i] ?? 0}
                       onChange={e => handleNumChange(i, e.target.value)}
-                      className="input-field"
-                      style={{ maxWidth: 120 }}
+                      className="input-field text-base"
+                      style={{ maxWidth: 140 }}
                       step="0.01"
                     />
                   </div>
@@ -201,8 +208,8 @@ export default function ModelPage() {
 
             {/* Denominator — always show A₀–A₄, grey out beyond order */}
             <div>
-              <label className="label">Denominator</label>
-              <div className="space-y-2">
+              <p className="text-gray-700 text-lg font-semibold mb-2">Denominator</p>
+              <div className="space-y-3">
                 {[
                   { i: 0, label: 'A₀' },
                   { i: 1, label: 'A₁' },
@@ -213,14 +220,14 @@ export default function ModelPage() {
                   const active = i <= order
                   return (
                     <div key={i} className="flex items-center gap-4">
-                      <span className={`text-sm w-7 shrink-0 ${active ? 'text-gray-600' : 'text-gray-400'}`}>{label}</span>
+                      <span className={`text-lg font-medium w-9 shrink-0 ${active ? 'text-gray-600' : 'text-gray-400'}`}>{label}</span>
                       <input
                         type="number"
                         value={active ? (den[i] ?? 0) : 0}
                         onChange={e => active && handleDenChange(i, e.target.value)}
                         disabled={!active}
-                        className={`input-field ${!active ? 'opacity-40 cursor-not-allowed' : ''}`}
-                        style={{ maxWidth: 120 }}
+                        className={`input-field text-base ${!active ? 'opacity-40 cursor-not-allowed' : ''}`}
+                        style={{ maxWidth: 140 }}
                         step="0.01"
                       />
                     </div>
@@ -231,13 +238,13 @@ export default function ModelPage() {
 
             {/* Delay */}
             <div>
-              <label className="label">Transport Delay L (s)</label>
+              <p className="text-gray-700 text-lg font-semibold mb-2">Transport Delay L (s)</p>
               <input
                 type="number"
                 value={delay}
                 onChange={e => setDelay(parseFloat(e.target.value) || 0)}
-                className="input-field"
-                style={{ maxWidth: 120 }}
+                className="input-field text-base"
+                style={{ maxWidth: 140 }}
                 min="0"
                 step="0.01"
               />
@@ -249,10 +256,6 @@ export default function ModelPage() {
               <p className="text-gray-500">Integration step <span className="text-accent-cyan font-mono">dt = {dtCalc.toExponential(2)} s</span></p>
               <p className="text-gray-500">Simulation time <span className="text-accent-cyan font-mono">T = {tCalc.toFixed(2)} s</span></p>
             </div>
-
-            <button onClick={computePreview} className="btn-secondary w-full">
-              Preview Step Response
-            </button>
           </div>
 
           {/* Preview */}
