@@ -9,10 +9,10 @@ export default {
     extend: {
       colors: {
         dark: {
-          bg: '#0f1117',
-          card: '#1a1f2e',
-          border: '#2a3040',
-          hover: '#252b3d',
+          bg: '#dde3ed',
+          card: '#edf0f6',
+          border: '#b8c4d8',
+          hover: '#ccd4e4',
         },
         accent: {
           blue: '#3b82f6',

@@ -173,7 +173,7 @@ export default function OptimizerPage() {
 
       {/* Optimizer selection */}
       <div className="card">
-        <h2 className="font-semibold text-gray-200 mb-4">Select Optimizer</h2>
+        <h2 className="font-semibold text-gray-900 mb-4">Select Optimizer</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {OPTIMIZERS.map(opt => (
             <button
@@ -187,10 +187,10 @@ export default function OptimizerPage() {
               }`}
               style={optConfig.selected === opt.id ? { borderColor: opt.color, backgroundColor: opt.color + '15' } : {}}
             >
-              <div className="font-bold text-sm mb-1" style={optConfig.selected === opt.id ? { color: opt.color } : { color: '#e5e7eb' }}>
+              <div className="font-bold text-sm mb-1" style={optConfig.selected === opt.id ? { color: opt.color } : { color: '#374151' }}>
                 {opt.label}
               </div>
-              <div className="text-gray-400 text-xs font-medium mb-1">{opt.fullName}</div>
+              <div className="text-gray-700 text-xs font-medium mb-1">{opt.fullName}</div>
               <div className="text-gray-600 text-xs leading-relaxed">{opt.desc}</div>
             </button>
           ))}
@@ -201,7 +201,7 @@ export default function OptimizerPage() {
       <div className="card">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <p className="text-gray-300 text-sm font-medium">
+            <p className="text-gray-600 text-sm font-medium">
               {optConfig.selected} &nbsp;·&nbsp;
               {optConfig.population} agents &nbsp;·&nbsp;
               {optConfig.iterations} iterations
@@ -229,7 +229,7 @@ export default function OptimizerPage() {
               background: `linear-gradient(90deg, ${OPTIMIZERS.find(o => o.id === optConfig.selected)?.color || '#3b82f6'}, #06b6d4)`,
             }}
           />
-          <div className="absolute inset-0 flex items-center justify-center text-xs font-mono text-gray-300">
+          <div className="absolute inset-0 flex items-center justify-center text-xs font-mono text-gray-600">
             {progress > 0 ? `${progress.toFixed(1)}%` : ''}
           </div>
         </div>
@@ -238,7 +238,7 @@ export default function OptimizerPage() {
           <p className={`mt-3 text-sm ${
             statusMsg.startsWith('✅') ? 'text-accent-green' :
             statusMsg.startsWith('⚠️') ? 'text-yellow-400' :
-            'text-gray-400'
+            'text-gray-600'
           }`}>
             {statusMsg}
           </p>
@@ -248,7 +248,7 @@ export default function OptimizerPage() {
       {/* Convergence chart */}
       {convergence.length > 0 && (
         <div className="card animate-slide-up">
-          <h2 className="font-semibold text-gray-200 mb-2">Convergence Plot</h2>
+          <h2 className="font-semibold text-gray-900 mb-2">Convergence Plot</h2>
           <p className="text-gray-500 text-xs mb-3">Best cost function value vs. iteration</p>
           <PlotlyChart
             id="convergence"
@@ -270,7 +270,7 @@ export default function OptimizerPage() {
       {/* Result summary */}
       {resultSummary && done && (
         <div className={`card border-2 animate-slide-up ${resultSummary.allOk ? 'border-accent-green/50' : 'border-yellow-500/50'}`}>
-          <h2 className="font-semibold text-gray-200 mb-4">
+          <h2 className="font-semibold text-gray-900 mb-4">
             {resultSummary.allOk ? '🎉 Optimization Complete!' : '⚠️ Optimization Complete (with warnings)'}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
@@ -293,7 +293,7 @@ export default function OptimizerPage() {
               { label: 'SS Error', val: resultSummary.metrics.ess.toFixed(4) },
             ].map(m => (
               <div key={m.label} className="metric-card">
-                <div className="text-base font-bold text-gray-200 font-mono">{m.val}</div>
+                <div className="text-base font-bold text-gray-900 font-mono">{m.val}</div>
                 <div className="text-gray-500 text-xs mt-1">{m.label}</div>
               </div>
             ))}

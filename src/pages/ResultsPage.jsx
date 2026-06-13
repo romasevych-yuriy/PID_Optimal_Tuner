@@ -60,8 +60,8 @@ export default function ResultsPage() {
     return (
       <div className="animate-fade-in text-center py-20">
         <div className="text-6xl mb-4">🔬</div>
-        <h2 className="text-xl font-semibold text-gray-300 mb-2">No optimization results yet</h2>
-        <p className="text-gray-500 mb-6">Run the optimizer first to see results.</p>
+        <h2 className="text-xl font-semibold text-gray-600 mb-2">No optimization results yet</h2>
+        <p className="text-gray-700 mb-6">Run the optimizer first to see results.</p>
         <button onClick={() => navigate('/optimizer')} className="btn-primary">Go to Optimizer →</button>
       </div>
     )
@@ -114,7 +114,7 @@ export default function ResultsPage() {
       {/* PID Gains — Interactive */}
       <div className="card">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-gray-200">PID Gains (Interactive)</h2>
+          <h2 className="font-semibold text-gray-900">PID Gains (Interactive)</h2>
           <button onClick={resetToOptimal} className="text-xs text-accent-blue hover:text-blue-400 transition-colors">
             ↺ Return to Optimization Result
           </button>
@@ -174,7 +174,7 @@ export default function ResultsPage() {
       {/* Step response + Control signal */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="card">
-          <h2 className="font-semibold text-gray-200 mb-3">Step Response y(t)</h2>
+          <h2 className="font-semibold text-gray-900 mb-3">Step Response y(t)</h2>
           {simData ? (
             <PlotlyChart
               id="step-response"
@@ -208,7 +208,7 @@ export default function ResultsPage() {
         </div>
 
         <div className="card">
-          <h2 className="font-semibold text-gray-200 mb-3">Control Signal u(t)</h2>
+          <h2 className="font-semibold text-gray-900 mb-3">Control Signal u(t)</h2>
           {simData ? (
             <PlotlyChart
               id="control-signal"
@@ -229,11 +229,11 @@ export default function ResultsPage() {
 
       {/* Metrics table */}
       <div className="card">
-        <h2 className="font-semibold text-gray-200 mb-4">Performance Metrics</h2>
+        <h2 className="font-semibold text-gray-900 mb-4">Performance Metrics</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {metricRows.map(m => (
             <div key={m.label} className="metric-card">
-              <div className="text-lg font-bold text-gray-200 font-mono">{m.val}</div>
+              <div className="text-lg font-bold text-gray-900 font-mono">{m.val}</div>
               <div className="text-gray-500 text-xs mt-1">{m.label}</div>
             </div>
           ))}
@@ -242,7 +242,7 @@ export default function ResultsPage() {
 
       {/* Bode plot */}
       <div className="card">
-        <h2 className="font-semibold text-gray-200 mb-1">Frequency Domain — Bode Plot</h2>
+        <h2 className="font-semibold text-gray-900 mb-1">Frequency Domain — Bode Plot</h2>
         <p className="text-gray-500 text-xs mb-3">Open-loop transfer function C(jω)·G(jω)</p>
         {bode ? (
           <>

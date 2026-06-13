@@ -154,7 +154,7 @@ export default function ModelPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-slide-up">
           {/* TF Input */}
           <div className="card space-y-5">
-            <h2 className="font-semibold text-gray-200">Transfer Function G(s)</h2>
+            <h2 className="font-semibold text-gray-900">Transfer Function G(s)</h2>
 
             {/* System order */}
             <div>
@@ -164,7 +164,7 @@ export default function ModelPage() {
                   <button
                     key={o}
                     onClick={() => handleOrderChange(o)}
-                    className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${order === o ? 'bg-accent-blue text-white' : 'bg-dark-bg border border-dark-border text-gray-400 hover:text-gray-200'}`}
+                    className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${order === o ? 'bg-accent-blue text-white' : 'bg-dark-bg border border-dark-border text-gray-700 hover:text-gray-900'}`}
                   >
                     {o}
                   </button>
@@ -228,7 +228,7 @@ export default function ModelPage() {
 
             {/* Auto-calculated params */}
             <div className="bg-dark-bg rounded-lg p-3 border border-dark-border text-xs space-y-1">
-              <p className="text-gray-400 font-medium mb-1">Auto-computed simulation parameters:</p>
+              <p className="text-gray-600 font-medium mb-1">Auto-computed simulation parameters:</p>
               <p className="text-gray-500">Integration step <span className="text-accent-cyan font-mono">dt = {dtCalc.toExponential(2)} s</span></p>
               <p className="text-gray-500">Simulation time <span className="text-accent-cyan font-mono">T = {tCalc.toFixed(2)} s</span></p>
             </div>
@@ -240,7 +240,7 @@ export default function ModelPage() {
 
           {/* Preview */}
           <div className="card">
-            <h2 className="font-semibold text-gray-200 mb-1">Step Response Preview</h2>
+            <h2 className="font-semibold text-gray-900 mb-1">Step Response Preview</h2>
             <div className="text-gray-500 text-xs mb-3 font-mono border border-dark-border rounded p-2 bg-dark-bg">
               G(s) = [{numStr}] / [{denStr}]{delay > 0 ? ` · e^(-${delay}s)` : ''}
             </div>
@@ -276,7 +276,7 @@ export default function ModelPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-slide-up">
           {/* Input */}
           <div className="card space-y-4">
-            <h2 className="font-semibold text-gray-200">Step Response Data</h2>
+            <h2 className="font-semibold text-gray-900">Step Response Data</h2>
             <p className="text-gray-500 text-xs">
               Paste CSV data: two columns (time, output), separated by comma, semicolon, tab or space.
               Minimum 10 points. Data is assumed to be a unit step response (input = 1 at t=0).
@@ -294,7 +294,7 @@ export default function ModelPage() {
                 </select>
               </div>
               <div className="flex items-end pb-1">
-                <label className="flex items-center gap-2 cursor-pointer text-gray-400 text-sm">
+                <label className="flex items-center gap-2 cursor-pointer text-gray-600 text-sm">
                   <input
                     type="checkbox"
                     checked={plant.identDelay}
@@ -328,15 +328,15 @@ export default function ModelPage() {
             {identResult && (
               <div className="bg-dark-bg rounded-lg p-3 border border-accent-green/30 text-xs space-y-1">
                 <p className="text-accent-green font-medium">✓ Identification complete</p>
-                <p className="text-gray-400">MSE: <span className="text-accent-cyan font-mono">{identResult.mse.toExponential(3)}</span></p>
-                <p className="text-gray-400 font-mono text-xs">
+                <p className="text-gray-600">MSE: <span className="text-accent-cyan font-mono">{identResult.mse.toExponential(3)}</span></p>
+                <p className="text-gray-600 font-mono text-xs">
                   num: [{identResult.num.map(v => v.toFixed(4)).join(', ')}]
                 </p>
-                <p className="text-gray-400 font-mono text-xs">
+                <p className="text-gray-600 font-mono text-xs">
                   den: [{identResult.den.map(v => v.toFixed(4)).join(', ')}]
                 </p>
                 {identResult.delay > 0 && (
-                  <p className="text-gray-400">Delay: <span className="font-mono text-accent-cyan">{identResult.delay.toFixed(3)} s</span></p>
+                  <p className="text-gray-600">Delay: <span className="font-mono text-accent-cyan">{identResult.delay.toFixed(3)} s</span></p>
                 )}
               </div>
             )}
@@ -344,7 +344,7 @@ export default function ModelPage() {
 
           {/* Plot */}
           <div className="card">
-            <h2 className="font-semibold text-gray-200 mb-3">Identification Result</h2>
+            <h2 className="font-semibold text-gray-900 mb-3">Identification Result</h2>
             {previewData ? (
               <PlotlyChart
                 id="ident-preview"

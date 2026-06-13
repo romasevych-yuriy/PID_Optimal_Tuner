@@ -37,7 +37,7 @@ export default function CriterionPage() {
 
       {/* Cost function formula */}
       <div className="card bg-gradient-to-r from-dark-card to-dark-bg border-accent-blue/20">
-        <h2 className="font-semibold text-gray-200 mb-3">Composite Criterion Formula</h2>
+        <h2 className="font-semibold text-gray-900 mb-3">Composite Criterion Formula</h2>
         <div className="bg-dark-bg rounded-lg p-4 border border-dark-border font-mono text-sm overflow-x-auto">
           <p className="text-accent-cyan">C_r = δ₁·ITAE/(T²/2) + δ₂·IAE/T + δ₃·ISE/T + δ₄·ITSE/(T²/2)</p>
           <p className="text-accent-cyan mt-1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ δ₅·Osh/100 + δ₆·tr/T + δ₇·ts/T + δ₈·ess/r</p>
@@ -47,7 +47,7 @@ export default function CriterionPage() {
 
       {/* Criteria selection */}
       <div className="card">
-        <h2 className="font-semibold text-gray-200 mb-4">Performance Metrics (enable & set weight δ ∈ [0,1])</h2>
+        <h2 className="font-semibold text-gray-900 mb-4">Performance Metrics (enable & set weight δ ∈ [0,1])</h2>
         <div className="space-y-3">
           {CRITERIA.map(c => (
             <div
@@ -111,7 +111,7 @@ export default function CriterionPage() {
 
       {/* Constraints */}
       <div className="card">
-        <h2 className="font-semibold text-gray-200 mb-4">Constraints</h2>
+        <h2 className="font-semibold text-gray-900 mb-4">Constraints</h2>
         <div className="space-y-4">
           {/* Overshoot constraint */}
           <div className={`p-4 rounded-lg border transition-all duration-200 ${criterion.useOvershootConstraint ? 'border-accent-yellow/40 bg-dark-bg' : 'border-dark-border bg-dark-bg/50'}`}>
@@ -126,13 +126,13 @@ export default function CriterionPage() {
                 <div className="w-10 h-5 bg-dark-border rounded-full peer peer-checked:bg-accent-yellow transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
               </label>
               <div>
-                <span className="font-medium text-gray-200 text-sm">Maximum Overshoot</span>
+                <span className="font-medium text-gray-900 text-sm">Maximum Overshoot</span>
                 <p className="text-gray-500 text-xs">Penalizes solutions where overshoot exceeds limit</p>
               </div>
             </div>
             {criterion.useOvershootConstraint && (
               <div className="flex items-center gap-3">
-                <label className="text-gray-400 text-sm w-28">Osh_max (%)</label>
+                <label className="text-gray-600 text-sm w-28">Osh_max (%)</label>
                 <input
                   type="range" min="0" max="100" step="1"
                   value={criterion.overshootMax}
@@ -163,7 +163,7 @@ export default function CriterionPage() {
                 <div className="w-10 h-5 bg-dark-border rounded-full peer peer-checked:bg-accent-red transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
               </label>
               <div>
-                <span className="font-medium text-gray-200 text-sm">Control Signal Saturation</span>
+                <span className="font-medium text-gray-900 text-sm">Control Signal Saturation</span>
                 <p className="text-gray-500 text-xs">u(t) is clipped to [u_min, u_max] during simulation</p>
               </div>
             </div>
@@ -197,9 +197,9 @@ export default function CriterionPage() {
 
       {/* PID bounds */}
       <div className="card">
-        <h2 className="font-semibold text-gray-200 mb-2">PID Gain Search Bounds</h2>
+        <h2 className="font-semibold text-gray-900 mb-2">PID Gain Search Bounds</h2>
         <p className="text-gray-500 text-xs mb-4">All optimizers search kp, ki, kd in [0, 100] by default.</p>
-        <div className="bg-dark-bg rounded-lg p-3 border border-dark-border font-mono text-sm text-gray-400">
+        <div className="bg-dark-bg rounded-lg p-3 border border-dark-border font-mono text-sm text-gray-600">
           kp ∈ [0, 100] &nbsp;·&nbsp; ki ∈ [0, 100] &nbsp;·&nbsp; kd ∈ [0, 100]
         </div>
       </div>

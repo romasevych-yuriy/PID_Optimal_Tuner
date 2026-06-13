@@ -20,7 +20,7 @@ export default function HomePage() {
         <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
           <span className="text-gradient">PID Optimal Tuner</span>
         </h1>
-        <p className="text-gray-300 text-2xl max-w-3xl mx-auto mb-8 leading-relaxed">
+        <p className="text-gray-700 text-2xl max-w-3xl mx-auto mb-8 leading-relaxed">
           Tune PID controllers optimally using state-of-the-art metaheuristic algorithms.
           Designed for process control, embedded systems, robotics and automation engineers.
         </p>
@@ -51,24 +51,25 @@ export default function HomePage() {
       {/* PID Block Diagram + Formula */}
       <section className="card">
         <h2 className="section-title text-center">PID + Plant Architecture</h2>
-        <p className="text-gray-400 text-center text-sm mb-5">Parallel PID form implemented in this tool</p>
+        <p className="text-gray-500 text-center text-sm mb-5">Parallel PID form implemented in this tool</p>
 
-        <div className="flex justify-center mb-6">
-          <img
-            src="pid-plant.jpg"
-            alt="PID Controller + Plant Block Diagram"
-            className="max-w-full rounded-lg border border-dark-border"
-            style={{ maxHeight: 380 }}
-          />
-        </div>
-
-        <div className="flex justify-center">
-          <img
-            src="pid-formula.jpg"
-            alt="PID Controller Formula"
-            className="max-w-full rounded-lg"
-            style={{ maxHeight: 260, filter: 'invert(1) brightness(0.85)' }}
-          />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+          <div className="flex justify-center">
+            <img
+              src="pid-plant.jpg"
+              alt="PID Controller + Plant Block Diagram"
+              className="max-w-full rounded-lg border border-dark-border"
+              style={{ maxHeight: 340 }}
+            />
+          </div>
+          <div className="flex justify-center items-center">
+            <img
+              src="pid-formula.jpg"
+              alt="PID Controller Formula"
+              className="max-w-full rounded-lg"
+              style={{ maxHeight: 280 }}
+            />
+          </div>
         </div>
       </section>
 
@@ -83,8 +84,8 @@ export default function HomePage() {
               style={{ animationDelay: `${i * 60}ms` }}
             >
               <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-200">{f.icon}</div>
-              <h3 className="font-semibold text-gray-200 mb-2 text-sm">{f.title}</h3>
-              <p className="text-gray-400 text-xs leading-relaxed">{f.desc}</p>
+              <h3 className="font-semibold text-gray-700 mb-2 text-base">{f.title}</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
             </div>
           ))}
         </div>
@@ -103,10 +104,10 @@ export default function HomePage() {
             <React.Fragment key={s.step}>
               <div className="flex flex-col items-center text-center max-w-[180px]">
                 <div className={`w-14 h-14 rounded-full ${s.color} flex items-center justify-center text-white font-bold text-xl mb-3 shadow-lg`}>{s.step}</div>
-                <div className="font-bold text-gray-100 text-base mb-2">{s.label}</div>
-                <div className="text-gray-400 text-sm leading-snug">{s.desc}</div>
+                <div className="font-bold text-gray-800 text-base mb-2">{s.label}</div>
+                <div className="text-gray-500 text-sm leading-snug">{s.desc}</div>
               </div>
-              {i < 3 && <div className="text-gray-400 text-3xl hidden md:block">→</div>}
+              {i < 3 && <div className="text-gray-500 text-3xl hidden md:block">→</div>}
             </React.Fragment>
           ))}
         </div>

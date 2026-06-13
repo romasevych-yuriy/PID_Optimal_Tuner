@@ -12,7 +12,7 @@
   }
 
   body {
-    @apply bg-dark-bg text-gray-100 font-sans;
+    @apply bg-dark-bg text-gray-800 font-sans;
     min-height: 100vh;
   }
 
@@ -44,7 +44,7 @@
   }
 
   .btn-secondary {
-    @apply bg-dark-border hover:bg-dark-hover text-gray-300 font-semibold px-6 py-2.5 rounded-lg transition-all duration-200;
+    @apply bg-dark-border hover:bg-dark-hover text-gray-700 font-semibold px-6 py-2.5 rounded-lg transition-all duration-200;
   }
 
   .btn-success {
@@ -56,19 +56,19 @@
   }
 
   .input-field {
-    @apply bg-dark-bg border border-dark-border rounded-lg px-3 py-2 text-gray-100 text-sm focus:outline-none focus:border-accent-blue transition-colors duration-200 w-full;
+    @apply bg-white border border-dark-border rounded-lg px-3 py-2 text-gray-800 text-sm focus:outline-none focus:border-accent-blue transition-colors duration-200 w-full;
   }
 
   .label {
-    @apply text-gray-400 text-sm font-medium mb-1 block;
+    @apply text-gray-600 text-sm font-medium mb-1 block;
   }
 
   .section-title {
-    @apply text-xl font-bold text-gray-100 mb-2;
+    @apply text-xl font-bold text-gray-800 mb-2;
   }
 
   .section-subtitle {
-    @apply text-gray-400 text-sm mb-6;
+    @apply text-gray-600 text-sm mb-6;
   }
 
   .badge {
@@ -80,7 +80,7 @@
   }
 
   .tab-inactive {
-    @apply text-gray-400 hover:text-gray-200 hover:bg-dark-hover;
+    @apply text-gray-600 hover:text-gray-900 hover:bg-dark-hover;
   }
 
   .metric-card {
@@ -102,7 +102,7 @@
   }
 }
 
-/* Plotly overrides for dark theme */
+/* Plotly overrides */
 .js-plotly-plot .plotly .bg {
   fill: transparent !important;
 }
@@ -123,7 +123,7 @@ input[type="range"]::-moz-range-thumb {
 
 /* Checkbox styling */
 input[type="checkbox"] {
-  @apply w-4 h-4 rounded border-dark-border bg-dark-bg text-accent-blue cursor-pointer;
+  @apply w-4 h-4 rounded border-dark-border bg-white text-accent-blue cursor-pointer;
   accent-color: #3b82f6;
 }
 
@@ -134,7 +134,7 @@ input[type="checkbox"] {
 }
 
 .shimmer {
-  background: linear-gradient(90deg, #2a3040 25%, #3b4560 50%, #2a3040 75%);
+  background: linear-gradient(90deg, #ccd4e4 25%, #b8c4d8 50%, #ccd4e4 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }

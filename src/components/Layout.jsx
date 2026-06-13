@@ -9,7 +9,7 @@ export default function Layout() {
       <main className="flex-1 container mx-auto px-4 py-6 max-w-7xl">
         <Outlet />
       </main>
-      <footer className="border-t border-dark-border py-4 text-center text-gray-500 text-xs">
+      <footer className="border-t border-dark-border py-4 text-center text-gray-600 text-xs">
         <span>PID Optimal Tuner v1.0 &nbsp;·&nbsp; </span>
         <span>Author: Yuriy Romasevych &nbsp;·&nbsp; </span>
         <a href="mailto:romasevichyuriy@ukr.net" className="hover:text-accent-blue transition-colors">romasevichyuriy@ukr.net</a>

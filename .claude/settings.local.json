@@ -12,7 +12,14 @@
       "Bash(ls \"/c/Program Files/nodejs/npm.cmd\" 2>/dev/null || echo \"not found\"; find \"/c/\" -name \"npm.cmd\" 2>/dev/null | head -5; find \"/c/\" -name \"node.exe\" 2>/dev/null | head -3)",
       "Read(//c//**)",
       "Bash(cmd /c \"where node 2>&1 && where npm 2>&1\")",
-      "Bash(cmd /c \"node --version 2>&1\")"
+      "Bash(cmd /c \"node --version 2>&1\")",
+      "Bash(git remote *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(gh api *)",
+      "PowerShell(gh api repos/romasevych-yuriy/PID_Optimal_Tuner/pages 2>&1)",
+      "WebFetch(domain:api.github.com)"
     ]
   }
 }

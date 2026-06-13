@@ -14,13 +14,13 @@ export default function Navigation() {
   const currentIdx = steps.findIndex(s => s.path === location.pathname)
 
   return (
-    <nav className="bg-dark-card border-b border-dark-border sticky top-0 z-50 backdrop-blur-sm">
+    <nav className="bg-dark-card border-b border-dark-border sticky top-0 z-50 backdrop-blur-sm shadow-sm">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-accent-blue flex items-center justify-center text-white font-bold text-sm">P</div>
-            <span className="font-bold text-gray-100 hidden sm:block">PID Optimal Tuner</span>
+            <span className="font-bold text-gray-800 hidden sm:block">PID Optimal Tuner</span>
           </div>
 
           {/* Steps */}
@@ -36,8 +36,8 @@ export default function Navigation() {
                       isActive
                         ? 'bg-accent-blue text-white shadow-lg glow-blue'
                         : isDone
-                        ? 'text-accent-cyan hover:bg-dark-hover'
-                        : 'text-gray-500 hover:text-gray-300 hover:bg-dark-hover'
+                        ? 'text-accent-blue hover:bg-dark-hover'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-dark-hover'
                     }`}
                   >
                     <span className="hidden lg:block">{step.icon}</span>
@@ -46,7 +46,7 @@ export default function Navigation() {
                     {isDone && <span className="text-accent-green text-xs">✓</span>}
                   </NavLink>
                   {idx < steps.length - 1 && (
-                    <span className="text-dark-border text-xs hidden sm:block">›</span>
+                    <span className="text-gray-400 text-xs hidden sm:block">›</span>
                   )}
                 </React.Fragment>
               )
