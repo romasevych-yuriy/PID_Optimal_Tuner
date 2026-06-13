@@ -278,9 +278,9 @@ export default function ModelPage() {
                 }]}
                 layout={{
                   title: { text: 'Open-loop Step Response', font: { size: 13 } },
-                  xaxis: { title: { text: 'Time (s)' } },
-                  yaxis: { title: { text: 'Output y(t)' } },
-                  height: 280,
+                  xaxis: { title: { text: 'Time (s)', font: { size: 14 } }, tickfont: { size: 13 } },
+                  yaxis: { title: { text: 'Output y(t)', font: { size: 14 } }, tickfont: { size: 13 } },
+                  height: 420,
                 }}
               />
             ) : (
