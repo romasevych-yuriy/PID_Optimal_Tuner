@@ -39,23 +39,12 @@ export default function HomePage() {
         <h2 className="section-title text-center">PID + Plant Architecture</h2>
         <p className="text-gray-500 text-center text-sm mb-6">Parallel PID form implemented in this tool</p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="flex items-center justify-center p-4 rounded-lg bg-white/60" style={{ minHeight: 500 }}>
-            <img
-              src="pid-plant.jpg"
-              alt="PID Controller + Plant Block Diagram"
-              className="max-w-full object-contain rounded-md border border-dark-border"
-              style={{ maxHeight: 630 }}
-            />
-          </div>
-          <div className="flex items-center justify-center p-4 rounded-lg bg-white/60" style={{ minHeight: 500 }}>
-            <img
-              src="pid-formula.jpg"
-              alt="PID Controller Formula"
-              className="max-w-full object-contain rounded-md"
-              style={{ maxHeight: 220 }}
-            />
-          </div>
+        <div className="flex items-center justify-center p-4 rounded-lg bg-white/60">
+          <img
+            src="PID+Plant_Formula.jpeg"
+            alt="PID Controller + Plant Block Diagram with Formula"
+            className="max-w-full object-contain rounded-md border border-dark-border"
+          />
         </div>
       </section>
 
