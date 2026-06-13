@@ -41,7 +41,7 @@ export default function HomePage() {
 
         <div className="flex items-center justify-center p-4 rounded-lg bg-white/60">
           <img
-            src="PID+Plant_Formula.jpeg"
+            src="PID+Plant_Formula.jpg"
             alt="PID Controller + Plant Block Diagram with Formula"
             className="max-w-full object-contain rounded-md border border-dark-border"
           />
