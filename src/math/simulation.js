@@ -89,20 +89,20 @@ export function simulate(num, den, delay, kp, ki, kd, opts = {}) {
     const ti = step * dt
     t[step] = ti
 
-    // Current plant output
-    let plantY = n === 0 ? gain * (delayBuf ? delayBuf[delayIdx] : 1) : dotProduct(C, state.slice(0, n))
-    y[step] = plantY
+    // Undelayed plant output from state
+    const plantRaw = n === 0 ? gain : dotProduct(C, state.slice(0, n))
 
-    // Apply delay: use delayed output for PID feedback
-    let yFeedback = plantY
+    // True system output = delayed plant output
+    let yOut = plantRaw
     if (delayBuf) {
-      yFeedback = delayBuf[delayIdx]
-      delayBuf[delayIdx] = plantY
+      yOut = delayBuf[delayIdx]
+      delayBuf[delayIdx] = plantRaw
       delayIdx = (delayIdx + 1) % (delaySteps + 1)
     }
+    y[step] = yOut
 
-    // Error
-    const e = r - yFeedback
+    // Error uses delayed output (true feedback)
+    const e = r - yOut
     errArr[step] = e
 
     // Derivative of error (backward difference)
@@ -129,7 +129,7 @@ export function simulate(num, den, delay, kp, ki, kd, opts = {}) {
       })
       // integral state derivative = e
       const yPt = dotProduct(C, s.slice(0, n))
-      const ePt = r - (delayBuf ? yFeedback : yPt)  // use same feedback for integration
+      const ePt = r - (delayBuf ? yOut : yPt)  // use delayed feedback for integration
       plantDerivs.push(ePt)
       return plantDerivs
     }
