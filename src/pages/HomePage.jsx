@@ -75,7 +75,7 @@ export default function HomePage() {
           {[
             { step: '1', label: 'Model',    desc: 'Define or identify your plant transfer function',    color: 'bg-accent-blue' },
             { step: '2', label: 'Criterion',desc: 'Choose optimization criteria and set constraints',   color: 'bg-accent-purple' },
-            { step: '3', label: 'Optimize', desc: 'Run a metaheuristic optimizer (25 agents, 200 iter)',color: 'bg-accent-cyan' },
+            { step: '3', label: 'Optimize', desc: 'Run a metaheuristic optimizer',                    color: 'bg-accent-cyan' },
             { step: '4', label: 'Analyze',  desc: 'Inspect step response, Bode plot, export PDF',       color: 'bg-accent-green' },
           ].map((s, i) => (
             <React.Fragment key={s.step}>
