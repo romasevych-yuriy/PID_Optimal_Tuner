@@ -293,18 +293,29 @@ export default function ModelPage() {
             {previewData ? (
               <PlotlyChart
                 id="tf-preview"
-                data={[{
-                  x: previewData.t,
-                  y: previewData.y,
-                  type: 'scatter',
-                  mode: 'lines',
-                  name: 'y(t)',
-                  line: { color: '#3b82f6', width: 2 },
-                }]}
+                data={[
+                  {
+                    x: previewData.t,
+                    y: previewData.y,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'y(t) — step response',
+                    line: { color: '#3b82f6', width: 2 },
+                  },
+                  {
+                    x: previewData.t,
+                    y: previewData.t.map(ti => ti < 0.7 * tCalc ? 1.0 : 0.75),
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'r(t) — setpoint',
+                    line: { color: '#ef4444', width: 2, shape: 'hv' },
+                  },
+                ]}
                 layout={{
                   title: { text: 'Open-loop Step Response', font: { size: 13 } },
                   xaxis: { title: { text: 'Time (s)', font: { size: 14 } }, tickfont: { size: 13 } },
-                  yaxis: { title: { text: 'Output y(t)', font: { size: 14 } }, tickfont: { size: 13 } },
+                  yaxis: { title: { text: 'Output y(t) / Setpoint r(t)', font: { size: 14 } }, tickfont: { size: 13 } },
+                  legend: { x: 0.99, y: 0.99, xanchor: 'right', yanchor: 'top' },
                   height: 420,
                 }}
               />
