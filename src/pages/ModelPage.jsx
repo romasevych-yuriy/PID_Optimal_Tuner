@@ -14,6 +14,7 @@ export default function ModelPage() {
   const [identRunning, setIdentRunning] = useState(false)
   const [identResult, setIdentResult] = useState(null)
   const [previewData, setPreviewData] = useState(null)
+  const [identPreviewData, setIdentPreviewData] = useState(null)
   const [previewError, setPreviewError] = useState('')
 
   // Transfer function coefficients (numerator max 1st order: b₀, b₁)
@@ -118,7 +119,7 @@ export default function ModelPage() {
       const useDelay = plant.identDelay
       const result = identifyTF(tArr, yArr, identOrder, useDelay, uArr)
       setIdentResult(result)
-      setPreviewData({ t: result.predicted.t, y: result.predicted.y, rawT: tArr, rawY: yArr, rawU: uArr })
+      setIdentPreviewData({ t: result.predicted.t, y: result.predicted.y, rawT: tArr, rawY: yArr, rawU: uArr })
     } catch (err) {
       setPreviewError('Identification failed: ' + err.message)
     }
@@ -149,7 +150,7 @@ export default function ModelPage() {
         den: identResult.den,
         delay: identResult.delay,
         order: identResult.den.length - 1,
-        identData: previewData ? { t: previewData.rawT, y: previewData.rawY } : null,
+        identData: identPreviewData ? { t: identPreviewData.rawT, y: identPreviewData.rawY } : null,
       })
     }
     navigate('/criterion')
@@ -497,13 +498,13 @@ export default function ModelPage() {
           {/* Plot */}
           <div className="card flex-1 min-w-0">
             <h2 className="font-semibold text-gray-900 mb-3">Identification Result</h2>
-            {previewData && previewData.rawT ? (
+            {identPreviewData && identPreviewData.rawT ? (
               <PlotlyChart
                 id="ident-preview"
                 data={[
                   {
-                    x: previewData.rawT,
-                    y: previewData.rawU,
+                    x: identPreviewData.rawT,
+                    y: identPreviewData.rawU,
                     type: 'scatter',
                     mode: 'lines',
                     name: '<b>u(t) — input</b>',
@@ -511,8 +512,8 @@ export default function ModelPage() {
                     cliponaxis: false,
                   },
                   {
-                    x: previewData.rawT,
-                    y: previewData.rawY,
+                    x: identPreviewData.rawT,
+                    y: identPreviewData.rawY,
                     type: 'scatter',
                     mode: 'lines+markers',
                     name: '<b>y(t) — measured</b>',
@@ -521,8 +522,8 @@ export default function ModelPage() {
                     cliponaxis: false,
                   },
                   {
-                    x: previewData.t,
-                    y: previewData.y,
+                    x: identPreviewData.t,
+                    y: identPreviewData.y,
                     type: 'scatter',
                     mode: 'lines',
                     name: '<b>ŷ(t) — model</b>',
