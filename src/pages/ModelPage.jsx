@@ -320,12 +320,14 @@ export default function ModelPage() {
                     title: { text: 'Time (s)', font: { size: 14 } },
                     tickfont: { size: 13 },
                     range: [0, tCalc * 1.05],
+                    showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
                   },
                   yaxis: {
                     title: { text: 'Output y(t) / Setpoint r(t)', font: { size: 14 } },
                     tickfont: { size: 13 },
                     autorange: true,
                     rangemode: 'normal',
+                    showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
                   },
                   legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', font: { size: 15 } },
                   margin: { l: 70, r: 40, t: 50, b: 55 },
@@ -367,11 +369,13 @@ export default function ModelPage() {
                     title: { text: 'Real (Re)', font: { size: 14 } },
                     tickfont: { size: 13 },
                     zeroline: false,
+                    showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
                   },
                   yaxis: {
                     title: { text: 'Imaginary (Im)', font: { size: 14 } },
                     tickfont: { size: 13 },
                     zeroline: false,
+                    showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
                   },
                   shapes: [
                     { type: 'line', x0: 0, x1: 0, y0: 0, y1: 1, xref: 'x', yref: 'paper', line: { color: '#9ca3af', dash: 'dash', width: 1.5 } },
