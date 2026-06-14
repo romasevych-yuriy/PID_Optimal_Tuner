@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useStore from '../store/useStore'
+import useStore, { polynomialRoots } from '../store/useStore'
 import PlotlyChart from '../components/PlotlyChart'
 import { simulate, computeSimParams } from '../math/simulation'
 
@@ -20,6 +20,31 @@ export default function ModelPage() {
   const [den, setDen] = useState(plant.den)
   const [delay, setDelay] = useState(plant.delay)
   const [order, setOrder] = useState(plant.order)
+
+  // Pole-Zero Map — derived from current coefficients
+  const pzMap = useMemo(() => {
+    // Poles: roots of active denominator (descending order)
+    let poles = []
+    try {
+      const activeDen = den.slice(0, order + 1)
+      const n = activeDen.length - 1
+      if (n > 0) {
+        const an = activeDen[n]
+        const poly = []
+        for (let i = n; i >= 0; i--) poly.push(activeDen[i] / an)
+        poles = polynomialRoots(poly)
+      }
+    } catch (_) {}
+
+    // Zeros: numerator b0 + b1*s → single zero at s = -b0/b1
+    const zeros = []
+    const b0 = num[0] ?? 0
+    const b1 = num[1] ?? 0
+    if (Math.abs(b1) > 1e-12) zeros.push({ re: -b0 / b1, im: 0 })
+
+    const stable = poles.length > 0 && poles.every(p => p.re < -1e-9)
+    return { poles, zeros, stable }
+  }, [num, den, order])
 
   // Compute preview when TF changes
   const computePreview = useCallback(() => {
@@ -288,6 +313,58 @@ export default function ModelPage() {
                 Click "Preview" to show step response
               </div>
             )}
+
+            {/* Pole-Zero Map */}
+            <div className="mt-4">
+              <PlotlyChart
+                id="pz-map"
+                data={[
+                  ...(pzMap.zeros.length > 0 ? [{
+                    x: pzMap.zeros.map(z => z.re),
+                    y: pzMap.zeros.map(z => z.im),
+                    type: 'scatter',
+                    mode: 'markers',
+                    name: '○ Zeros',
+                    marker: { symbol: 'circle-open', size: 14, color: '#3b82f6', line: { width: 2.5 } },
+                  }] : []),
+                  ...(pzMap.poles.length > 0 ? [{
+                    x: pzMap.poles.map(p => p.re),
+                    y: pzMap.poles.map(p => p.im),
+                    type: 'scatter',
+                    mode: 'markers',
+                    name: '× Poles',
+                    marker: { symbol: 'x', size: 14, color: '#ef4444', line: { width: 2.5 } },
+                  }] : []),
+                ]}
+                layout={{
+                  title: { text: 'Pole-Zero Map', font: { size: 13 } },
+                  xaxis: {
+                    title: { text: 'Real (Re)', font: { size: 14 } },
+                    tickfont: { size: 13 },
+                    zeroline: false,
+                  },
+                  yaxis: {
+                    title: { text: 'Imaginary (Im)', font: { size: 14 } },
+                    tickfont: { size: 13 },
+                    zeroline: false,
+                  },
+                  shapes: [
+                    { type: 'line', x0: 0, x1: 0, y0: 0, y1: 1, xref: 'x', yref: 'paper', line: { color: '#9ca3af', dash: 'dash', width: 1.5 } },
+                    { type: 'line', x0: 0, x1: 1, y0: 0, y1: 0, xref: 'paper', yref: 'y', line: { color: '#9ca3af', dash: 'dash', width: 1.5 } },
+                  ],
+                  annotations: [{
+                    text: pzMap.stable ? '✓ Stable system' : '⚠ Unstable / marginally stable',
+                    x: 0.99, y: 0.99, xref: 'paper', yref: 'paper',
+                    xanchor: 'right', yanchor: 'top', showarrow: false,
+                    font: { color: pzMap.stable ? '#10b981' : '#ef4444', size: 13 },
+                    bgcolor: pzMap.stable ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)',
+                    bordercolor: pzMap.stable ? '#10b981' : '#ef4444',
+                    borderwidth: 1, borderpad: 5,
+                  }],
+                  height: 360,
+                }}
+              />
+            </div>
           </div>
         </div>
       )}
