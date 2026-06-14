@@ -17,7 +17,7 @@ import { simulate, computeSimParams } from './simulation.js'
 export function identifyTF(tData, yData, order = 2, useDelay = false, uData = null) {
   const T = tData[tData.length - 1]
   const n = order
-  const numOrder = Math.min(n - 1, 2)
+  const numOrder = Math.min(n - 1, 1)
 
   // Normalize output
   const yMax = Math.max(...yData.map(Math.abs))

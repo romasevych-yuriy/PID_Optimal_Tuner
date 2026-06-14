@@ -453,9 +453,9 @@ export default function ModelPage() {
               <textarea
                 value={identText}
                 onChange={e => setIdentText(e.target.value)}
-                className="input-field font-mono text-xs resize-none"
+                className="input-field font-mono text-xs resize-none wide-scroll"
                 rows={10}
-                style={{ overflowY: 'auto' }}
+                style={{ overflowY: 'scroll' }}
               />
             </div>
 
@@ -467,21 +467,6 @@ export default function ModelPage() {
               {identRunning ? '⏳ Identifying...' : '🔍 Identify System'}
             </button>
 
-            {identResult && (
-              <div className="bg-dark-bg rounded-lg p-3 border border-accent-green/30 text-xs space-y-1">
-                <p className="text-accent-green font-medium">✓ Identification complete</p>
-                <p className="text-gray-600">MSE: <span className="text-accent-cyan font-mono">{identResult.mse.toExponential(3)}</span></p>
-                <p className="text-gray-600 font-mono text-xs">
-                  num: [{identResult.num.map(v => v.toFixed(4)).join(', ')}]
-                </p>
-                <p className="text-gray-600 font-mono text-xs">
-                  den: [{identResult.den.map(v => v.toFixed(4)).join(', ')}]
-                </p>
-                {identResult.delay > 0 && (
-                  <p className="text-gray-600">Delay: <span className="font-mono text-accent-cyan">{identResult.delay.toFixed(3)} s</span></p>
-                )}
-              </div>
-            )}
           </div>
 
           {/* Plot */}
@@ -504,9 +489,11 @@ export default function ModelPage() {
                     x: previewData.rawT,
                     y: previewData.rawY,
                     type: 'scatter',
-                    mode: 'markers',
+                    mode: 'lines+markers',
                     name: '<b>y(t) — measured</b>',
-                    marker: { color: '#10b981', size: 4 },
+                    line: { color: '#f59e0b', width: 2 },
+                    marker: { color: '#f59e0b', size: 4 },
+                    cliponaxis: false,
                   },
                   {
                     x: previewData.t,
@@ -539,6 +526,17 @@ export default function ModelPage() {
             ) : (
               <div className="flex items-center justify-center h-64 text-gray-600 text-sm">
                 Run identification to see results
+              </div>
+            )}
+            {identResult && (
+              <div className="bg-dark-bg rounded-lg p-4 border border-accent-green/30 space-y-2 mt-4">
+                <p className="text-accent-green font-bold text-base">✓ Identification complete</p>
+                <p className="text-gray-700 font-bold text-sm">MSE: <span className="text-accent-cyan font-mono">{identResult.mse.toExponential(3)}</span></p>
+                <p className="text-gray-700 font-bold text-sm font-mono">num: [{identResult.num.map(v => v.toFixed(4)).join(', ')}]</p>
+                <p className="text-gray-700 font-bold text-sm font-mono">den: [{identResult.den.map(v => v.toFixed(4)).join(', ')}]</p>
+                {identResult.delay > 0 && (
+                  <p className="text-gray-700 font-bold text-sm">Delay: <span className="font-mono text-accent-cyan">{identResult.delay.toFixed(3)} s</span></p>
+                )}
               </div>
             )}
           </div>
