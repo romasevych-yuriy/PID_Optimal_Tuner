@@ -125,6 +125,20 @@ export default function ModelPage() {
     setIdentRunning(false)
   }
 
+  const handlePassToTF = () => {
+    if (!identResult) return
+    const newOrder = identResult.den.length - 1
+    const newNum = [identResult.num[0] ?? 0, identResult.num[1] ?? 0]
+    const newDen = identResult.den.slice()
+    const newDelay = identResult.delay
+    setNum(newNum)
+    setDen(newDen)
+    setDelay(newDelay)
+    setOrder(newOrder)
+    setPlant({ method: 'tf', num: newNum, den: newDen, delay: newDelay, order: newOrder })
+    setTab('tf')
+  }
+
   const handleNext = () => {
     if (tab === 'tf') {
       setPlant({ method: 'tf', num, den, delay, order })
@@ -539,8 +553,8 @@ export default function ModelPage() {
                 Run identification to see results
               </div>
             )}
-            {identResult && (
-              <div className="bg-dark-bg rounded-lg p-4 border border-accent-green/30 space-y-2 mt-4">
+            {identResult && !identRunning && (
+              <div className="bg-dark-bg p-4 border border-accent-green/30 space-y-2 mt-4">
                 <p className="text-accent-green font-bold text-base">✓ Identification complete</p>
                 <p className="text-gray-700 font-bold text-sm">Mean Squared Error of Identification: <span className="text-accent-cyan font-mono">{identResult.mse.toExponential(3)}</span></p>
                 <p className="text-gray-700 font-bold text-sm">Numerator coefficients: <span className="font-mono">[{identResult.num.map(v => v.toFixed(4)).join(', ')}]</span></p>
@@ -548,6 +562,9 @@ export default function ModelPage() {
                 {identResult.delay > 0 && (
                   <p className="text-gray-700 font-bold text-sm">Delay: <span className="font-mono text-accent-cyan">{identResult.delay.toFixed(3)} s</span></p>
                 )}
+                <button onClick={handlePassToTF} className="btn-primary w-full mt-2">
+                  Pass identified coefficients to Transfer Function
+                </button>
               </div>
             )}
           </div>
