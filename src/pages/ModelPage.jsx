@@ -344,22 +344,22 @@ export default function ModelPage() {
               <PlotlyChart
                 id="pz-map"
                 data={[
-                  ...(pzMap.zeros.length > 0 ? [{
+                  {
                     x: pzMap.zeros.map(z => z.re),
                     y: pzMap.zeros.map(z => z.im),
                     type: 'scatter',
                     mode: 'markers',
                     name: '○ Zeros',
                     marker: { symbol: 'circle-open', size: 14, color: '#3b82f6', line: { width: 2.5 } },
-                  }] : []),
-                  ...(pzMap.poles.length > 0 ? [{
+                  },
+                  {
                     x: pzMap.poles.map(p => p.re),
                     y: pzMap.poles.map(p => p.im),
                     type: 'scatter',
                     mode: 'markers',
                     name: '× Poles',
                     marker: { symbol: 'x', size: 14, color: '#ef4444', line: { width: 2.5 } },
-                  }] : []),
+                  },
                 ]}
                 layout={{
                   title: { text: 'Pole-Zero Map', font: { size: 13 } },
@@ -377,7 +377,8 @@ export default function ModelPage() {
                     { type: 'line', x0: 0, x1: 0, y0: 0, y1: 1, xref: 'x', yref: 'paper', line: { color: '#9ca3af', dash: 'dash', width: 1.5 } },
                     { type: 'line', x0: 0, x1: 1, y0: 0, y1: 0, xref: 'paper', yref: 'y', line: { color: '#9ca3af', dash: 'dash', width: 1.5 } },
                   ],
-                  legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom' },
+                  showlegend: true,
+                  legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', bgcolor: 'rgba(237,240,246,0.9)', bordercolor: '#b8c4d8', borderwidth: 1 },
                   annotations: [{
                     text: pzMap.stable ? '✓ Stable system' : '⚠ Unstable / marginally stable',
                     x: 0.99, y: 0.99, xref: 'paper', yref: 'paper',
