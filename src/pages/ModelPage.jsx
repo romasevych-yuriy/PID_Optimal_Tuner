@@ -408,37 +408,43 @@ export default function ModelPage() {
           {/* Input */}
           <div className="card space-y-4 lg:w-96 shrink-0">
             <h2 className="font-semibold text-gray-900">Step Response Data</h2>
-            <p className="text-gray-500 text-xs">
-              Paste CSV data: two columns (time, output), separated by comma, semicolon, tab or space.
-              Minimum 10 points. Data is assumed to be a unit step response (input = 1 at t=0).
+            <p className="text-gray-500 text-sm">
+              Paste CSV data: three columns (time, input, output), separated by comma, semicolon, tab or space. Minimum 20 points.
             </p>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="label">Model Order (1–4)</label>
-                <select
-                  value={plant.identOrder}
-                  onChange={e => setPlant({ identOrder: parseInt(e.target.value) })}
-                  className="input-field"
-                >
-                  {[1, 2, 3, 4].map(o => <option key={o} value={o}>{o}</option>)}
-                </select>
+            <div>
+              <p className="text-gray-700 text-lg font-semibold mb-2">Select Model Order (1–4)</p>
+              <div className="flex gap-2">
+                {[
+                  { o: 1, label: '1st' },
+                  { o: 2, label: '2nd' },
+                  { o: 3, label: '3rd' },
+                  { o: 4, label: '4th' },
+                ].map(({ o, label }) => (
+                  <button
+                    key={o}
+                    onClick={() => setPlant({ identOrder: o })}
+                    className={`flex-1 py-2.5 rounded-lg text-base font-semibold transition-all ${plant.identOrder === o ? 'bg-accent-blue text-white' : 'bg-dark-bg border border-dark-border text-gray-700 hover:text-gray-900'}`}
+                  >
+                    {label}
+                  </button>
+                ))}
               </div>
-              <div className="flex items-end pb-1">
-                <label className="flex items-center gap-2 cursor-pointer text-gray-600 text-sm">
+              <div className="mt-3">
+                <label className="flex items-center gap-2 cursor-pointer text-gray-600 text-sm w-fit">
                   <input
                     type="checkbox"
                     checked={plant.identDelay}
                     onChange={e => setPlant({ identDelay: e.target.checked })}
                     className="w-4 h-4"
                   />
-                  Include Delay
+                  <span>Include<br/>Delay</span>
                 </label>
               </div>
             </div>
 
             <div>
-              <label className="label">Data (CSV/tab-separated)</label>
+              <p className="text-gray-700 text-lg font-semibold mb-2">Data (CSV/tab-separated)</p>
               <textarea
                 value={identText}
                 onChange={e => setIdentText(e.target.value)}
