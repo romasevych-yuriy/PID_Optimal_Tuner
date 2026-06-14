@@ -315,7 +315,7 @@ export default function ModelPage() {
                   },
                 ]}
                 layout={{
-                  title: { text: 'Open-loop Step Response', font: { size: 13 } },
+                  title: { text: '<b>Open-loop Step Response</b>', font: { size: 16 } },
                   xaxis: {
                     title: { text: 'Time (s)', font: { size: 14 } },
                     tickfont: { size: 13 },
@@ -362,7 +362,7 @@ export default function ModelPage() {
                   },
                 ]}
                 layout={{
-                  title: { text: 'Pole-Zero Map', font: { size: 13 } },
+                  title: { text: '<b>Pole-Zero Map</b>', font: { size: 16 } },
                   xaxis: {
                     title: { text: 'Real (Re)', font: { size: 14 } },
                     tickfont: { size: 13 },
