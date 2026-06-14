@@ -340,7 +340,7 @@ export default function ModelPage() {
             )}
 
             {/* Pole-Zero Map */}
-            <div className="mt-4">
+            <div className="mt-4 relative">
               <PlotlyChart
                 id="pz-map"
                 data={[
@@ -380,18 +380,20 @@ export default function ModelPage() {
                   showlegend: true,
                   legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', bgcolor: 'rgba(237,240,246,0.9)', bordercolor: '#b8c4d8', borderwidth: 1, font: { size: 15 } },
                   modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
-                  annotations: [{
-                    text: pzMap.stable ? '<b>✓  Stable system</b>' : '<b>⚠  Unstable system</b>',
-                    x: 0.98, y: 0.97, xref: 'paper', yref: 'paper',
-                    xanchor: 'right', yanchor: 'top', showarrow: false,
-                    font: { color: '#000000', size: 14 },
-                    bgcolor: pzMap.stable ? '#86efac' : '#ef4444',
-                    bordercolor: pzMap.stable ? '#22c55e' : '#b91c1c',
-                    borderwidth: 2, borderpad: 10,
-                  }],
                   height: 360,
                 }}
               />
+              {/* Stability badge — HTML overlay to avoid Plotly bgcolor transparency bug */}
+              <div
+                className={`absolute font-bold text-sm text-black px-3 py-1.5 rounded border-2 pointer-events-none ${
+                  pzMap.stable
+                    ? 'bg-green-300 border-green-500'
+                    : 'bg-red-500 border-red-700'
+                }`}
+                style={{ top: 48, right: 52 }}
+              >
+                {pzMap.stable ? '✓ Stable system' : '⚠ Unstable system'}
+              </div>
             </div>
           </div>
         </div>
