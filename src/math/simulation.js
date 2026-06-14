@@ -181,7 +181,7 @@ export function computeSimParams(den, delay = 0) {
   const tauMax = 1 / Math.min(...absRe)
 
   const dt = Math.max(1e-4, Math.min(0.1, tauMin / 50))
-  const T = Math.max(1, Math.min(500, 5 * tauMax + delay))
+  const T = Math.max(1, Math.min(600, 1.2 * (5 * tauMax + delay)))
 
   return { dt, T }
 }
