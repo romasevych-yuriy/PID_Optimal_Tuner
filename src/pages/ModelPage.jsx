@@ -460,6 +460,13 @@ export default function ModelPage() {
             </div>
 
             <button
+              onClick={() => setIdentText('')}
+              className="btn-secondary w-full"
+            >
+              🗑 Clear Table
+            </button>
+
+            <button
               onClick={handleIdentify}
               disabled={identRunning || !identText.trim()}
               className="btn-primary w-full"
@@ -531,9 +538,9 @@ export default function ModelPage() {
             {identResult && (
               <div className="bg-dark-bg rounded-lg p-4 border border-accent-green/30 space-y-2 mt-4">
                 <p className="text-accent-green font-bold text-base">✓ Identification complete</p>
-                <p className="text-gray-700 font-bold text-sm">MSE: <span className="text-accent-cyan font-mono">{identResult.mse.toExponential(3)}</span></p>
-                <p className="text-gray-700 font-bold text-sm font-mono">num: [{identResult.num.map(v => v.toFixed(4)).join(', ')}]</p>
-                <p className="text-gray-700 font-bold text-sm font-mono">den: [{identResult.den.map(v => v.toFixed(4)).join(', ')}]</p>
+                <p className="text-gray-700 font-bold text-sm">Mean Squared Error of Identification: <span className="text-accent-cyan font-mono">{identResult.mse.toExponential(3)}</span></p>
+                <p className="text-gray-700 font-bold text-sm">Numerator coefficients: <span className="font-mono">[{identResult.num.map(v => v.toFixed(4)).join(', ')}]</span></p>
+                <p className="text-gray-700 font-bold text-sm">Denominator coefficients: <span className="font-mono">[{identResult.den.map(v => v.toFixed(4)).join(', ')}]</span></p>
                 {identResult.delay > 0 && (
                   <p className="text-gray-700 font-bold text-sm">Delay: <span className="font-mono text-accent-cyan">{identResult.delay.toFixed(3)} s</span></p>
                 )}
