@@ -69,17 +69,13 @@ export function identifyTF(tData, yData, order = 2, useDelay = false, uData = nu
 
 function generateRandomParams(n, numOrder, useDelay, DCgain, T) {
   const params = []
-  // Denominator coefficients a1..a_{n-1} (a0=gain, an=1)
-  const gain = DCgain * (0.5 + Math.random())
-  params.push(Math.max(0.01, gain))  // a0 (DC gain numerator/denominator)
-
-  // Time constants: distribute between 0.01 and T/n
-  for (let i = 1; i < n; i++) {
-    params.push(Math.random() * T / n + 0.01)
+  // a0..a_{n-1}: denominator coefficients in [-1, 10]
+  for (let i = 0; i < n; i++) {
+    params.push(Math.random() * 11 - 1)
   }
-  // Numerator coefficients
+  // b0, b1: numerator coefficients in [-1, +2]
   for (let i = 0; i <= numOrder; i++) {
-    params.push((Math.random() - 0.5) * 0.5)
+    params.push(Math.random() * 3 - 1)
   }
   // Delay
   if (useDelay) {
