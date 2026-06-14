@@ -62,6 +62,8 @@ export function tfToStateSpace(num, den) {
  */
 export function simulate(num, den, delay, kp, ki, kd, opts = {}) {
   const { dt, T, r = 1, uMin = -Infinity, uMax = Infinity, openLoop = false } = opts
+  // r may be a constant or a function of time r(t)
+  const rFn = typeof r === 'function' ? r : () => r
 
   const { A, B, C, n, gain } = tfToStateSpace(num, den)
 
@@ -82,12 +84,13 @@ export function simulate(num, den, delay, kp, ki, kd, opts = {}) {
   const delayBuf = delaySteps > 0 ? new Float64Array(delaySteps + 1) : null
   let delayIdx = 0
 
-  let ePrev = r  // for derivative
+  let ePrev = rFn(0)  // for derivative
   let yPrev = 0
 
   for (let step = 0; step < steps; step++) {
     const ti = step * dt
     t[step] = ti
+    const rCurrent = rFn(ti)
 
     // Undelayed plant output from state
     const plantRaw = n === 0 ? gain : dotProduct(C, state.slice(0, n))
@@ -102,14 +105,14 @@ export function simulate(num, den, delay, kp, ki, kd, opts = {}) {
     y[step] = yOut
 
     // Error uses delayed output (true feedback)
-    const e = r - yOut
+    const e = rCurrent - yOut
     errArr[step] = e
 
     // Derivative of error (backward difference)
     const deDt = step === 0 ? 0 : (e - ePrev) / dt
 
-    // PID control signal (or direct unit step in open-loop mode)
-    const uRaw = openLoop ? r : kp * e + ki * state[n] + kd * deDt
+    // PID control signal (or direct plant input in open-loop mode)
+    const uRaw = openLoop ? rCurrent : kp * e + ki * state[n] + kd * deDt
     const uClamped = Math.max(uMin, Math.min(uMax, uRaw))
     u[step] = uClamped
     ePrev = e
@@ -129,7 +132,7 @@ export function simulate(num, den, delay, kp, ki, kd, opts = {}) {
       })
       // integral state derivative = e
       const yPt = dotProduct(C, s.slice(0, n))
-      const ePt = r - (delayBuf ? yOut : yPt)  // use delayed feedback for integration
+      const ePt = rCurrent - (delayBuf ? yOut : yPt)
       plantDerivs.push(ePt)
       return plantDerivs
     }

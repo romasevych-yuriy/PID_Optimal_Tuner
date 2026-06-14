@@ -50,7 +50,8 @@ export default function ModelPage() {
   const computePreview = useCallback(() => {
     try {
       const { dt, T } = computeSimParams(den, delay)
-      const result = simulate(num, den, delay, 0, 0, 0, { dt, T, r: 1, openLoop: true })
+      const rFn = (t) => t < 0.7 * T ? 1.0 : 0.75
+      const result = simulate(num, den, delay, 0, 0, 0, { dt, T, r: rFn, openLoop: true })
       setPreviewData(result)
       setPreviewError('')
     } catch (err) {
