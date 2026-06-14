@@ -183,7 +183,7 @@ export default function ModelPage() {
             <h2 className="font-semibold text-gray-900">Transfer Function G(s)</h2>
 
             {/* TF reference image */}
-            <div className="rounded-lg border border-dark-border overflow-hidden bg-white">
+            <div className="rounded-lg overflow-hidden">
               <img
                 src="TF_No_L.png"
                 alt="Transfer Function structure"
