@@ -287,7 +287,7 @@ export default function ModelPage() {
           {/* Preview */}
           <div className="card flex-1 min-w-0">
             <h2 className="font-semibold text-gray-900 mb-1">Step Response Preview</h2>
-            <div className="text-gray-600 mb-4 font-mono border border-dark-border rounded p-4 bg-dark-bg leading-relaxed" style={{ fontSize: '0.96rem' }}>
+            <div className="text-gray-600 mb-4 font-mono font-bold border border-dark-border rounded p-4 bg-dark-bg leading-relaxed" style={{ fontSize: '0.96rem' }}>
               G(s) = [{numStr}] / [{denStr}]{delay > 0 ? ` · e^(-${delay}s)` : ''}
             </div>
             {previewError && <p className="text-red-400 text-sm mb-3">{previewError}</p>}
@@ -381,13 +381,13 @@ export default function ModelPage() {
                   legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', bgcolor: 'rgba(237,240,246,0.9)', bordercolor: '#b8c4d8', borderwidth: 1, font: { size: 15 } },
                   modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                   annotations: [{
-                    text: pzMap.stable ? '<b>✓ Stable system</b>' : '<b>⚠ Unstable system</b>',
-                    x: 0.99, y: 0.99, xref: 'paper', yref: 'paper',
+                    text: pzMap.stable ? '<b>✓  Stable system</b>' : '<b>⚠  Unstable system</b>',
+                    x: 0.98, y: 0.97, xref: 'paper', yref: 'paper',
                     xanchor: 'right', yanchor: 'top', showarrow: false,
-                    font: { color: '#000000', size: 13 },
+                    font: { color: '#ffffff', size: 14 },
                     bgcolor: pzMap.stable ? '#10b981' : '#ef4444',
-                    bordercolor: pzMap.stable ? '#10b981' : '#ef4444',
-                    borderwidth: 0, borderpad: 6,
+                    bordercolor: pzMap.stable ? '#047857' : '#b91c1c',
+                    borderwidth: 2, borderpad: 10,
                   }],
                   height: 360,
                 }}
