@@ -404,9 +404,9 @@ export default function ModelPage() {
       )}
 
       {tab === 'ident' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-slide-up">
+        <div className="flex flex-col lg:flex-row gap-6 animate-slide-up">
           {/* Input */}
-          <div className="card space-y-4">
+          <div className="card space-y-4 lg:w-96 shrink-0">
             <h2 className="font-semibold text-gray-900">Step Response Data</h2>
             <p className="text-gray-500 text-xs">
               Paste CSV data: two columns (time, output), separated by comma, semicolon, tab or space.
@@ -474,7 +474,7 @@ export default function ModelPage() {
           </div>
 
           {/* Plot */}
-          <div className="card">
+          <div className="card flex-1 min-w-0">
             <h2 className="font-semibold text-gray-900 mb-3">Identification Result</h2>
             {previewData ? (
               <PlotlyChart
