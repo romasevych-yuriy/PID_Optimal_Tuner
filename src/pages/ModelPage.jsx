@@ -450,12 +450,16 @@ export default function ModelPage() {
 
             <div>
               <p className="text-gray-700 text-lg font-semibold mb-2">Data (CSV/tab-separated)</p>
+              <div
+                className="font-mono font-bold text-white text-sm bg-gray-700 border border-dark-border border-b-0 px-3 py-1.5"
+                style={{ whiteSpace: 'pre', tabSize: 8 }}
+              >{'time\tinput\toutput'}</div>
               <textarea
                 value={identText}
                 onChange={e => setIdentText(e.target.value)}
-                className="input-field font-mono text-xs resize-none wide-scroll"
+                className="input-field font-mono text-sm resize-none wide-scroll"
                 rows={10}
-                style={{ overflowY: 'scroll' }}
+                style={{ overflowY: 'scroll', tabSize: 8, borderTop: 'none', borderRadius: 0 }}
               />
             </div>
 
