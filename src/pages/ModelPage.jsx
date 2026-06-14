@@ -319,7 +319,7 @@ export default function ModelPage() {
                   xaxis: {
                     title: { text: 'Time (s)', font: { size: 14 } },
                     tickfont: { size: 13 },
-                    range: [0, tCalc * 1.05],
+                    range: [0, tCalc],
                     showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
                   },
                   yaxis: {
