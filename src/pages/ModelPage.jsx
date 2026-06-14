@@ -302,6 +302,7 @@ export default function ModelPage() {
                     mode: 'lines',
                     name: 'y(t) — step response',
                     line: { color: '#3b82f6', width: 3 },
+                    cliponaxis: false,
                   },
                   {
                     x: previewData.t,
@@ -310,13 +311,25 @@ export default function ModelPage() {
                     mode: 'lines',
                     name: 'r(t) — setpoint',
                     line: { color: '#ef4444', width: 3, shape: 'hv' },
+                    cliponaxis: false,
                   },
                 ]}
                 layout={{
                   title: { text: 'Open-loop Step Response', font: { size: 13 } },
-                  xaxis: { title: { text: 'Time (s)', font: { size: 14 } }, tickfont: { size: 13 } },
-                  yaxis: { title: { text: 'Output y(t) / Setpoint r(t)', font: { size: 14 } }, tickfont: { size: 13 } },
+                  xaxis: {
+                    title: { text: 'Time (s)', font: { size: 14 } },
+                    tickfont: { size: 13 },
+                    range: [0, tCalc * 1.05],
+                  },
+                  yaxis: {
+                    title: { text: 'Output y(t) / Setpoint r(t)', font: { size: 14 } },
+                    tickfont: { size: 13 },
+                    autorange: true,
+                    rangemode: 'normal',
+                  },
                   legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom' },
+                  margin: { l: 70, r: 40, t: 50, b: 55 },
+                  modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                   height: 420,
                 }}
               />
