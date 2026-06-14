@@ -287,7 +287,7 @@ export default function ModelPage() {
           {/* Preview */}
           <div className="card flex-1 min-w-0">
             <h2 className="font-semibold text-gray-900 mb-1">Step Response Preview</h2>
-            <div className="text-gray-600 text-xl mb-4 font-mono border border-dark-border rounded p-4 bg-dark-bg leading-relaxed">
+            <div className="text-gray-600 mb-4 font-mono border border-dark-border rounded p-4 bg-dark-bg leading-relaxed" style={{ fontSize: '0.96rem' }}>
               G(s) = [{numStr}] / [{denStr}]{delay > 0 ? ` · e^(-${delay}s)` : ''}
             </div>
             {previewError && <p className="text-red-400 text-sm mb-3">{previewError}</p>}
@@ -300,7 +300,7 @@ export default function ModelPage() {
                     y: previewData.y,
                     type: 'scatter',
                     mode: 'lines',
-                    name: 'y(t) — step response',
+                    name: '<b>y(t) — step response</b>',
                     line: { color: '#3b82f6', width: 3 },
                     cliponaxis: false,
                   },
@@ -309,7 +309,7 @@ export default function ModelPage() {
                     y: previewData.t.map(ti => ti < 0.7 * tCalc ? 1.0 : 0.75),
                     type: 'scatter',
                     mode: 'lines',
-                    name: 'r(t) — setpoint',
+                    name: '<b>r(t) — setpoint</b>',
                     line: { color: '#ef4444', width: 3, shape: 'hv' },
                     cliponaxis: false,
                   },
@@ -327,7 +327,7 @@ export default function ModelPage() {
                     autorange: true,
                     rangemode: 'normal',
                   },
-                  legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom' },
+                  legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', font: { size: 15 } },
                   margin: { l: 70, r: 40, t: 50, b: 55 },
                   modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                   height: 420,
@@ -349,7 +349,7 @@ export default function ModelPage() {
                     y: pzMap.zeros.map(z => z.im),
                     type: 'scatter',
                     mode: 'markers',
-                    name: '○ Zeros',
+                    name: '<b>○ Zeros</b>',
                     marker: { symbol: 'circle-open', size: 14, color: '#3b82f6', line: { width: 2.5 } },
                   },
                   {
@@ -357,7 +357,7 @@ export default function ModelPage() {
                     y: pzMap.poles.map(p => p.im),
                     type: 'scatter',
                     mode: 'markers',
-                    name: '× Poles',
+                    name: '<b>× Poles</b>',
                     marker: { symbol: 'x', size: 14, color: '#ef4444', line: { width: 2.5 } },
                   },
                 ]}
@@ -378,15 +378,16 @@ export default function ModelPage() {
                     { type: 'line', x0: 0, x1: 1, y0: 0, y1: 0, xref: 'paper', yref: 'y', line: { color: '#9ca3af', dash: 'dash', width: 1.5 } },
                   ],
                   showlegend: true,
-                  legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', bgcolor: 'rgba(237,240,246,0.9)', bordercolor: '#b8c4d8', borderwidth: 1 },
+                  legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', bgcolor: 'rgba(237,240,246,0.9)', bordercolor: '#b8c4d8', borderwidth: 1, font: { size: 15 } },
+                  modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                   annotations: [{
-                    text: pzMap.stable ? '✓ Stable system' : '⚠ Unstable / marginally stable',
+                    text: pzMap.stable ? '<b>✓ Stable system</b>' : '<b>⚠ Unstable system</b>',
                     x: 0.99, y: 0.99, xref: 'paper', yref: 'paper',
                     xanchor: 'right', yanchor: 'top', showarrow: false,
-                    font: { color: pzMap.stable ? '#10b981' : '#ef4444', size: 13 },
-                    bgcolor: pzMap.stable ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)',
+                    font: { color: '#000000', size: 13 },
+                    bgcolor: pzMap.stable ? '#10b981' : '#ef4444',
                     bordercolor: pzMap.stable ? '#10b981' : '#ef4444',
-                    borderwidth: 1, borderpad: 5,
+                    borderwidth: 0, borderpad: 6,
                   }],
                   height: 360,
                 }}
