@@ -14,26 +14,20 @@ import { simulate, computeSimParams } from './simulation.js'
  * @param {boolean} useDelay - Whether to include transport delay
  * @returns {{ num, den, delay, mse, predicted }}
  */
-export function identifyTF(tData, yData, order = 2, useDelay = false) {
+export function identifyTF(tData, yData, order = 2, useDelay = false, uData = null) {
   const T = tData[tData.length - 1]
   const n = order
   const numOrder = Math.min(n - 1, 2)
 
-  // Normalize data
+  // Normalize output
   const yMax = Math.max(...yData.map(Math.abs))
   const yNorm = yData.map(v => v / (yMax || 1))
 
-  // Compute step input (unit step)
-  const r = 1.0
+  // Normalize input (actual u(t) if provided, otherwise unit step)
+  const uMax = uData ? Math.max(...uData.map(Math.abs)) : 1.0
+  const uNorm = uData ? uData.map(v => v / (uMax || 1)) : null
+  const rFn = uNorm ? (t) => interpolate(tData, uNorm, t) : 1.0
 
-  // Parameter vector:
-  // [a1, a2, ..., a_{n-1} (normalized denom coeffs), b0, b1, ... bm, L (if delay)]
-  // We fix a0=1 for the DC gain, and last den coeff = 1
-  // Actually: den = [a0, a1, ..., a_{n-1}, 1], num = [b0, ..., bm]
-
-  const numParams = (n) + (numOrder + 1) + (useDelay ? 1 : 0)
-
-  // Best so far
   let bestMSE = Infinity
   let bestParams = null
 
@@ -42,9 +36,8 @@ export function identifyTF(tData, yData, order = 2, useDelay = false) {
   // Multi-start random search
   const nTries = 200
   for (let trial = 0; trial < nTries; trial++) {
-    // Random initial params
     const params = generateRandomParams(n, numOrder, useDelay, DCgain, T)
-    const mse = evalParams(params, tData, yNorm, n, numOrder, useDelay, r, T)
+    const mse = evalParams(params, tData, yNorm, n, numOrder, useDelay, rFn, T)
     if (mse < bestMSE) {
       bestMSE = mse
       bestParams = [...params]
@@ -54,7 +47,7 @@ export function identifyTF(tData, yData, order = 2, useDelay = false) {
   // Refine with Nelder-Mead
   if (bestParams) {
     const result = nelderMead(
-      p => evalParams(p, tData, yNorm, n, numOrder, useDelay, r, T),
+      p => evalParams(p, tData, yNorm, n, numOrder, useDelay, rFn, T),
       bestParams,
       { maxIter: 500, tol: 1e-8 }
     )
@@ -62,21 +55,16 @@ export function identifyTF(tData, yData, order = 2, useDelay = false) {
     bestMSE = result.fval
   }
 
-  // Reconstruct TF from best params
+  // Reconstruct TF and scale back to physical units: G_physical = G_normalized * yMax / uMax
   const { num, den, delay } = paramsToTF(bestParams, n, numOrder, useDelay, DCgain)
+  const numScaled = num.map(v => v * yMax / uMax)
 
-  // Rescale num/den for original data
-  const numScaled = num.map(v => v * yMax)
-
-  // Compute predicted response
+  // Predicted response using actual (unscaled) input
+  const rActual = uData ? (t) => interpolate(tData, uData, t) : 1.0
   const { dt } = computeSimParams(den, delay)
-  const simResult = simulate(numScaled, den, delay, 0, 0, 0, { dt, T: T * 1.1, r, openLoop: true })
-  const predicted = {
-    t: simResult.t,
-    y: simResult.y
-  }
+  const simResult = simulate(numScaled, den, delay, 0, 0, 0, { dt, T: T * 1.1, r: rActual, openLoop: true })
 
-  return { num: numScaled, den, delay, mse: bestMSE, predicted }
+  return { num: numScaled, den, delay, mse: bestMSE, predicted: { t: simResult.t, y: simResult.y } }
 }
 
 function generateRandomParams(n, numOrder, useDelay, DCgain, T) {

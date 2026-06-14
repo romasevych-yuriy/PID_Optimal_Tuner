@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import useStore, { polynomialRoots } from '../store/useStore'
 import PlotlyChart from '../components/PlotlyChart'
 import { simulate, computeSimParams } from '../math/simulation'
+import { DEFAULT_IDENT_DATA } from '../data/defaultIdentData'
 
 export default function ModelPage() {
   const navigate = useNavigate()
   const { plant, setPlant } = useStore()
 
   const [tab, setTab] = useState(plant.method)
-  const [identText, setIdentText] = useState('')
+  const [identText, setIdentText] = useState(DEFAULT_IDENT_DATA)
   const [identRunning, setIdentRunning] = useState(false)
   const [identResult, setIdentResult] = useState(null)
   const [previewData, setPreviewData] = useState(null)
@@ -91,15 +92,18 @@ export default function ModelPage() {
     const lines = identText.trim().split('\n').filter(l => l.trim())
     const points = []
     for (const line of lines) {
-      const parts = line.split(/[,;\t ]+/)
-      if (parts.length >= 2) {
-        const t = parseFloat(parts[0])
-        const y = parseFloat(parts[1])
-        if (!isNaN(t) && !isNaN(y)) points.push({ t, y })
+      // Tab/semicolon split first to preserve European decimal commas within values
+      let parts = line.trim().split(/[\t;]+/)
+      if (parts.length < 3) parts = line.trim().split(/[,\t;\s]+/)
+      if (parts.length >= 3) {
+        const t = parseFloat(parts[0].replace(',', '.'))
+        const u = parseFloat(parts[1].replace(',', '.'))
+        const y = parseFloat(parts[2].replace(',', '.'))
+        if (!isNaN(t) && !isNaN(u) && !isNaN(y)) points.push({ t, u, y })
       }
     }
-    if (points.length < 10) {
-      setPreviewError('Need at least 10 data points (t, y)')
+    if (points.length < 20) {
+      setPreviewError('Need at least 20 data points (t, u, y)')
       return
     }
 
@@ -108,12 +112,13 @@ export default function ModelPage() {
     try {
       const { identifyTF } = await import('../math/identification.js')
       const tArr = points.map(p => p.t)
+      const uArr = points.map(p => p.u)
       const yArr = points.map(p => p.y)
       const identOrder = plant.identOrder
       const useDelay = plant.identDelay
-      const result = identifyTF(tArr, yArr, identOrder, useDelay)
+      const result = identifyTF(tArr, yArr, identOrder, useDelay, uArr)
       setIdentResult(result)
-      setPreviewData({ t: result.predicted.t, y: result.predicted.y, rawT: tArr, rawY: yArr })
+      setPreviewData({ t: result.predicted.t, y: result.predicted.y, rawT: tArr, rawY: yArr, rawU: uArr })
     } catch (err) {
       setPreviewError('Identification failed: ' + err.message)
     }
@@ -438,7 +443,7 @@ export default function ModelPage() {
                     onChange={e => setPlant({ identDelay: e.target.checked })}
                     className="w-4 h-4"
                   />
-                  <span>Include<br/>Delay</span>
+                  <span>Include Delay</span>
                 </label>
               </div>
             </div>
@@ -449,8 +454,8 @@ export default function ModelPage() {
                 value={identText}
                 onChange={e => setIdentText(e.target.value)}
                 className="input-field font-mono text-xs resize-none"
-                rows={12}
-                placeholder="0.0, 0.000&#10;0.1, 0.095&#10;0.2, 0.181&#10;..."
+                rows={10}
+                style={{ overflowY: 'auto' }}
               />
             </div>
 
@@ -482,32 +487,53 @@ export default function ModelPage() {
           {/* Plot */}
           <div className="card flex-1 min-w-0">
             <h2 className="font-semibold text-gray-900 mb-3">Identification Result</h2>
-            {previewData ? (
+            {previewData && previewData.rawT ? (
               <PlotlyChart
                 id="ident-preview"
                 data={[
-                  previewData.rawT && {
+                  {
+                    x: previewData.rawT,
+                    y: previewData.rawU,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: '<b>u(t) — input</b>',
+                    line: { color: '#ef4444', width: 3 },
+                    cliponaxis: false,
+                  },
+                  {
                     x: previewData.rawT,
                     y: previewData.rawY,
                     type: 'scatter',
                     mode: 'markers',
-                    name: 'Measured',
-                    marker: { color: '#f59e0b', size: 5 },
+                    name: '<b>y(t) — measured</b>',
+                    marker: { color: '#10b981', size: 4 },
                   },
                   {
                     x: previewData.t,
                     y: previewData.y,
                     type: 'scatter',
                     mode: 'lines',
-                    name: 'Model',
-                    line: { color: '#3b82f6', width: 2 },
+                    name: '<b>ŷ(t) — model</b>',
+                    line: { color: '#3b82f6', width: 3 },
+                    cliponaxis: false,
                   },
-                ].filter(Boolean)}
+                ]}
                 layout={{
-                  title: { text: 'Data vs Identified Model', font: { size: 13 } },
-                  xaxis: { title: { text: 'Time (s)' } },
-                  yaxis: { title: { text: 'Output' } },
-                  height: 320,
+                  title: { text: '<b>Data vs Identified Model</b>', font: { size: 16 } },
+                  xaxis: {
+                    title: { text: 'Time (s)', font: { size: 14 } },
+                    tickfont: { size: 13 },
+                    showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
+                  },
+                  yaxis: {
+                    title: { text: 'Signal', font: { size: 14 } },
+                    tickfont: { size: 13 },
+                    showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
+                  },
+                  legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', font: { size: 15 } },
+                  margin: { l: 70, r: 40, t: 50, b: 55 },
+                  modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
+                  height: 420,
                 }}
               />
             ) : (
