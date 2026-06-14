@@ -301,7 +301,7 @@ export default function ModelPage() {
                     type: 'scatter',
                     mode: 'lines',
                     name: 'y(t) — step response',
-                    line: { color: '#3b82f6', width: 2 },
+                    line: { color: '#3b82f6', width: 3 },
                   },
                   {
                     x: previewData.t,
@@ -309,14 +309,14 @@ export default function ModelPage() {
                     type: 'scatter',
                     mode: 'lines',
                     name: 'r(t) — setpoint',
-                    line: { color: '#ef4444', width: 2, shape: 'hv' },
+                    line: { color: '#ef4444', width: 3, shape: 'hv' },
                   },
                 ]}
                 layout={{
                   title: { text: 'Open-loop Step Response', font: { size: 13 } },
                   xaxis: { title: { text: 'Time (s)', font: { size: 14 } }, tickfont: { size: 13 } },
                   yaxis: { title: { text: 'Output y(t) / Setpoint r(t)', font: { size: 14 } }, tickfont: { size: 13 } },
-                  legend: { x: 0.99, y: 0.99, xanchor: 'right', yanchor: 'top' },
+                  legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom' },
                   height: 420,
                 }}
               />
@@ -364,6 +364,7 @@ export default function ModelPage() {
                     { type: 'line', x0: 0, x1: 0, y0: 0, y1: 1, xref: 'x', yref: 'paper', line: { color: '#9ca3af', dash: 'dash', width: 1.5 } },
                     { type: 'line', x0: 0, x1: 1, y0: 0, y1: 0, xref: 'paper', yref: 'y', line: { color: '#9ca3af', dash: 'dash', width: 1.5 } },
                   ],
+                  legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom' },
                   annotations: [{
                     text: pzMap.stable ? '✓ Stable system' : '⚠ Unstable / marginally stable',
                     x: 0.99, y: 0.99, xref: 'paper', yref: 'paper',
