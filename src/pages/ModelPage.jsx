@@ -183,13 +183,15 @@ export default function ModelPage() {
       <div className="flex gap-2">
         <button
           onClick={() => { setTab('tf'); setPlant({ method: 'tf' }) }}
-          className={`px-5 py-2 rounded-lg font-medium text-sm transition-all ${tab === 'tf' ? 'tab-active' : 'tab-inactive'}`}
+          className={`px-5 py-2 rounded-lg font-bold transition-all ${tab === 'tf' ? 'tab-active' : 'tab-inactive'}`}
+          style={{ fontSize: '1.05rem' }}
         >
           <span className="flex items-center gap-1.5"><i className="ti ti-math-function" /> Transfer Function</span>
         </button>
         <button
           onClick={() => { setTab('ident'); setPlant({ method: 'ident' }) }}
-          className={`px-5 py-2 rounded-lg font-medium text-sm transition-all ${tab === 'ident' ? 'tab-active' : 'tab-inactive'}`}
+          className={`px-5 py-2 rounded-lg font-bold transition-all ${tab === 'ident' ? 'tab-active' : 'tab-inactive'}`}
+          style={{ fontSize: '1.05rem' }}
         >
           <span className="flex items-center gap-1.5"><i className="ti ti-chart-dots" /> System Identification</span>
         </button>
