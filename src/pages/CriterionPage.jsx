@@ -37,11 +37,9 @@ export default function CriterionPage() {
 
       {/* Cost function formula */}
       <div className="card bg-gradient-to-r from-dark-card to-dark-bg border-accent-blue/20">
-        <h2 className="font-semibold text-gray-900 mb-3">Composite Criterion Formula</h2>
+        <h2 className="font-semibold text-gray-900 mb-3">Objective Function</h2>
         <div className="bg-dark-bg rounded-lg p-4 border border-dark-border font-mono text-sm overflow-x-auto">
-          <p className="text-accent-cyan">C_r = δ₁·ITAE/(T²/2) + δ₂·IAE/T + δ₃·ISE/T + δ₄·ITSE/(T²/2)</p>
-          <p className="text-accent-cyan mt-1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ δ₅·Osh/100 + δ₆·tr/T + δ₇·ts/T + δ₈·ess/r</p>
-          <p className="text-gray-500 text-xs mt-2">f_OF = PS (stability penalty) + PC (constraint penalty) + C_r</p>
+          <p className="text-white font-bold">Objective Function = Composite Criterion + Stability Penalty + Constraints Penalty</p>
         </div>
       </div>
 
@@ -103,7 +101,7 @@ export default function CriterionPage() {
         </div>
 
         {!anyEnabled && (
-          <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg text-yellow-400 text-sm">
+          <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500 text-sm font-bold">
             ⚠️ Select at least one criterion. The optimizer will use ISE by default if none selected.
           </div>
         )}
