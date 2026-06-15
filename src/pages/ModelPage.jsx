@@ -157,15 +157,14 @@ export default function ModelPage() {
   }
 
   const tfDisplay = () => {
+    const fmt = v => v < 0 ? `(${v})` : `${v}`
     const numStr = num.map((v, i) => {
       if (v === 0) return null
-      const term = i === 0 ? `${v}` : i === 1 ? `${v}s` : `${v}s^${i}`
-      return term
+      return i === 0 ? fmt(v) : i === 1 ? `${fmt(v)}s` : `${fmt(v)}s^${i}`
     }).filter(Boolean).join(' + ') || '0'
     const denStr = den.map((v, i) => {
       if (v === 0) return null
-      const term = i === 0 ? `${v}` : i === 1 ? `${v}s` : `${v}s^${i}`
-      return term
+      return i === 0 ? fmt(v) : i === 1 ? `${fmt(v)}s` : `${fmt(v)}s^${i}`
     }).filter(Boolean).join(' + ') || '0'
     return { numStr, denStr }
   }
@@ -186,13 +185,13 @@ export default function ModelPage() {
           onClick={() => { setTab('tf'); setPlant({ method: 'tf' }) }}
           className={`px-5 py-2 rounded-lg font-medium text-sm transition-all ${tab === 'tf' ? 'tab-active' : 'tab-inactive'}`}
         >
-          ⚙️ Transfer Function
+          <span className="flex items-center gap-1.5"><i className="ti ti-math-function" /> Transfer Function</span>
         </button>
         <button
           onClick={() => { setTab('ident'); setPlant({ method: 'ident' }) }}
           className={`px-5 py-2 rounded-lg font-medium text-sm transition-all ${tab === 'ident' ? 'tab-active' : 'tab-inactive'}`}
         >
-          📈 System Identification
+          <span className="flex items-center gap-1.5"><i className="ti ti-chart-dots" /> System Identification</span>
         </button>
       </div>
 
@@ -480,9 +479,9 @@ export default function ModelPage() {
 
             <button
               onClick={() => setIdentText('')}
-              className="btn-secondary w-full"
+              className="btn-danger w-full"
             >
-              🗑 Clear Table
+              <span className="flex items-center justify-center gap-1.5"><i className="ti ti-eraser" /> Clear Table</span>
             </button>
 
             <button
@@ -490,7 +489,7 @@ export default function ModelPage() {
               disabled={identRunning || !identText.trim()}
               className="btn-primary w-full"
             >
-              {identRunning ? '⏳ Identifying...' : '🔍 Identify System'}
+              {identRunning ? '⏳ Identifying...' : <span className="flex items-center justify-center gap-1.5"><i className="ti ti-radar" /> Identify System</span>}
             </button>
 
           </div>

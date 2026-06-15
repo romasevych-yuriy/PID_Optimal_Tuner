@@ -1,13 +1,13 @@
 import React from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { Home, FunctionSquare, Target, Cpu, BarChart2 } from 'lucide-react'
+import { Home, Target, Cpu, BarChart2 } from 'lucide-react'
 
 const steps = [
-  { path: '/',          label: 'Home',      short: '1', Icon: Home           },
-  { path: '/model',     label: 'Model',     short: '2', Icon: FunctionSquare },
-  { path: '/criterion', label: 'Criterion', short: '3', Icon: Target         },
-  { path: '/optimizer', label: 'Optimizer', short: '4', Icon: Cpu            },
-  { path: '/results',   label: 'Results',   short: '5', Icon: BarChart2      },
+  { path: '/',          label: 'Home',      short: '1', Icon: Home      },
+  { path: '/model',     label: 'Model',     short: '2', tablerIcon: 'ti-arrows-exchange' },
+  { path: '/criterion', label: 'Criterion', short: '3', Icon: Target    },
+  { path: '/optimizer', label: 'Optimizer', short: '4', Icon: Cpu       },
+  { path: '/results',   label: 'Results',   short: '5', Icon: BarChart2 },
 ]
 
 export default function Navigation() {
@@ -41,7 +41,10 @@ export default function Navigation() {
                       : 'text-gray-600 hover:text-gray-900 hover:bg-dark-hover'
                   }`}
                 >
-                  <step.Icon size={20} strokeWidth={1.75} className="hidden lg:block" />
+                  {step.Icon
+                    ? <step.Icon size={20} strokeWidth={1.75} className="hidden lg:block" />
+                    : <i className={`ti ${step.tablerIcon} hidden lg:block`} style={{ fontSize: 16 }} />
+                  }
                   <span className="hidden md:block">{step.label}</span>
                   <span className="md:hidden text-sm">{step.short}</span>
                   {isDone && <span className="text-accent-green text-sm">✓</span>}
