@@ -38,8 +38,10 @@ export default function CriterionPage() {
       {/* Cost function formula */}
       <div className="card bg-gradient-to-r from-dark-card to-dark-bg border-accent-blue/20">
         <h2 className="font-semibold text-gray-900 mb-3">Objective Function</h2>
-        <div className="bg-dark-bg rounded-lg p-4 border border-dark-border font-mono text-sm overflow-x-auto">
-          <p className="text-white font-bold">Objective Function = Composite Criterion + Stability Penalty + Constraints Penalty</p>
+        <div className="bg-dark-bg rounded-lg p-4 border border-dark-border">
+          <p className="text-black font-bold text-center w-full">Objective Function = Composite Criterion + Stability Penalty + Constraints Penalty</p>
+          <img src="Formula_Cr.jpg" alt="Composite Criterion Formula" className="w-full mt-3" style={{ mixBlendMode: 'multiply' }} />
+          <p className="text-black font-bold text-center mt-2">Composite Criterion</p>
         </div>
       </div>
 
