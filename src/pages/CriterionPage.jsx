@@ -226,6 +226,14 @@ export default function CriterionPage() {
             </div>
           ))}
         </div>
+        {(() => {
+          const ki0 = (optimizer.kiMax ?? 100) === 0
+          const kd0 = (optimizer.kdMax ?? 100) === 0
+          if (ki0 && kd0) return <p className="mt-4 text-red-500 font-bold text-sm">⚠️ P-controller will be tuned</p>
+          if (kd0)        return <p className="mt-4 text-red-500 font-bold text-sm">⚠️ PI-controller will be tuned</p>
+          if (ki0)        return <p className="mt-4 text-red-500 font-bold text-sm">⚠️ PD-controller will be tuned</p>
+          return null
+        })()}
       </div>
 
       {/* Navigation */}
