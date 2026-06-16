@@ -7,7 +7,7 @@ const CRITERIA = [
   { key: 'w2', label: 'IAE',  fullName: 'Integral of Absolute Error',        color: 'text-cyan-400',  formula: 'δ₂·IAE/T' },
   { key: 'w3', label: 'ISE',  fullName: 'Integral of Squared Error',         color: 'text-green-400', formula: 'δ₃·ISE/T' },
   { key: 'w4', label: 'ITSE', fullName: 'Integral of Time × Squared Error',  color: 'text-purple-400',formula: 'δ₄·ITSE/(T²/2)' },
-  { key: 'w5', label: 'Overshoot', fullName: 'Maximum Overshoot %',          color: 'text-yellow-400',formula: 'δ₅·Osh/100' },
+  { key: 'w5', label: 'Overshoot', fullName: 'Maximum Overshoot %',          color: 'text-indigo-400',formula: 'δ₅·Osh/100' },
   { key: 'w6', label: 'Rise Time', fullName: 'Time to reach 90% setpoint',   color: 'text-orange-400',formula: 'δ₆·tr/T' },
   { key: 'w7', label: 'Settling Time', fullName: '±2% settling time',        color: 'text-red-400',   formula: 'δ₇·ts/T' },
   { key: 'w8', label: 'Steady-state Error', fullName: '|r - y(∞)|',          color: 'text-pink-400',  formula: 'δ₈·ess/r' },
