@@ -5,12 +5,12 @@ import PlotlyChart from '../components/PlotlyChart'
 import { computeSimParams } from '../math/simulation'
 
 const OPTIMIZERS = [
-  { id: 'PSO',    label: 'PSO',          fullName: 'Particle Swarm Optimization',           color: '#3b82f6', desc: 'Standard PSO with fixed inertia weight (w=0.72, c₁=c₂=1.19)' },
-  { id: 'LDWPSO', label: 'LDW-PSO',      fullName: 'Linear Decreasing Weight PSO',          color: '#06b6d4', desc: 'PSO with w linearly decreasing from 0.9 to 0.4' },
-  { id: 'VCTPSO', label: 'VCT-PSO',      fullName: 'Variable Cognitive Topology PSO',       color: '#8b5cf6', desc: 'Randomizes cognitive reference every RC=5 iterations' },
-  { id: 'RingPSO',label: 'Ring-PSO',     fullName: 'Ring Topology PSO',                     color: '#10b981', desc: 'Local ring neighborhood, reduces premature convergence' },
-  { id: 'DE',     label: 'DE/best/bin',  fullName: 'Differential Evolution (best/1/bin)',   color: '#f59e0b', desc: 'CR=0.5, SF=0.6 — robust for multimodal problems' },
-  { id: 'GWO',    label: 'GWO',          fullName: 'Grey Wolf Optimizer',                   color: '#ef4444', desc: 'α, β, δ wolves guide the search pack' },
+  { id: 'PSO',    label: 'PSO',      text: 'Standard Particle Swarm Optimization',       color: '#3b82f6' },
+  { id: 'LDWPSO', label: 'LDW-PSO',  text: 'PSO with linear weight decreasing',          color: '#06b6d4' },
+  { id: 'VCTPSO', label: 'VCT-PSO',  text: 'PSO variable cognitive term',                color: '#8b5cf6' },
+  { id: 'RingPSO',label: 'Ring-PSO', text: 'PSO with local particles connections',       color: '#10b981' },
+  { id: 'DE',     label: 'DE',       text: 'Differential evolution method best/1/bin',   color: '#f59e0b' },
+  { id: 'GWO',    label: 'GWO',      text: 'Grey Wolf Optimizer',                        color: '#ef4444' },
 ]
 
 const WORKER_MAP = {
@@ -80,6 +80,9 @@ export default function OptimizerPage() {
         population: optConfig.population,
         iterations: optConfig.iterations,
         bounds: optConfig.bounds,
+        kpMax: optConfig.kpMax ?? 100,
+        kiMax: optConfig.kiMax ?? 100,
+        kdMax: optConfig.kdMax ?? 100,
       },
     }
 
@@ -168,7 +171,7 @@ export default function OptimizerPage() {
     <div className="animate-fade-in space-y-6 max-w-5xl mx-auto">
       <div>
         <h1 className="section-title text-2xl">Optimizer</h1>
-        <p className="section-subtitle">Choose and run a metaheuristic optimizer (25 agents, 200 iterations).</p>
+        <p className="section-subtitle">Select a metaheuristic optimizer, configure its parameters, and run it.</p>
       </div>
 
       {/* Optimizer selection */}
@@ -180,20 +183,62 @@ export default function OptimizerPage() {
               key={opt.id}
               onClick={() => setOptimizerConfig({ selected: opt.id })}
               disabled={running}
-              className={`p-4 rounded-xl border text-left transition-all duration-200 ${
+              className={`p-4 rounded-xl border text-center transition-all duration-200 ${
                 optConfig.selected === opt.id
                   ? 'border-2 shadow-lg scale-[1.02]'
                   : 'border-dark-border hover:border-gray-500 bg-dark-bg'
               }`}
               style={optConfig.selected === opt.id ? { borderColor: opt.color, backgroundColor: opt.color + '15' } : {}}
             >
-              <div className="font-bold text-sm mb-1" style={optConfig.selected === opt.id ? { color: opt.color } : { color: '#374151' }}>
+              <div className="font-bold mb-2" style={{ fontSize: '1.3rem', color: optConfig.selected === opt.id ? opt.color : '#374151' }}>
                 {opt.label}
               </div>
-              <div className="text-gray-700 text-xs font-medium mb-1">{opt.fullName}</div>
-              <div className="text-gray-600 text-xs leading-relaxed">{opt.desc}</div>
+              <div className="text-gray-700" style={{ fontSize: '1.125rem' }}>{opt.text}</div>
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Optimizer Configurations */}
+      <div className="card">
+        <h2 className="font-semibold text-gray-900 mb-4">Optimizer Configurations</h2>
+        <div className="space-y-4">
+          <div className="p-4 rounded-lg border border-dark-border bg-dark-bg">
+            <span className="font-bold text-gray-900 block mb-3" style={{ fontSize: '1.3rem' }}>Iterations Number</span>
+            <div className="flex items-center gap-3">
+              <input
+                type="range" min="50" max="200" step="1"
+                value={optConfig.iterations}
+                onChange={e => setOptimizerConfig({ iterations: parseInt(e.target.value) })}
+                className="flex-1"
+              />
+              <input
+                type="number" min="50" max="200" step="1"
+                value={optConfig.iterations}
+                onChange={e => setOptimizerConfig({ iterations: Math.max(50, Math.min(200, parseInt(e.target.value) || 200)) })}
+                className="input-field w-[7.5rem] text-center font-bold"
+                style={{ fontSize: '1.125rem' }}
+              />
+            </div>
+          </div>
+          <div className="p-4 rounded-lg border border-dark-border bg-dark-bg">
+            <span className="font-bold text-gray-900 block mb-3" style={{ fontSize: '1.3rem' }}>Agents Number</span>
+            <div className="flex items-center gap-3">
+              <input
+                type="range" min="10" max="50" step="1"
+                value={optConfig.population}
+                onChange={e => setOptimizerConfig({ population: parseInt(e.target.value) })}
+                className="flex-1"
+              />
+              <input
+                type="number" min="10" max="50" step="1"
+                value={optConfig.population}
+                onChange={e => setOptimizerConfig({ population: Math.max(10, Math.min(50, parseInt(e.target.value) || 25)) })}
+                className="input-field w-[7.5rem] text-center font-bold"
+                style={{ fontSize: '1.125rem' }}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -202,11 +247,10 @@ export default function OptimizerPage() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-gray-600 text-sm font-medium">
-              {optConfig.selected} &nbsp;·&nbsp;
+              {OPTIMIZERS.find(o => o.id === optConfig.selected)?.label} &nbsp;·&nbsp;
               {optConfig.population} agents &nbsp;·&nbsp;
               {optConfig.iterations} iterations
             </p>
-            <p className="text-gray-500 text-xs mt-0.5">kp, ki, kd ∈ [0, 100]</p>
           </div>
           <button
             onClick={handleRun}
