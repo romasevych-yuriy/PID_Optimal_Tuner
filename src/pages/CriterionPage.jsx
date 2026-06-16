@@ -164,13 +164,13 @@ export default function CriterionPage() {
                 <div className="flex items-center gap-3">
                   <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1.5rem' }}>u<sub>min</sub></span>
                   <input
-                    type="range" min="-20" max="0" step="1"
+                    type="range" min="-20" max="0" step="0.01"
                     value={criterion.uMin}
                     onChange={e => setCriterion({ uMin: parseFloat(e.target.value) })}
                     className="flex-1"
                   />
                   <input
-                    type="number" min="-20" max="0" step="1"
+                    type="number" min="-20" max="0" step="0.01"
                     value={criterion.uMin}
                     onChange={e => setCriterion({ uMin: parseFloat(e.target.value) || -10 })}
                     className="input-field w-20 text-center font-bold"
@@ -180,13 +180,13 @@ export default function CriterionPage() {
                 <div className="flex items-center gap-3">
                   <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1.5rem' }}>u<sub>max</sub></span>
                   <input
-                    type="range" min="0" max="20" step="1"
+                    type="range" min="0" max="20" step="0.01"
                     value={criterion.uMax}
                     onChange={e => setCriterion({ uMax: parseFloat(e.target.value) })}
                     className="flex-1"
                   />
                   <input
-                    type="number" min="0" max="20" step="1"
+                    type="number" min="0" max="20" step="0.01"
                     value={criterion.uMax}
                     onChange={e => setCriterion({ uMax: parseFloat(e.target.value) || 10 })}
                     className="input-field w-20 text-center font-bold"
