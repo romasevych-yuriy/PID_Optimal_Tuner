@@ -16,9 +16,9 @@ const CRITERIA = [
 function Tooltip({ text }) {
   return (
     <span className="group relative inline-flex items-center cursor-help ml-1.5">
-      <span className="text-gray-400 group-hover:text-gray-600 select-none" style={{ fontSize: '0.85rem' }}>ⓘ</span>
+      <span className="text-gray-400 group-hover:text-gray-600 select-none" style={{ fontSize: '1.7rem', lineHeight: 1 }}>ⓘ</span>
       <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50" style={{ width: 260 }}>
-        <span className="block text-white whitespace-pre-line" style={{ background: '#1e293b', fontSize: 12, borderRadius: 6, padding: '8px 12px', lineHeight: 1.6 }}>
+        <span className="block text-white whitespace-pre-line" style={{ background: '#1e293b', fontSize: 18, borderRadius: 6, padding: '8px 12px', lineHeight: 1.6 }}>
           {text}
         </span>
         <span className="block w-0 h-0 mx-auto" style={{ borderLeft: '6px solid transparent', borderRight: '6px solid transparent', borderTop: '6px solid #1e293b' }} />
@@ -245,7 +245,7 @@ export default function CriterionPage() {
             { key: 'kiMax', sub: 'i' },
             { key: 'kdMax', sub: 'd' },
           ].map(({ key, sub }) => (
-            <div key={key} className="flex items-center gap-3">
+            <div key={key} className={`flex items-center gap-3 transition-opacity duration-200 ${(optimizer[key] ?? 100) === 0 ? 'opacity-40' : ''}`}>
               <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1.5rem' }}>k<sub>{sub}</sub></span>
               <input
                 type="range" min="0" max="100" step="0.1"
