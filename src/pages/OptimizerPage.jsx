@@ -162,9 +162,9 @@ export default function OptimizerPage() {
     x: convergence.map(p => p.iter),
     y: convergence.map(p => p.cost),
     type: 'scatter',
-    mode: 'lines',
-    name: 'f_OF',
-    line: { color: OPTIMIZERS.find(o => o.id === optConfig.selected)?.color || '#3b82f6', width: 2 },
+    mode: 'markers',
+    name: 'f<sub>OF</sub>',
+    marker: { color: OPTIMIZERS.find(o => o.id === optConfig.selected)?.color || '#3b82f6', size: 4 },
   }] : []
 
   return (
@@ -279,13 +279,20 @@ export default function OptimizerPage() {
         </div>
 
         {statusMsg && (
-          <p className={`mt-3 text-sm ${
-            statusMsg.startsWith('✅') ? 'text-accent-green' :
-            statusMsg.startsWith('⚠️') ? 'text-yellow-400' :
-            'text-gray-600'
-          }`}>
-            {statusMsg}
-          </p>
+          <div className="mt-3">
+            <p className={`font-bold font-mono ${
+              statusMsg.startsWith('✅') ? 'text-accent-green' :
+              statusMsg.startsWith('⚠️') ? 'text-red-500' :
+              'text-gray-600'
+            }`} style={{ fontSize: '1.5rem' }}>
+              {statusMsg}
+            </p>
+            {statusMsg.startsWith('⚠️') && (
+              <p className="text-red-500 font-bold mt-1" style={{ fontSize: '1.5rem' }}>
+                Make the conditions softer and re-run optimization
+              </p>
+            )}
+          </div>
         )}
       </div>
 
@@ -293,26 +300,39 @@ export default function OptimizerPage() {
       {convergence.length > 0 && (
         <div className="card animate-slide-up">
           <h2 className="font-semibold text-gray-900 mb-2">Convergence Plot</h2>
-          <p className="text-gray-500 text-xs mb-3">Best cost function value vs. iteration</p>
+          <p className="text-gray-700 font-bold mb-3" style={{ fontSize: '1.2rem' }}>Best Objective Function value vs. Iteration</p>
           <PlotlyChart
             id="convergence"
             data={convData}
             layout={{
-              xaxis: { title: { text: 'Iteration' } },
-              yaxis: { title: { text: 'f_OF (log scale)' }, type: 'log' },
-              height: 280,
+              xaxis: {
+                title: { text: 'Iteration', font: { size: 14 } },
+                tickfont: { size: 13 },
+                showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
+              },
+              yaxis: {
+                title: { text: 'f<sub>OF</sub> (log scale)', font: { size: 14 } },
+                tickfont: { size: 13 },
+                type: 'log',
+                autorange: true,
+                showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
+              },
+              legend: { x: 0.99, y: 0.99, xanchor: 'right', yanchor: 'top', font: { size: 15 } },
+              margin: { l: 70, r: 40, t: 10, b: 55 },
+              modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
+              height: 300,
             }}
           />
           {bestCostLive !== null && (
-            <p className="text-gray-500 text-xs mt-2 font-mono">
-              Current best: f_OF = {bestCostLive.toExponential(6)}
+            <p className="text-gray-700 font-bold font-mono mt-2" style={{ fontSize: '1.5rem' }}>
+              Current best: f<sub>OF</sub> = {bestCostLive.toExponential(6)}
             </p>
           )}
         </div>
       )}
 
       {/* Result summary */}
-      {resultSummary && done && (
+      {resultSummary && done && resultSummary.allOk && (
         <div className={`card border-2 animate-slide-up ${resultSummary.allOk ? 'border-accent-green/50' : 'border-yellow-500/50'}`}>
           <h2 className="font-semibold text-gray-900 mb-4">
             {resultSummary.allOk ? '🎉 Optimization Complete!' : '⚠️ Optimization Complete (with warnings)'}
