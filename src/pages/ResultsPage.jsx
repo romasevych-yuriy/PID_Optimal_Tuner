@@ -106,7 +106,7 @@ export default function ResultsPage() {
 
       {/* Status */}
       {results.statusMessage && (
-        <div className={`p-4 rounded-xl border ${results.allConstraintsMet ? 'border-accent-green/40 bg-accent-green/5 text-accent-green' : 'border-yellow-400/40 bg-yellow-400/5 text-yellow-400'}`}>
+        <div className={`p-4 rounded-xl border font-bold ${results.allConstraintsMet ? 'border-accent-green/40 bg-accent-green/5 text-accent-green' : 'border-red-500/40 bg-red-500/5 text-red-500'}`}>
           {results.statusMessage}
         </div>
       )}
