@@ -118,10 +118,12 @@ export default function OptimizerPage() {
             // Check constraints
             const overshootOk = !criterion.useOvershootConstraint || metrics.overshoot <= criterion.overshootMax
             const stableOk = Math.abs(simResult.y[simResult.y.length - 1] - 1) < 0.1
+            const fofOk = bestCost < 50  // Cr alone < ~8; any penalty pushes fOF >> 50
 
-            const allOk = overshootOk && stableOk
+            const allOk = fofOk && overshootOk && stableOk
             const msgs = []
             if (!stableOk) msgs.push('System did not converge to setpoint (stability issue)')
+            if (!fofOk && stableOk) msgs.push(`f_OF = ${bestCost.toExponential(2)} — stability or constraint penalty is active`)
             if (!overshootOk) msgs.push(`Overshoot ${metrics.overshoot.toFixed(1)}% exceeds limit ${criterion.overshootMax}%`)
 
             const statusMessage = allOk
