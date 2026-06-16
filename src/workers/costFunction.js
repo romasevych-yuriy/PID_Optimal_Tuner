@@ -194,7 +194,7 @@ function computePS(yFinal, r) {
 }
 
 function computePC(overshoot, overshootMax) {
-  if (!overshootMax || overshootMax <= 0) return 0
+  if (overshootMax == null || overshootMax < 0) return 0
   if (overshoot > overshootMax) return 1e3 * (overshoot - overshootMax) ** 2
   return 0
 }
