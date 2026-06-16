@@ -80,7 +80,7 @@ export default function ResultsPage() {
     { label: 'Overshoot', val: `${metrics.overshoot.toFixed(2)}%` },
     { label: 'Rise Time', val: `${metrics.riseTime.toFixed(4)} s` },
     { label: 'Settling Time', val: `${metrics.settlingTime.toFixed(4)} s` },
-    { label: 'SS Error', val: metrics.ess.toFixed(6) },
+    { label: 'Steady-state Error', val: metrics.ess.toFixed(6) },
   ] : []
 
   return (
@@ -223,7 +223,7 @@ export default function ResultsPage() {
           {metricRows.map(m => (
             <div key={m.label} className="metric-card">
               <div className="text-lg font-bold text-gray-900 font-mono">{m.val}</div>
-              <div className="text-gray-500 text-xs mt-1">{m.label}</div>
+              <div className="text-gray-700 font-bold mt-1" style={{ fontSize: '1.125rem' }}>{m.label}</div>
             </div>
           ))}
         </div>
