@@ -171,7 +171,7 @@ export default function OptimizerPage() {
     <div className="animate-fade-in space-y-6 max-w-5xl mx-auto">
       <div>
         <h1 className="section-title text-2xl">Optimizer</h1>
-        <p className="section-subtitle">Select a metaheuristic optimizer, configure its parameters, and run it.</p>
+        <p className="section-subtitle">Choose a metaheuristic optimizer, configure its parameters, and run it.</p>
       </div>
 
       {/* Optimizer selection */}
