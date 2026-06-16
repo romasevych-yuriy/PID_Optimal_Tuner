@@ -185,10 +185,10 @@ export default function OptimizerPage() {
               disabled={running}
               className={`p-4 rounded-xl border text-center transition-all duration-200 ${
                 optConfig.selected === opt.id
-                  ? 'border-2 shadow-lg scale-[1.02]'
-                  : 'border-dark-border hover:border-gray-500 bg-dark-bg'
+                  ? 'border-4 shadow-xl scale-[1.04]'
+                  : 'border-dark-border bg-dark-bg opacity-40 hover:opacity-70'
               }`}
-              style={optConfig.selected === opt.id ? { borderColor: opt.color, backgroundColor: opt.color + '15' } : {}}
+              style={optConfig.selected === opt.id ? { borderColor: opt.color, backgroundColor: opt.color + '22' } : {}}
             >
               <div className="font-bold mb-2" style={{ fontSize: '1.3rem', color: optConfig.selected === opt.id ? opt.color : '#374151' }}>
                 {opt.label}
@@ -273,7 +273,7 @@ export default function OptimizerPage() {
               background: `linear-gradient(90deg, ${OPTIMIZERS.find(o => o.id === optConfig.selected)?.color || '#3b82f6'}, #06b6d4)`,
             }}
           />
-          <div className="absolute inset-0 flex items-center justify-center text-xs font-mono text-gray-600">
+          <div className="absolute inset-0 flex items-center justify-center font-mono text-gray-600 font-semibold" style={{ fontSize: '1.125rem' }}>
             {progress > 0 ? `${progress.toFixed(1)}%` : ''}
           </div>
         </div>
