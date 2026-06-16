@@ -121,14 +121,10 @@ export default function CriterionPage() {
                 />
                 <div className="w-10 h-5 bg-dark-border rounded-full peer peer-checked:bg-accent-yellow transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
               </label>
-              <div>
-                <span className="font-medium text-gray-900 text-sm">Maximum Overshoot</span>
-                <p className="text-gray-500 text-xs">Penalizes solutions where overshoot exceeds limit</p>
-              </div>
+              <span className="font-bold text-gray-900" style={{ fontSize: '1.3rem' }}>Allowable Overshoot</span>
             </div>
             {criterion.useOvershootConstraint && (
               <div className="flex items-center gap-3">
-                <label className="text-gray-600 text-sm w-28">Osh_max (%)</label>
                 <input
                   type="range" min="0" max="100" step="1"
                   value={criterion.overshootMax}
@@ -139,9 +135,10 @@ export default function CriterionPage() {
                   type="number" min="0" max="100" step="1"
                   value={criterion.overshootMax}
                   onChange={e => setCriterion({ overshootMax: parseFloat(e.target.value) || 20 })}
-                  className="input-field w-20 text-center"
+                  className="input-field w-20 text-center font-bold"
+                  style={{ fontSize: '1.125rem' }}
                 />
-                <span className="text-gray-500 text-sm">%</span>
+                <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1.5rem' }}>%</span>
               </div>
             )}
           </div>
