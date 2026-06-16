@@ -3,15 +3,29 @@ import { useNavigate } from 'react-router-dom'
 import useStore from '../store/useStore'
 
 const CRITERIA = [
-  { key: 'w1', label: 'ITAE',               hat: 'ITÂE', },
-  { key: 'w2', label: 'IAE',                hat: 'IÂE',  },
-  { key: 'w3', label: 'ISE',                hat: 'ÎSE',  },
-  { key: 'w4', label: 'ITSE',               hat: 'ÎTSE', },
-  { key: 'w5', label: 'Overshoot',          hat: 'Ôsh',  },
-  { key: 'w6', label: 'Rise Time',          hat: 't̂ᵣ',  },
-  { key: 'w7', label: 'Settling Time',      hat: 't̂ₛ',  },
-  { key: 'w8', label: 'Steady-state Error', hat: 'êₛₛ', },
+  { key: 'w1', label: 'ITAE',               hat: 'ITÂE', tooltip: 'Penalizes errors that persist over time.\nBest for eliminating long-lasting deviations.\nMost commonly used criterion for PID tuning.' },
+  { key: 'w2', label: 'IAE',                hat: 'IÂE',  tooltip: 'Measures total accumulated error regardless of time.\nGood balance between fast response and accuracy.\nLess sensitive to initial transients than ITAE.' },
+  { key: 'w3', label: 'ISE',                hat: 'ÎSE',  tooltip: 'Heavily penalizes large errors, tolerates small ones.\nProduces fast response but may cause overshoot.\nSensitive to noise due to squaring.' },
+  { key: 'w4', label: 'ITSE',               hat: 'ÎTSE', tooltip: 'Combines time-weighting with squared error penalty.\nSuppresses large early errors and persistent late errors.\nGood for systems where initial overshoot is acceptable.' },
+  { key: 'w5', label: 'Overshoot',          hat: 'Ôsh',  tooltip: 'Percentage by which the output exceeds the setpoint.\nCritical for systems with physical limits\n(pressure vessels, mechanical stops, temperature limits).' },
+  { key: 'w6', label: 'Rise Time',          hat: 't̂ᵣ',  tooltip: 'Time for the output to first reach the setpoint.\nMinimize for fast-responding systems\n(servo drives, flow control).' },
+  { key: 'w7', label: 'Settling Time',      hat: 't̂ₛ',  tooltip: 'Time until the output stays within ±5% of setpoint.\nKey indicator of overall control quality\nand disturbance rejection.' },
+  { key: 'w8', label: 'Steady-state Error', hat: 'êₛₛ', tooltip: 'Residual offset between setpoint and final output.\nShould be zero for type-1 systems with integrator.\nCritical for precision positioning and regulation.' },
 ]
+
+function Tooltip({ text }) {
+  return (
+    <span className="group relative inline-flex items-center cursor-help ml-1.5">
+      <span className="text-gray-400 group-hover:text-gray-600 select-none" style={{ fontSize: '0.85rem' }}>ⓘ</span>
+      <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50" style={{ width: 260 }}>
+        <span className="block text-white whitespace-pre-line" style={{ background: '#1e293b', fontSize: 12, borderRadius: 6, padding: '8px 12px', lineHeight: 1.6 }}>
+          {text}
+        </span>
+        <span className="block w-0 h-0 mx-auto" style={{ borderLeft: '6px solid transparent', borderRight: '6px solid transparent', borderTop: '6px solid #1e293b' }} />
+      </span>
+    </span>
+  )
+}
 
 export default function CriterionPage() {
   const navigate = useNavigate()
@@ -81,10 +95,11 @@ export default function CriterionPage() {
                 </label>
 
                 {/* Label */}
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 flex items-center">
                   <span className="font-bold" style={{ fontSize: '1.3rem', color: active ? '#15803d' : '#9ca3af' }}>
                     {c.label}
                   </span>
+                  <Tooltip text={c.tooltip} />
                 </div>
 
                 {/* Weight slider — always visible, non-interactive when disabled */}
