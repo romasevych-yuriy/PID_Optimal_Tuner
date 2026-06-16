@@ -179,7 +179,7 @@ export default function ResultsPage() {
               id="step-response"
               data={[
                 { x: simData.t, y: simData.y, type: 'scatter', mode: 'lines', name: 'y(t)', line: { color: '#3b82f6', width: 3 } },
-                { x: [simData.t[0], simData.t[simData.t.length - 1]], y: [1, 1], type: 'scatter', mode: 'lines', name: 'Setpoint', line: { color: '#10b981', width: 1.5, dash: 'dash' } },
+                { x: [simData.t[0], simData.t[simData.t.length - 1]], y: [1, 1], type: 'scatter', mode: 'lines', name: 'Setpoint r(t)', line: { color: '#ef4444', width: 1.5 } },
               ]}
               layout={{
                 xaxis: { title: { text: 'Time (s)', font: { size: 14 } }, tickfont: { size: 13 }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
@@ -200,8 +200,8 @@ export default function ResultsPage() {
               id="control-signal"
               data={[
                 { x: simData.t, y: simData.u, type: 'scatter', mode: 'lines', name: 'u(t)', line: { color: '#8b5cf6', width: 3 } },
-                criterion.useControlConstraint && { x: [simData.t[0], simData.t[simData.t.length - 1]], y: [criterion.uMax, criterion.uMax], type: 'scatter', mode: 'lines', name: 'u_max', line: { color: '#ef4444', width: 1.5, dash: 'dash' } },
-                criterion.useControlConstraint && { x: [simData.t[0], simData.t[simData.t.length - 1]], y: [criterion.uMin, criterion.uMin], type: 'scatter', mode: 'lines', name: 'u_min', line: { color: '#ef4444', width: 1.5, dash: 'dot' } },
+                criterion.useControlConstraint && { x: [simData.t[0], simData.t[simData.t.length - 1]], y: [criterion.uMax, criterion.uMax], type: 'scatter', mode: 'lines', name: 'u<sub>max</sub>', line: { color: '#ef4444', width: 1.5, dash: 'dash' } },
+                criterion.useControlConstraint && { x: [simData.t[0], simData.t[simData.t.length - 1]], y: [criterion.uMin, criterion.uMin], type: 'scatter', mode: 'lines', name: 'u<sub>min</sub>', line: { color: '#f59e0b', width: 1.5, dash: 'dash' } },
               ].filter(Boolean)}
               layout={{
                 xaxis: { title: { text: 'Time (s)', font: { size: 14 } }, tickfont: { size: 13 }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
