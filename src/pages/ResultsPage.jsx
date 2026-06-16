@@ -151,16 +151,16 @@ export default function ResultsPage() {
         {/* Both forms */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-dark-bg rounded-lg p-3 border border-dark-border">
-            <p className="text-gray-500 font-medium mb-2" style={{ fontSize: '1.5rem' }}>Parallel Form</p>
-            <div className="font-mono font-bold space-y-1" style={{ fontSize: '0.875rem' }}>
+            <p className="text-gray-500 font-medium mb-2" style={{ fontSize: '1.25rem' }}>Parallel Form</p>
+            <div className="font-mono font-bold space-y-1" style={{ fontSize: '1.225rem' }}>
               <p><span className="text-yellow-400">k<sub>p</sub></span> = {kp.toFixed(4)}</p>
               <p><span className="text-green-400">k<sub>i</sub></span> = {ki.toFixed(4)}</p>
               <p><span className="text-blue-400">k<sub>d</sub></span> = {kd.toFixed(4)}</p>
             </div>
           </div>
           <div className="bg-dark-bg rounded-lg p-3 border border-dark-border">
-            <p className="text-gray-500 font-medium mb-2" style={{ fontSize: '1.5rem' }}>Standard Form</p>
-            <div className="font-mono font-bold space-y-1" style={{ fontSize: '0.875rem' }}>
+            <p className="text-gray-500 font-medium mb-2" style={{ fontSize: '1.25rem' }}>Standard Form</p>
+            <div className="font-mono font-bold space-y-1" style={{ fontSize: '1.225rem' }}>
               <p><span className="text-yellow-400">K<sub>p</sub></span> = {Kp.toFixed(4)}</p>
               <p><span className="text-green-400">T<sub>i</sub></span> = {isFinite(Ti) ? Ti.toFixed(4) : '∞'} s</p>
               <p><span className="text-blue-400">T<sub>d</sub></span> = {Td.toFixed(4)} s</p>
@@ -260,8 +260,8 @@ export default function ResultsPage() {
                 { label: 'Phase Crossover', val: bode.gainMarginFreq ? `${bode.gainMarginFreq.toFixed(3)} rad/s` : 'N/A', good: true },
               ].map(s => (
                 <div key={s.label} className={`metric-card border ${s.good ? 'border-accent-green/30' : 'border-red-500/30'}`}>
-                  <div className={`text-base font-bold font-mono ${s.good ? 'text-accent-green' : 'text-red-400'}`}>{s.val}</div>
-                  <div className="text-gray-500 text-xs mt-1">{s.label}</div>
+                  <div className={`font-bold font-mono ${s.good ? 'text-accent-green' : 'text-red-400'}`} style={{ fontSize: '1.5rem' }}>{s.val}</div>
+                  <div className="text-gray-500 font-medium mt-1" style={{ fontSize: '1.125rem' }}>{s.label}</div>
                 </div>
               ))}
             </div>
