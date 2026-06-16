@@ -49,9 +49,9 @@ const defaultOptimizer = {
   population: 25,
   iterations: 200,
   bounds: [0, 100],  // legacy fallback
-  kpMax: 100,
-  kiMax: 100,
-  kdMax: 100,
+  kpMax: 200,
+  kiMax: 200,
+  kdMax: 200,
 }
 
 const defaultResults = {

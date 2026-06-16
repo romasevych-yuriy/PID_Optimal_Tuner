@@ -308,7 +308,7 @@ export default function ModelPage() {
           {/* Preview */}
           <div className="card flex-1 min-w-0">
             <h2 className="font-semibold text-gray-900 mb-1">Step Response Preview</h2>
-            <div className="text-gray-600 mb-4 font-mono font-bold border border-dark-border rounded p-4 bg-dark-bg leading-relaxed" style={{ fontSize: '0.96rem' }}>
+            <div className="text-gray-600 mb-4 font-mono font-bold border border-dark-border rounded p-4 bg-dark-bg leading-relaxed" style={{ fontSize: '1.44rem' }}>
               G(s) = [{numStr}] / [{denStr}]{delay > 0 ? ` · e^(-${delay}s)` : ''}
             </div>
             {previewError && <p className="text-red-400 text-sm mb-3">{previewError}</p>}

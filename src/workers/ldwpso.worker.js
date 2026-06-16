@@ -1,4 +1,4 @@
-/**
+﻿/**
  * LDWPSO (Linear Decreasing Weight PSO) Web Worker
  * w linearly decreases from Wmax=0.9 to Wmin=0.4
  */
@@ -6,7 +6,7 @@ import { objectiveFunction } from './costFunction.js'
 
 self.onmessage = function(e) {
   const { config } = e.data
-  const { population = 25, iterations = 200, kpMax = 100, kiMax = 100, kdMax = 100 } = config.optimizer
+  const { population = 25, iterations = 200, kpMax = 200, kiMax = 200, kdMax = 200 } = config.optimizer
 
   const nDim = 3
   const WMax = 0.9, WMin = 0.4, c1 = 1.19, c2 = 1.19

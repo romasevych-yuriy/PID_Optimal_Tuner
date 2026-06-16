@@ -245,18 +245,18 @@ export default function CriterionPage() {
             { key: 'kiMax', sub: 'i' },
             { key: 'kdMax', sub: 'd' },
           ].map(({ key, sub }) => (
-            <div key={key} className={`flex items-center gap-3 transition-opacity duration-200 ${(optimizer[key] ?? 100) === 0 ? 'opacity-40' : ''}`}>
+            <div key={key} className={`flex items-center gap-3 transition-opacity duration-200 ${(optimizer[key] ?? 200) === 0 ? 'opacity-40' : ''}`}>
               <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1.5rem' }}>k<sub>{sub}</sub></span>
               <input
-                type="range" min="0" max="100" step="0.1"
-                value={optimizer[key] ?? 100}
+                type="range" min="0" max="200" step="0.1"
+                value={optimizer[key] ?? 200}
                 onChange={e => setOptimizerConfig({ [key]: parseFloat(e.target.value) })}
                 className="flex-1"
               />
               <input
-                type="number" min="0" max="100" step="0.1"
-                value={optimizer[key] ?? 100}
-                onChange={e => setOptimizerConfig({ [key]: parseFloat(e.target.value) || 100 })}
+                type="number" min="0" max="200" step="0.1"
+                value={optimizer[key] ?? 200}
+                onChange={e => setOptimizerConfig({ [key]: parseFloat(e.target.value) || 200 })}
                 className="input-field w-[7.5rem] text-center font-bold"
                 style={{ fontSize: '1.125rem' }}
               />
@@ -264,9 +264,9 @@ export default function CriterionPage() {
           ))}
         </div>
         {(() => {
-          const kp0 = (optimizer.kpMax ?? 100) === 0
-          const ki0 = (optimizer.kiMax ?? 100) === 0
-          const kd0 = (optimizer.kdMax ?? 100) === 0
+          const kp0 = (optimizer.kpMax ?? 200) === 0
+          const ki0 = (optimizer.kiMax ?? 200) === 0
+          const kd0 = (optimizer.kdMax ?? 200) === 0
           return (
             <div className="mt-4 space-y-1">
               {kp0 && <p className="text-red-500 font-bold text-sm">⚠️ Nonzero value of k<sub>p</sub> must be set</p>}
