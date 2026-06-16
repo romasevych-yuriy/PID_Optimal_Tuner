@@ -75,7 +75,7 @@ export default function CriterionPage() {
               {/* Weight slider */}
               {criterion.enabled[c.key] && (
                 <div className="flex items-center gap-3 min-w-[360px]">
-                  <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1rem' }}>δ<sub>{idx + 1}</sub></span>
+                  <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1.5rem' }}>δ<sub>{idx + 1}</sub></span>
                   <input
                     type="range"
                     min="0" max="1" step="0.01"
