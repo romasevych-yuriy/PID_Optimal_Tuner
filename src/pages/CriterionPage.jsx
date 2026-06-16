@@ -264,12 +264,17 @@ export default function CriterionPage() {
           ))}
         </div>
         {(() => {
+          const kp0 = (optimizer.kpMax ?? 100) === 0
           const ki0 = (optimizer.kiMax ?? 100) === 0
           const kd0 = (optimizer.kdMax ?? 100) === 0
-          if (ki0 && kd0) return <p className="mt-4 text-red-500 font-bold text-sm">⚠️ P-controller will be tuned</p>
-          if (kd0)        return <p className="mt-4 text-red-500 font-bold text-sm">⚠️ PI-controller will be tuned</p>
-          if (ki0)        return <p className="mt-4 text-red-500 font-bold text-sm">⚠️ PD-controller will be tuned</p>
-          return null
+          return (
+            <div className="mt-4 space-y-1">
+              {kp0 && <p className="text-red-500 font-bold text-sm">⚠️ Nonzero value of k<sub>p</sub> must be set</p>}
+              {!kp0 && ki0 && kd0 && <p className="text-red-500 font-bold text-sm">⚠️ P-controller will be tuned</p>}
+              {!kp0 && kd0 && !ki0  && <p className="text-red-500 font-bold text-sm">⚠️ PI-controller will be tuned</p>}
+              {!kp0 && ki0 && !kd0  && <p className="text-red-500 font-bold text-sm">⚠️ PD-controller will be tuned</p>}
+            </div>
+          )
         })()}
       </div>
 
