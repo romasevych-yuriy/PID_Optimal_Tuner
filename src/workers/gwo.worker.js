@@ -6,7 +6,7 @@ import { objectiveFunction } from './costFunction.js'
 
 self.onmessage = function(e) {
   const { config } = e.data
-  const { population = 25, iterations = 200, kpMax = 200, kiMax = 200, kdMax = 200 } = config.optimizer
+  const { population = 25, iterations = 100, kpMax = 200, kiMax = 200, kdMax = 200 } = config.optimizer
 
   const nDim = 3
   const domain = [[0, kpMax], [0, kiMax], [0, kdMax]]

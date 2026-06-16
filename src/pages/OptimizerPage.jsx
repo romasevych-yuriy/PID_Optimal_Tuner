@@ -214,15 +214,15 @@ export default function OptimizerPage() {
             <span className="font-bold text-gray-900 block mb-3" style={{ fontSize: '1.3rem' }}>Iterations Number</span>
             <div className="flex items-center gap-3">
               <input
-                type="range" min="50" max="200" step="1"
+                type="range" min="20" max="100" step="1"
                 value={optConfig.iterations}
                 onChange={e => setOptimizerConfig({ iterations: parseInt(e.target.value) })}
                 className="flex-1"
               />
               <input
-                type="number" min="50" max="200" step="1"
+                type="number" min="20" max="100" step="1"
                 value={optConfig.iterations}
-                onChange={e => setOptimizerConfig({ iterations: Math.max(50, Math.min(200, parseInt(e.target.value) || 200)) })}
+                onChange={e => setOptimizerConfig({ iterations: Math.max(20, Math.min(100, parseInt(e.target.value) || 100)) })}
                 className="input-field w-[7.5rem] text-center font-bold"
                 style={{ fontSize: '1.125rem' }}
               />

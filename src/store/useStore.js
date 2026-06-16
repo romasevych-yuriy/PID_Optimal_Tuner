@@ -47,7 +47,7 @@ const defaultCriterion = {
 const defaultOptimizer = {
   selected: 'PSO',   // 'PSO' | 'LDWPSO' | 'VCTPSO' | 'RingPSO' | 'DE' | 'GWO'
   population: 25,
-  iterations: 200,
+  iterations: 100,
   bounds: [0, 100],  // legacy fallback
   kpMax: 200,
   kiMax: 200,
