@@ -45,7 +45,7 @@ export default function CriterionPage() {
 
       {/* Criteria selection */}
       <div className="card">
-        <h2 className="font-semibold text-gray-900 mb-4">Performance Metrics (enable & set weight δ ∈ [0,1])</h2>
+        <h2 className="font-semibold text-gray-900 mb-4">Performance Metrics (enable and set weight coefficients δ)</h2>
         <div className="space-y-3">
           {CRITERIA.map(c => (
             <div
@@ -69,16 +69,12 @@ export default function CriterionPage() {
 
               {/* Label */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className={`font-semibold text-sm ${c.color}`}>{c.label}</span>
-                  <span className="text-gray-600 text-xs hidden sm:block">{c.fullName}</span>
-                </div>
-                <p className="text-gray-600 text-xs font-mono mt-0.5">{c.formula}</p>
+                <span className={`font-bold ${c.color}`} style={{ fontSize: '1.3rem' }}>{c.label}</span>
               </div>
 
               {/* Weight slider */}
               {criterion.enabled[c.key] && (
-                <div className="flex items-center gap-3 min-w-[180px]">
+                <div className="flex items-center gap-3 min-w-[360px]">
                   <input
                     type="range"
                     min="0" max="1" step="0.01"
@@ -92,7 +88,8 @@ export default function CriterionPage() {
                     min="0" max="1" step="0.01"
                     value={criterion.weights[c.key]}
                     onChange={e => setWeight(c.key, e.target.value)}
-                    className="input-field w-16 text-center text-xs"
+                    className="input-field w-20 text-center font-bold"
+                    style={{ fontSize: '1.125rem' }}
                   />
                 </div>
               )}
