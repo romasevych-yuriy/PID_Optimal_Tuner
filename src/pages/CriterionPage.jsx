@@ -113,7 +113,7 @@ export default function CriterionPage() {
         </div>
 
         {/* Live formula */}
-        <div className="mt-4 p-4 bg-dark-bg border border-dark-border rounded-lg text-center font-mono">
+        <div className="mt-4 p-4 bg-dark-bg border border-dark-border rounded-lg text-center font-mono" style={{ fontSize: '1.5rem' }}>
           {formulaTerms.length > 0
             ? <span className="text-gray-800 font-semibold">Cr = {formulaTerms.join(' + ')}</span>
             : <span className="text-gray-500">Cr = 0 (no metrics selected)</span>
@@ -132,7 +132,7 @@ export default function CriterionPage() {
         <h2 className="font-semibold text-gray-900 mb-4">Constraints</h2>
         <div className="space-y-4">
           {/* Overshoot constraint */}
-          <div className={`p-4 rounded-lg border transition-all duration-200 ${criterion.useOvershootConstraint ? 'border-accent-yellow/40 bg-dark-bg' : 'border-dark-border bg-dark-bg/50'}`}>
+          <div className={`p-4 rounded-lg border transition-all duration-200 ${criterion.useOvershootConstraint ? 'border-accent-yellow/40 bg-dark-bg' : 'border-dark-border bg-dark-bg/50 opacity-40'}`}>
             <div className="flex items-center gap-3 mb-3">
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -166,7 +166,7 @@ export default function CriterionPage() {
           </div>
 
           {/* Control constraint */}
-          <div className={`p-4 rounded-lg border transition-all duration-200 ${criterion.useControlConstraint ? 'border-accent-red/40 bg-dark-bg' : 'border-dark-border bg-dark-bg/50'}`}>
+          <div className={`p-4 rounded-lg border transition-all duration-200 ${criterion.useControlConstraint ? 'border-accent-red/40 bg-dark-bg' : 'border-dark-border bg-dark-bg/50 opacity-40'}`}>
             <div className="flex items-center gap-3 mb-3">
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
