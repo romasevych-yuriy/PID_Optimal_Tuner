@@ -155,31 +155,42 @@ export default function CriterionPage() {
                 />
                 <div className="w-10 h-5 bg-dark-border rounded-full peer peer-checked:bg-accent-red transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
               </label>
-              <div>
-                <span className="font-medium text-gray-900 text-sm">Control Signal Saturation</span>
-                <p className="text-gray-500 text-xs">u(t) is clipped to [u_min, u_max] during simulation</p>
-              </div>
+              <span className="font-bold text-gray-900" style={{ fontSize: '1.3rem' }}>
+                Control Signal Saturation. u(t) is clipped to [u<sub>min</sub>, u<sub>max</sub>] during simulation
+              </span>
             </div>
             {criterion.useControlConstraint && (
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="label">u_min</label>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1.5rem' }}>u<sub>min</sub></span>
                   <input
-                    type="number"
+                    type="range" min="-20" max="0" step="1"
+                    value={criterion.uMin}
+                    onChange={e => setCriterion({ uMin: parseFloat(e.target.value) })}
+                    className="flex-1"
+                  />
+                  <input
+                    type="number" min="-20" max="0" step="1"
                     value={criterion.uMin}
                     onChange={e => setCriterion({ uMin: parseFloat(e.target.value) || -10 })}
-                    className="input-field"
-                    step="any"
+                    className="input-field w-20 text-center font-bold"
+                    style={{ fontSize: '1.125rem' }}
                   />
                 </div>
-                <div>
-                  <label className="label">u_max</label>
+                <div className="flex items-center gap-3">
+                  <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1.5rem' }}>u<sub>max</sub></span>
                   <input
-                    type="number"
+                    type="range" min="0" max="20" step="1"
+                    value={criterion.uMax}
+                    onChange={e => setCriterion({ uMax: parseFloat(e.target.value) })}
+                    className="flex-1"
+                  />
+                  <input
+                    type="number" min="0" max="20" step="1"
                     value={criterion.uMax}
                     onChange={e => setCriterion({ uMax: parseFloat(e.target.value) || 10 })}
-                    className="input-field"
-                    step="any"
+                    className="input-field w-20 text-center font-bold"
+                    style={{ fontSize: '1.125rem' }}
                   />
                 </div>
               </div>
