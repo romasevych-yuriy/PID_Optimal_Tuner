@@ -32,7 +32,6 @@ export default function OptimizerPage() {
   const [convergence, setConvergence] = useState([])
   const [statusMsg, setStatusMsg] = useState('')
   const [done, setDone] = useState(false)
-  const [resultSummary, setResultSummary] = useState(null)
   const workerRef = useRef(null)
 
   const handleRun = useCallback(() => {
@@ -126,11 +125,10 @@ export default function OptimizerPage() {
             if (!overshootOk) msgs.push(`Overshoot ${metrics.overshoot.toFixed(1)}% exceeds limit ${criterion.overshootMax}%`)
 
             const statusMessage = allOk
-              ? '✅ All tuning conditions satisfied!'
+              ? '✅ Optimization complete and all tuning conditions satisfied!'
               : `⚠️ Some conditions not met: ${msgs.join('; ')}`
 
             setStatusMsg(statusMessage)
-            setResultSummary({ kp, ki, kd, bestCost, metrics, allOk, msgs })
             setConvergence(costHistory.map((c, i) => ({ iter: i, cost: c })))
 
             setResults({
@@ -158,13 +156,22 @@ export default function OptimizerPage() {
     worker.postMessage({ config })
   }, [running, plant, criterion, optConfig, resetResults, setResults])
 
+  const renderMsg = (msg) => {
+    const parts = msg.split('f_OF')
+    return parts.flatMap((part, i) =>
+      i < parts.length - 1
+        ? [part, <React.Fragment key={i}>f<sub>OF</sub></React.Fragment>]
+        : [part]
+    )
+  }
+
   const convData = convergence.length > 0 ? [{
     x: convergence.map(p => p.iter),
     y: convergence.map(p => p.cost),
     type: 'scatter',
     mode: 'markers',
     name: 'f<sub>OF</sub>',
-    marker: { color: OPTIMIZERS.find(o => o.id === optConfig.selected)?.color || '#3b82f6', size: 4 },
+    marker: { color: '#000000', size: 6 },
   }] : []
 
   return (
@@ -285,7 +292,7 @@ export default function OptimizerPage() {
               statusMsg.startsWith('⚠️') ? 'text-red-500' :
               'text-gray-600'
             }`} style={{ fontSize: '1.5rem' }}>
-              {statusMsg}
+              {renderMsg(statusMsg)}
             </p>
             {statusMsg.startsWith('⚠️') && (
               <p className="text-red-500 font-bold mt-1" style={{ fontSize: '1.5rem' }}>
@@ -311,7 +318,7 @@ export default function OptimizerPage() {
                 showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
               },
               yaxis: {
-                title: { text: 'f<sub>OF</sub> (log scale)', font: { size: 14 } },
+                title: { text: 'f<sub>OF</sub> (logarithmic scale)', font: { size: 14 } },
                 tickfont: { size: 13 },
                 type: 'log',
                 autorange: true,
@@ -331,51 +338,6 @@ export default function OptimizerPage() {
         </div>
       )}
 
-      {/* Result summary */}
-      {resultSummary && done && resultSummary.allOk && (
-        <div className={`card border-2 animate-slide-up ${resultSummary.allOk ? 'border-accent-green/50' : 'border-yellow-500/50'}`}>
-          <h2 className="font-semibold text-gray-900 mb-4">
-            {resultSummary.allOk ? '🎉 Optimization Complete!' : '⚠️ Optimization Complete (with warnings)'}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-            {[
-              { label: 'kp', val: resultSummary.kp, color: 'text-yellow-400' },
-              { label: 'ki', val: resultSummary.ki, color: 'text-green-400' },
-              { label: 'kd', val: resultSummary.kd, color: 'text-blue-400' },
-            ].map(g => (
-              <div key={g.label} className="metric-card">
-                <div className={`text-2xl font-bold ${g.color} font-mono`}>{g.val.toFixed(4)}</div>
-                <div className="text-gray-500 text-xs mt-1">{g.label}</div>
-              </div>
-            ))}
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-            {[
-              { label: 'Overshoot', val: `${resultSummary.metrics.overshoot.toFixed(2)}%` },
-              { label: 'Rise Time', val: `${resultSummary.metrics.riseTime.toFixed(3)} s` },
-              { label: 'Settling Time', val: `${resultSummary.metrics.settlingTime.toFixed(3)} s` },
-              { label: 'SS Error', val: resultSummary.metrics.ess.toFixed(4) },
-            ].map(m => (
-              <div key={m.label} className="metric-card">
-                <div className="text-base font-bold text-gray-900 font-mono">{m.val}</div>
-                <div className="text-gray-500 text-xs mt-1">{m.label}</div>
-              </div>
-            ))}
-          </div>
-          {!resultSummary.allOk && (
-            <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg text-yellow-400 text-sm">
-              {resultSummary.msgs.map((m, i) => <p key={i}>{m}</p>)}
-              <p className="mt-2 text-xs">Try another optimizer or relax constraints.</p>
-            </div>
-          )}
-          <div className="flex gap-3 mt-4">
-            <button onClick={handleRun} className="btn-secondary">🔄 Re-run</button>
-            <button onClick={() => navigate('/results')} className="btn-primary px-8">
-              View Full Results →
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Navigation */}
       <div className="flex justify-between pt-2">
