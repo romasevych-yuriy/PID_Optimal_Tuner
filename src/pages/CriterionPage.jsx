@@ -201,7 +201,7 @@ export default function CriterionPage() {
 
       {/* PID bounds */}
       <div className="card">
-        <h2 className="font-semibold text-gray-900 mb-4">PID Gain Search Bounds</h2>
+        <h2 className="font-semibold text-gray-900 mb-4">PID Gain Search Bounds. Lower Bounds are 0. Set Upper Bounds.</h2>
         <div className="space-y-3">
           {[
             { key: 'kpMax', sub: 'p' },
