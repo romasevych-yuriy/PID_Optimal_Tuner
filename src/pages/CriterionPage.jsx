@@ -15,7 +15,7 @@ const CRITERIA = [
 
 export default function CriterionPage() {
   const navigate = useNavigate()
-  const { criterion, setCriterion } = useStore()
+  const { criterion, setCriterion, optimizer, setOptimizerConfig } = useStore()
 
   const toggleEnabled = (key) => {
     setCriterion({ enabled: { ...criterion.enabled, [key]: !criterion.enabled[key] } })
@@ -201,10 +201,30 @@ export default function CriterionPage() {
 
       {/* PID bounds */}
       <div className="card">
-        <h2 className="font-semibold text-gray-900 mb-2">PID Gain Search Bounds</h2>
-        <p className="text-gray-500 text-xs mb-4">All optimizers search kp, ki, kd in [0, 100] by default.</p>
-        <div className="bg-dark-bg rounded-lg p-3 border border-dark-border font-mono text-sm text-gray-600">
-          kp ∈ [0, 100] &nbsp;·&nbsp; ki ∈ [0, 100] &nbsp;·&nbsp; kd ∈ [0, 100]
+        <h2 className="font-semibold text-gray-900 mb-4">PID Gain Search Bounds</h2>
+        <div className="space-y-3">
+          {[
+            { key: 'kpMax', label: 'kp' },
+            { key: 'kiMax', label: 'ki' },
+            { key: 'kdMax', label: 'kd' },
+          ].map(({ key, label }) => (
+            <div key={key} className="flex items-center gap-3">
+              <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1.5rem' }}>{label}</span>
+              <input
+                type="range" min="0" max="200" step="0.1"
+                value={optimizer[key] ?? 100}
+                onChange={e => setOptimizerConfig({ [key]: parseFloat(e.target.value) })}
+                className="flex-1"
+              />
+              <input
+                type="number" min="0" max="200" step="0.1"
+                value={optimizer[key] ?? 100}
+                onChange={e => setOptimizerConfig({ [key]: parseFloat(e.target.value) || 100 })}
+                className="input-field w-[7.5rem] text-center font-bold"
+                style={{ fontSize: '1.125rem' }}
+              />
+            </div>
+          ))}
         </div>
       </div>
 

@@ -48,7 +48,10 @@ const defaultOptimizer = {
   selected: 'PSO',   // 'PSO' | 'LDWPSO' | 'VCTPSO' | 'RingPSO' | 'DE' | 'GWO'
   population: 25,
   iterations: 200,
-  bounds: [0, 100],  // [min, max] for kp, ki, kd
+  bounds: [0, 100],  // legacy fallback
+  kpMax: 100,
+  kiMax: 100,
+  kdMax: 100,
 }
 
 const defaultResults = {
