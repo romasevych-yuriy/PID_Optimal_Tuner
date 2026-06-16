@@ -47,7 +47,7 @@ export default function CriterionPage() {
       <div className="card">
         <h2 className="font-semibold text-gray-900 mb-4">Performance Metrics (enable and set weight coefficients δ)</h2>
         <div className="space-y-3">
-          {CRITERIA.map(c => (
+          {CRITERIA.map((c, idx) => (
             <div
               key={c.key}
               className={`flex items-center gap-4 p-3 rounded-lg border transition-all duration-200 ${
@@ -75,6 +75,7 @@ export default function CriterionPage() {
               {/* Weight slider */}
               {criterion.enabled[c.key] && (
                 <div className="flex items-center gap-3 min-w-[360px]">
+                  <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1rem' }}>δ<sub>{idx + 1}</sub></span>
                   <input
                     type="range"
                     min="0" max="1" step="0.01"
