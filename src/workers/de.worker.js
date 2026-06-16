@@ -1,4 +1,4 @@
-﻿/**
+/**
  * DE/best/1/bin (Differential Evolution) Web Worker
  * CR=0.5, SF=0.6
  */
@@ -6,7 +6,7 @@ import { objectiveFunction } from './costFunction.js'
 
 self.onmessage = function(e) {
   const { config } = e.data
-  const { population = 25, iterations = 100, kpMax = 200, kiMax = 200, kdMax = 200 } = config.optimizer
+  const { population = 25, iterations = 100, kpMax = 50, kiMax = 50, kdMax = 50 } = config.optimizer
 
   const nDim = 3
   const CR = 0.5, SF = 0.6

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * VCTPSO (Variable Cognitive Topology PSO) Web Worker
  * Every RC=5 iterations, the cognitive reference changes to a random particle
  */
@@ -6,7 +6,7 @@ import { objectiveFunction } from './costFunction.js'
 
 self.onmessage = function(e) {
   const { config } = e.data
-  const { population = 25, iterations = 100, kpMax = 200, kiMax = 200, kdMax = 200 } = config.optimizer
+  const { population = 25, iterations = 100, kpMax = 50, kiMax = 50, kdMax = 50 } = config.optimizer
 
   const nDim = 3
   const w = 0.72, c1 = 1.19, c2 = 1.19, RC = 5
