@@ -204,20 +204,20 @@ export default function CriterionPage() {
         <h2 className="font-semibold text-gray-900 mb-4">PID Gain Search Bounds</h2>
         <div className="space-y-3">
           {[
-            { key: 'kpMax', label: 'kp' },
-            { key: 'kiMax', label: 'ki' },
-            { key: 'kdMax', label: 'kd' },
-          ].map(({ key, label }) => (
+            { key: 'kpMax', sub: 'p' },
+            { key: 'kiMax', sub: 'i' },
+            { key: 'kdMax', sub: 'd' },
+          ].map(({ key, sub }) => (
             <div key={key} className="flex items-center gap-3">
-              <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1.5rem' }}>{label}</span>
+              <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1.5rem' }}>k<sub>{sub}</sub></span>
               <input
-                type="range" min="0" max="200" step="0.1"
+                type="range" min="0" max="100" step="0.1"
                 value={optimizer[key] ?? 100}
                 onChange={e => setOptimizerConfig({ [key]: parseFloat(e.target.value) })}
                 className="flex-1"
               />
               <input
-                type="number" min="0" max="200" step="0.1"
+                type="number" min="0" max="100" step="0.1"
                 value={optimizer[key] ?? 100}
                 onChange={e => setOptimizerConfig({ [key]: parseFloat(e.target.value) || 100 })}
                 className="input-field w-[7.5rem] text-center font-bold"
