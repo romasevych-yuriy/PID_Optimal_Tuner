@@ -1,16 +1,16 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import useStore from '../store/useStore'
 
 const CRITERIA = [
-  { key: 'w1', label: 'ITAE', fullName: 'Integral of Time × Absolute Error', color: 'text-blue-400',   formula: 'δ₁·ITAE/(T²/2)' },
-  { key: 'w2', label: 'IAE',  fullName: 'Integral of Absolute Error',        color: 'text-cyan-400',  formula: 'δ₂·IAE/T' },
-  { key: 'w3', label: 'ISE',  fullName: 'Integral of Squared Error',         color: 'text-green-400', formula: 'δ₃·ISE/T' },
-  { key: 'w4', label: 'ITSE', fullName: 'Integral of Time × Squared Error',  color: 'text-purple-400',formula: 'δ₄·ITSE/(T²/2)' },
-  { key: 'w5', label: 'Overshoot', fullName: 'Maximum Overshoot %',          color: 'text-indigo-400',formula: 'δ₅·Osh/100' },
-  { key: 'w6', label: 'Rise Time', fullName: 'Time to reach 90% setpoint',   color: 'text-orange-400',formula: 'δ₆·tr/T' },
-  { key: 'w7', label: 'Settling Time', fullName: '±2% settling time',        color: 'text-red-400',   formula: 'δ₇·ts/T' },
-  { key: 'w8', label: 'Steady-state Error', fullName: '|r - y(∞)|',          color: 'text-pink-400',  formula: 'δ₈·ess/r' },
+  { key: 'w1', label: 'ITAE',               hat: 'ITÂE', },
+  { key: 'w2', label: 'IAE',                hat: 'IÂE',  },
+  { key: 'w3', label: 'ISE',                hat: 'ÎSE',  },
+  { key: 'w4', label: 'ITSE',               hat: 'ÎTSE', },
+  { key: 'w5', label: 'Overshoot',          hat: 'Ôsh',  },
+  { key: 'w6', label: 'Rise Time',          hat: 't̂ᵣ',  },
+  { key: 'w7', label: 'Settling Time',      hat: 't̂ₛ',  },
+  { key: 'w8', label: 'Steady-state Error', hat: 'êₛₛ', },
 ]
 
 export default function CriterionPage() {
@@ -18,15 +18,28 @@ export default function CriterionPage() {
   const { criterion, setCriterion, optimizer, setOptimizerConfig } = useStore()
 
   const toggleEnabled = (key) => {
-    setCriterion({ enabled: { ...criterion.enabled, [key]: !criterion.enabled[key] } })
+    const newEnabled = !criterion.enabled[key]
+    setCriterion({
+      enabled: { ...criterion.enabled, [key]: newEnabled },
+      weights: newEnabled
+        ? { ...criterion.weights, [key]: criterion.weights[key] > 0 ? criterion.weights[key] : 1 }
+        : { ...criterion.weights, [key]: 0 },
+    })
   }
 
   const setWeight = (key, val) => {
     const v = Math.max(0, Math.min(1, parseFloat(val) || 0))
-    setCriterion({ weights: { ...criterion.weights, [key]: v } })
+    setCriterion({
+      weights: { ...criterion.weights, [key]: v },
+      enabled: { ...criterion.enabled, [key]: v > 0 },
+    })
   }
 
   const anyEnabled = Object.values(criterion.enabled).some(Boolean)
+
+  const formulaTerms = CRITERIA
+    .filter(c => criterion.enabled[c.key] && criterion.weights[c.key] > 0)
+    .map(c => `${criterion.weights[c.key].toFixed(2)}·${c.hat}`)
 
   return (
     <div className="animate-fade-in space-y-6 max-w-4xl mx-auto">
@@ -47,34 +60,35 @@ export default function CriterionPage() {
       <div className="card">
         <h2 className="font-semibold text-gray-900 mb-4">Performance Metrics (enable and set weight coefficients δ)</h2>
         <div className="space-y-3">
-          {CRITERIA.map((c, idx) => (
-            <div
-              key={c.key}
-              className={`flex items-center gap-4 p-3 rounded-lg border transition-all duration-200 ${
-                criterion.enabled[c.key]
-                  ? 'border-accent-blue/40 bg-dark-bg'
-                  : 'border-dark-border bg-dark-bg/50'
-              }`}
-            >
-              {/* Toggle */}
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={criterion.enabled[c.key]}
-                  onChange={() => toggleEnabled(c.key)}
-                  className="sr-only peer"
-                />
-                <div className="w-10 h-5 bg-dark-border peer-focus:outline-none rounded-full peer peer-checked:bg-accent-blue transition-colors duration-200 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
-              </label>
+          {CRITERIA.map((c, idx) => {
+            const active = criterion.enabled[c.key]
+            return (
+              <div
+                key={c.key}
+                className={`flex items-center gap-4 p-3 rounded-lg border transition-all duration-200 ${
+                  active ? 'border-accent-blue/40 bg-dark-bg' : 'border-dark-border bg-dark-bg/50 opacity-40'
+                }`}
+              >
+                {/* Toggle */}
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={active}
+                    onChange={() => toggleEnabled(c.key)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-10 h-5 bg-dark-border peer-focus:outline-none rounded-full peer peer-checked:bg-accent-blue transition-colors duration-200 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
+                </label>
 
-              {/* Label */}
-              <div className="flex-1 min-w-0">
-                <span className={`font-bold ${c.color}`} style={{ fontSize: '1.3rem' }}>{c.label}</span>
-              </div>
+                {/* Label */}
+                <div className="flex-1 min-w-0">
+                  <span className="font-bold" style={{ fontSize: '1.3rem', color: active ? '#15803d' : '#9ca3af' }}>
+                    {c.label}
+                  </span>
+                </div>
 
-              {/* Weight slider */}
-              {criterion.enabled[c.key] && (
-                <div className="flex items-center gap-3 min-w-[360px]">
+                {/* Weight slider — always visible, non-interactive when disabled */}
+                <div className={`flex items-center gap-3 min-w-[360px] ${!active ? 'pointer-events-none' : ''}`}>
                   <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1.5rem' }}>δ<sub>{idx + 1}</sub></span>
                   <input
                     type="range"
@@ -93,13 +107,21 @@ export default function CriterionPage() {
                     style={{ fontSize: '1.125rem' }}
                   />
                 </div>
-              )}
-            </div>
-          ))}
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Live formula */}
+        <div className="mt-4 p-4 bg-dark-bg border border-dark-border rounded-lg text-center font-mono">
+          {formulaTerms.length > 0
+            ? <span className="text-gray-800 font-semibold">Cr = {formulaTerms.join(' + ')}</span>
+            : <span className="text-gray-500">Cr = 0 (no metrics selected)</span>
+          }
         </div>
 
         {!anyEnabled && (
-          <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500 text-sm font-bold">
+          <div className="mt-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500 text-sm font-bold">
             ⚠️ Select at least one criterion. The optimizer will use ISE by default if none selected.
           </div>
         )}
