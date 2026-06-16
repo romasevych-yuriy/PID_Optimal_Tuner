@@ -121,9 +121,9 @@ export default function ResultsPage() {
         </div>
         <div className="space-y-3 mb-4">
           {[
-            { sub: 'p', val: kp, set: setKp, color: '#f59e0b', min: 0, max: 200 },
-            { sub: 'i', val: ki, set: setKi, color: '#10b981', min: 0, max: 200 },
-            { sub: 'd', val: kd, set: setKd, color: '#3b82f6', min: 0, max: 200 },
+            { sub: 'p', val: kp, set: setKp, color: '#f59e0b', min: 0, max: 50 },
+            { sub: 'i', val: ki, set: setKi, color: '#10b981', min: 0, max: 50 },
+            { sub: 'd', val: kd, set: setKd, color: '#3b82f6', min: 0, max: 50 },
           ].map(g => (
             <div key={g.sub} className="flex items-center gap-3">
               <span className="font-bold shrink-0" style={{ fontSize: '1.5rem', color: g.color }}>k<sub>{g.sub}</sub></span>
