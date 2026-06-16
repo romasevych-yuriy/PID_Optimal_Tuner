@@ -130,8 +130,8 @@ export default function CriterionPage() {
         {/* Live formula */}
         <div className="mt-4 p-4 bg-dark-bg border border-dark-border rounded-lg text-center font-mono" style={{ fontSize: '1.2rem' }}>
           {formulaTerms.length > 0
-            ? <span className="text-gray-800 font-semibold">Cr = {formulaTerms.join(' + ')}</span>
-            : <span className="text-gray-500">Cr = 0 (no metrics selected)</span>
+            ? <span className="text-gray-800 font-semibold">Cr = {formulaTerms.join(' + ')} + Stability Penalty + Constraints Penalty</span>
+            : <span className="text-gray-500">Cr = 0 + Stability Penalty + Constraints Penalty</span>
           }
         </div>
 
