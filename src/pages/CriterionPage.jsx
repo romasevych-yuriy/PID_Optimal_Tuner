@@ -89,7 +89,7 @@ export default function CriterionPage() {
                     min="0" max="1" step="0.01"
                     value={criterion.weights[c.key]}
                     onChange={e => setWeight(c.key, e.target.value)}
-                    className="input-field w-20 text-center font-bold"
+                    className="input-field w-[7.5rem] text-center font-bold"
                     style={{ fontSize: '1.125rem' }}
                   />
                 </div>
@@ -173,7 +173,7 @@ export default function CriterionPage() {
                     type="number" min="-20" max="0" step="0.01"
                     value={criterion.uMin}
                     onChange={e => setCriterion({ uMin: parseFloat(e.target.value) || -10 })}
-                    className="input-field w-20 text-center font-bold"
+                    className="input-field w-[7.5rem] text-center font-bold"
                     style={{ fontSize: '1.125rem' }}
                   />
                 </div>
@@ -189,7 +189,7 @@ export default function CriterionPage() {
                     type="number" min="0" max="20" step="0.01"
                     value={criterion.uMax}
                     onChange={e => setCriterion({ uMax: parseFloat(e.target.value) || 10 })}
-                    className="input-field w-20 text-center font-bold"
+                    className="input-field w-[7.5rem] text-center font-bold"
                     style={{ fontSize: '1.125rem' }}
                   />
                 </div>
