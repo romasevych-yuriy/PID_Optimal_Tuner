@@ -176,7 +176,7 @@ export default function OptimizerPage() {
 
       {/* Optimizer selection */}
       <div className="card">
-        <h2 className="font-semibold text-gray-900 mb-4">Select Optimizer</h2>
+        <h2 className="font-semibold text-gray-900 mb-4">Choose Optimizer</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {OPTIMIZERS.map(opt => (
             <button
@@ -246,7 +246,7 @@ export default function OptimizerPage() {
       <div className="card">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <p className="text-gray-600 text-sm font-medium">
+            <p className="text-gray-600 font-bold" style={{ fontSize: '1.125rem' }}>
               {OPTIMIZERS.find(o => o.id === optConfig.selected)?.label} &nbsp;·&nbsp;
               {optConfig.population} agents &nbsp;·&nbsp;
               {optConfig.iterations} iterations
