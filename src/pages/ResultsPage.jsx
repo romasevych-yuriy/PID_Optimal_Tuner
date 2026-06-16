@@ -115,36 +115,35 @@ export default function ResultsPage() {
       <div className="card">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-semibold text-gray-900">PID Gains (Interactive)</h2>
-          <button onClick={resetToOptimal} className="text-xs text-accent-blue hover:text-blue-400 transition-colors">
+          <button onClick={resetToOptimal} className="px-6 py-2 rounded-lg font-semibold text-white transition-all duration-200 bg-accent-green hover:bg-emerald-400 glow-green">
             ↺ Return to Optimization Result
           </button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-4">
+        <div className="space-y-3 mb-4">
           {[
-            { label: 'kp', val: kp, set: setKp, color: '#f59e0b', min: 0, max: 200 },
-            { label: 'ki', val: ki, set: setKi, color: '#10b981', min: 0, max: 200 },
-            { label: 'kd', val: kd, set: setKd, color: '#3b82f6', min: 0, max: 200 },
+            { sub: 'p', val: kp, set: setKp, color: '#f59e0b', min: 0, max: 200 },
+            { sub: 'i', val: ki, set: setKi, color: '#10b981', min: 0, max: 200 },
+            { sub: 'd', val: kd, set: setKd, color: '#3b82f6', min: 0, max: 200 },
           ].map(g => (
-            <div key={g.label}>
-              <label className="label flex items-center justify-between">
-                <span style={{ color: g.color }} className="font-semibold">{g.label}</span>
-                <input
-                  type="number"
-                  value={g.val.toFixed(4)}
-                  onChange={e => g.set(parseFloat(e.target.value) || 0)}
-                  className="input-field w-28 text-right text-xs font-mono"
-                  step="0.001"
-                  min={g.min}
-                  max={g.max}
-                />
-              </label>
+            <div key={g.sub} className="flex items-center gap-3">
+              <span className="font-bold shrink-0" style={{ fontSize: '1.5rem', color: g.color }}>k<sub>{g.sub}</sub></span>
               <input
                 type="range"
                 min={g.min} max={g.max} step="0.001"
                 value={g.val}
                 onChange={e => g.set(parseFloat(e.target.value))}
-                className="w-full mt-1"
+                className="flex-1"
                 style={{ accentColor: g.color }}
+              />
+              <input
+                type="number"
+                value={g.val.toFixed(4)}
+                onChange={e => g.set(parseFloat(e.target.value) || 0)}
+                className="input-field w-[7.5rem] text-center font-bold"
+                style={{ fontSize: '1.125rem' }}
+                step="0.001"
+                min={g.min}
+                max={g.max}
               />
             </div>
           ))}
@@ -195,9 +194,12 @@ export default function ResultsPage() {
                 },
               ].filter(Boolean)}
               layout={{
-                xaxis: { title: { text: 'Time (s)' } },
-                yaxis: { title: { text: 'Output y(t)' } },
-                height: 280,
+                xaxis: { title: { text: 'Time (s)', font: { size: 14 } }, tickfont: { size: 13 }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                yaxis: { title: { text: 'Output y(t)', font: { size: 14 } }, tickfont: { size: 13 }, autorange: true, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', font: { size: 15 } },
+                margin: { l: 70, r: 40, t: 10, b: 55 },
+                modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
+                height: 320,
                 annotations: metrics ? [
                   { x: metrics.riseTime, y: 0.9, text: `t_r = ${metrics.riseTime.toFixed(2)}s`, showarrow: true, arrowhead: 2, ax: 30, ay: -30, font: { color: '#f59e0b', size: 10 } },
                   { x: metrics.settlingTime, y: 1.02, text: `t_s = ${metrics.settlingTime.toFixed(2)}s`, showarrow: true, arrowhead: 2, ax: 30, ay: -30, font: { color: '#ef4444', size: 10 } },
@@ -218,9 +220,12 @@ export default function ResultsPage() {
                 criterion.useControlConstraint && { x: [simData.t[0], simData.t[simData.t.length - 1]], y: [criterion.uMin, criterion.uMin], type: 'scatter', mode: 'lines', name: 'u_min', line: { color: '#ef4444', width: 1, dash: 'dot' } },
               ].filter(Boolean)}
               layout={{
-                xaxis: { title: { text: 'Time (s)' } },
-                yaxis: { title: { text: 'u(t)' } },
-                height: 280,
+                xaxis: { title: { text: 'Time (s)', font: { size: 14 } }, tickfont: { size: 13 }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                yaxis: { title: { text: 'u(t)', font: { size: 14 } }, tickfont: { size: 13 }, autorange: true, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', font: { size: 15 } },
+                margin: { l: 70, r: 40, t: 10, b: 55 },
+                modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
+                height: 320,
               }}
             />
           ) : <div className="h-64 flex items-center justify-center text-gray-600">Computing...</div>}
@@ -257,10 +262,13 @@ export default function ResultsPage() {
                 { x: [bode.freqs[0], bode.freqs[bode.freqs.length - 1]], y: [-180, -180], type: 'scatter', mode: 'lines', name: '-180°', line: { color: '#4b5563', width: 1, dash: 'dot' }, xaxis: 'x', yaxis: 'y2', showlegend: false },
               ]}
               layout={{
-                xaxis: { type: 'log', title: { text: 'Frequency (rad/s)' } },
-                yaxis: { title: { text: 'Magnitude (dB)' }, side: 'left' },
-                yaxis2: { title: { text: 'Phase (°)' }, side: 'right', overlaying: 'y' },
-                height: 320,
+                xaxis: { type: 'log', title: { text: 'Frequency (rad/s)', font: { size: 14 } }, tickfont: { size: 13 }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                yaxis: { title: { text: 'Magnitude (dB)', font: { size: 14 } }, tickfont: { size: 13 }, showline: true, linecolor: '#9ca3af', linewidth: 1.5, side: 'left' },
+                yaxis2: { title: { text: 'Phase (°)', font: { size: 14 } }, tickfont: { size: 13 }, side: 'right', overlaying: 'y' },
+                legend: { x: 0.99, y: 0.99, xanchor: 'right', yanchor: 'top', font: { size: 15 } },
+                margin: { l: 70, r: 70, t: 10, b: 55 },
+                modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
+                height: 380,
               }}
             />
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
