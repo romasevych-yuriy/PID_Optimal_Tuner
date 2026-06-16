@@ -151,19 +151,19 @@ export default function ResultsPage() {
         {/* Both forms */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-dark-bg rounded-lg p-3 border border-dark-border">
-            <p className="text-gray-500 text-xs font-medium mb-2">Parallel Form</p>
-            <div className="font-mono font-bold space-y-1" style={{ fontSize: '1.75rem' }}>
-              <p><span className="text-yellow-400">kp</span> = {kp.toFixed(4)}</p>
-              <p><span className="text-green-400">ki</span> = {ki.toFixed(4)}</p>
-              <p><span className="text-blue-400">kd</span> = {kd.toFixed(4)}</p>
+            <p className="text-gray-500 font-medium mb-2" style={{ fontSize: '1.5rem' }}>Parallel Form</p>
+            <div className="font-mono font-bold space-y-1" style={{ fontSize: '0.875rem' }}>
+              <p><span className="text-yellow-400">k<sub>p</sub></span> = {kp.toFixed(4)}</p>
+              <p><span className="text-green-400">k<sub>i</sub></span> = {ki.toFixed(4)}</p>
+              <p><span className="text-blue-400">k<sub>d</sub></span> = {kd.toFixed(4)}</p>
             </div>
           </div>
           <div className="bg-dark-bg rounded-lg p-3 border border-dark-border">
-            <p className="text-gray-500 text-xs font-medium mb-2">Standard Form</p>
-            <div className="font-mono font-bold space-y-1" style={{ fontSize: '1.75rem' }}>
-              <p><span className="text-yellow-400">Kp</span> = {Kp.toFixed(4)}</p>
-              <p><span className="text-green-400">Ti</span> = {isFinite(Ti) ? Ti.toFixed(4) : '∞'} s</p>
-              <p><span className="text-blue-400">Td</span> = {Td.toFixed(4)} s</p>
+            <p className="text-gray-500 font-medium mb-2" style={{ fontSize: '1.5rem' }}>Standard Form</p>
+            <div className="font-mono font-bold space-y-1" style={{ fontSize: '0.875rem' }}>
+              <p><span className="text-yellow-400">K<sub>p</sub></span> = {Kp.toFixed(4)}</p>
+              <p><span className="text-green-400">T<sub>i</sub></span> = {isFinite(Ti) ? Ti.toFixed(4) : '∞'} s</p>
+              <p><span className="text-blue-400">T<sub>d</sub></span> = {Td.toFixed(4)} s</p>
             </div>
           </div>
         </div>
