@@ -291,11 +291,11 @@ export default function OptimizerPage() {
               statusMsg.startsWith('✅') ? 'text-accent-green' :
               statusMsg.startsWith('⚠️') ? 'text-red-500' :
               'text-gray-600'
-            }`} style={{ fontSize: '1.5rem' }}>
+            }`} style={{ fontSize: '1.2rem' }}>
               {renderMsg(statusMsg)}
             </p>
             {statusMsg.startsWith('⚠️') && (
-              <p className="text-red-500 font-bold mt-1" style={{ fontSize: '1.5rem' }}>
+              <p className="text-red-500 font-bold mt-1" style={{ fontSize: '1.2rem' }}>
                 Make the conditions softer and re-run optimization
               </p>
             )}
@@ -331,7 +331,7 @@ export default function OptimizerPage() {
             }}
           />
           {bestCostLive !== null && (
-            <p className="text-gray-700 font-bold font-mono mt-2" style={{ fontSize: '1.5rem' }}>
+            <p className="text-gray-700 font-bold font-mono mt-2" style={{ fontSize: '1.2rem' }}>
               Current best: f<sub>OF</sub> = {bestCostLive.toExponential(6)}
             </p>
           )}
