@@ -241,12 +241,12 @@ export default function CriterionPage() {
         <h2 className="font-semibold text-gray-900 mb-4">PID Gain Search Bounds. Lower Bounds are 0. Set Upper Bounds.</h2>
         <div className="space-y-3">
           {[
-            { key: 'kpMax', sub: 'p' },
-            { key: 'kiMax', sub: 'i' },
-            { key: 'kdMax', sub: 'd' },
-          ].map(({ key, sub }) => (
+            { key: 'kpMax', sub: 'p', color: '#f59e0b' },
+            { key: 'kiMax', sub: 'i', color: '#10b981' },
+            { key: 'kdMax', sub: 'd', color: '#3b82f6' },
+          ].map(({ key, sub, color }) => (
             <div key={key} className={`flex items-center gap-3 transition-opacity duration-200 ${(optimizer[key] ?? 200) === 0 ? 'opacity-40' : ''}`}>
-              <span className="font-bold text-gray-700 shrink-0" style={{ fontSize: '1.5rem' }}>k<sub>{sub}</sub></span>
+              <span className="font-bold shrink-0" style={{ fontSize: '1.5rem', color }}>k<sub>{sub}</sub></span>
               <input
                 type="range" min="0" max="200" step="0.1"
                 value={optimizer[key] ?? 200}

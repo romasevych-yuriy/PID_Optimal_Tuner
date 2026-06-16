@@ -121,8 +121,8 @@ export function computeBode(num, den, delay, kp, ki, kd) {
   const N = 500
   const wMin = 1e-3, wMax = 1e3
   const freqs = []
-  const mag = []
-  const phase = []
+  const mag = [], phase = []
+  const magCL = [], phaseCL = []
 
   for (let i = 0; i < N; i++) {
     const w = wMin * Math.pow(wMax / wMin, i / (N - 1))
@@ -149,9 +149,15 @@ export function computeBode(num, den, delay, kp, ki, kd) {
     const Ljw = complexMul(Cjw, GjwD)
     const magVal = Math.sqrt(Ljw.re ** 2 + Ljw.im ** 2)
     const phaseVal = Math.atan2(Ljw.im, Ljw.re) * 180 / Math.PI
-
     mag.push(20 * Math.log10(Math.max(magVal, 1e-20)))
     phase.push(phaseVal)
+
+    // Closed-loop H(jw) = L(jw) / (1 + L(jw))
+    const Hjw = complexDiv(Ljw, { re: 1 + Ljw.re, im: Ljw.im })
+    const magCLVal = Math.sqrt(Hjw.re ** 2 + Hjw.im ** 2)
+    const phaseCLVal = Math.atan2(Hjw.im, Hjw.re) * 180 / Math.PI
+    magCL.push(20 * Math.log10(Math.max(magCLVal, 1e-20)))
+    phaseCL.push(phaseCLVal)
   }
 
   // Gain margin: frequency where phase = -180°, margin = -mag at that freq
@@ -178,7 +184,7 @@ export function computeBode(num, den, delay, kp, ki, kd) {
     }
   }
 
-  return { freqs, mag, phase, gainMargin, phaseMargin, gainMarginFreq, phaseMarginFreq }
+  return { freqs, mag, phase, magCL, phaseCL, gainMargin, phaseMargin, gainMarginFreq, phaseMarginFreq }
 }
 
 function evalPolyComplex(coeffs, s) {
