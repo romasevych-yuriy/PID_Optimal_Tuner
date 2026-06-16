@@ -15,7 +15,7 @@ export function objectiveFunction(kp, ki, kd, config) {
   try {
     // Run simulation
     const result = simRK4(num, den, delay, kp, ki, kd, dt, T, r, constraints)
-    const { y, u, t } = result
+    const { y, u, t, finalState } = result
 
     if (!y || y.some(v => isNaN(v) || !isFinite(v))) return 1e12
 
@@ -26,7 +26,7 @@ export function objectiveFunction(kp, ki, kd, config) {
     const metrics = computeMetrics(t, y, u, r)
 
     // Stability penalty PS
-    const PS = computePS(yFinal, r)
+    const PS = computePS(yFinal, finalState, r)
 
     // Overshoot penalty PC
     const PC = constraints.useOvershootConstraint
@@ -54,7 +54,7 @@ function simRK4(num, den, delay, kp, ki, kd, dt, T, r, constraints) {
     const steps = Math.ceil(T / dt) + 1
     const t = [], y = [], u = []
     for (let i = 0; i < steps; i++) { t.push(i * dt); y.push(gain * r); u.push(0) }
-    return { t, y, u }
+    return { t, y, u, finalState: [] }
   }
 
   const an = den[n]
@@ -137,7 +137,7 @@ function simRK4(num, den, delay, kp, ki, kd, dt, T, r, constraints) {
     }
   }
 
-  return { t, y, u }
+  return { t, y, u, finalState: Array.from(state) }
 }
 
 function computeMetrics(t, y, u, r) {
@@ -184,13 +184,21 @@ function computeMetrics(t, y, u, r) {
   return { ITAE, IAE, ISE, ITSE, overshoot, riseTime, settlingTime, ess }
 }
 
-function computePS(yFinal, r) {
-  const delta = 0.05  // 5% tolerance
-  const err = Math.abs(yFinal - r)
-  if (err > delta * Math.abs(r)) {
-    return 1e6 * ((yFinal - r) / (delta * Math.abs(r))) ** 2
-  }
-  return 0
+function computePS(yFinal, finalState, r) {
+  // Term 1: normalised output error
+  const relError = Math.abs(yFinal - r) / Math.abs(r)
+
+  // Terms 2+: state[1]..state[n-1] are derivatives (dx/dt, d²x/dt², …)
+  // In controllable canonical form these equal 0 at true steady state.
+  // state[0]  – base state (can be non-zero at SS, not checked)
+  // state[n]  – integrator (excluded by taking slice up to length-1)
+  const derivStates = finalState.slice(1, finalState.length - 1)
+
+  const anyViolation = relError > 0.01 || derivStates.some(s => Math.abs(s) > 0.01)
+  if (!anyViolation) return 0
+
+  const sum = relError + derivStates.reduce((acc, s) => acc + Math.abs(s), 0)
+  return 1e6 * sum
 }
 
 function computePC(overshoot, overshootMax) {
