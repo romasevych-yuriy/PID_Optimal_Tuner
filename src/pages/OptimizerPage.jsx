@@ -171,7 +171,7 @@ export default function OptimizerPage() {
     type: 'scatter',
     mode: 'markers',
     name: 'f<sub>OF</sub>',
-    marker: { color: '#000000', size: 6 },
+    marker: { color: '#000000', size: 9 },
   }] : []
 
   return (
