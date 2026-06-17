@@ -1,326 +1,603 @@
 import Plotly from 'plotly.js-dist-min'
+import { simulate, computeSimParams } from '../math/simulation'
+import { polynomialRoots } from '../store/useStore'
 
+// ── Color palette (light / professional) ────────────────────────────────────
+const C = {
+  BLUE:       [59,  130, 246],
+  BLUE_LIGHT: [219, 234, 254],
+  WHITE:      [255, 255, 255],
+  DARK:       [30,  41,  59],
+  MED:        [71,  85,  105],
+  TH_BG:      [226, 232, 240],
+  ROW_ALT:    [248, 250, 252],
+  GREEN:      [22,  163, 74],
+  RED:        [220, 38,  38],
+  WARN:       [180, 83,  9],
+  GRAY:       [148, 163, 184],
+}
+
+const A4_W = 210, A4_H = 297, MARGIN = 15, TOTAL_PAGES = 6
+const CW = A4_W - 2 * MARGIN   // 180 mm usable width
+
+const pad2 = n => String(n).padStart(2, '0')
+
+// ── Plotly chart render helpers ──────────────────────────────────────────────
+const CHART_LAYOUT_BASE = {
+  paper_bgcolor: '#ffffff',
+  plot_bgcolor:  '#f8fafc',
+  font: { color: '#1e293b', family: 'Helvetica, Arial, sans-serif', size: 13 },
+  margin: { l: 70, r: 50, t: 20, b: 55 },
+  xaxis: { gridcolor: '#e2e8f0', linecolor: '#94a3b8', tickcolor: '#64748b', zerolinecolor: '#cbd5e1' },
+  yaxis: { gridcolor: '#e2e8f0', linecolor: '#94a3b8', tickcolor: '#64748b', zerolinecolor: '#cbd5e1' },
+  legend: { bgcolor: 'rgba(255,255,255,0.9)', bordercolor: '#e2e8f0', borderwidth: 1 },
+}
+
+async function renderChart(traces, layoutOverride = {}, w = 1400, h = 560) {
+  const div = document.createElement('div')
+  div.style.cssText = `position:fixed;top:-9999px;left:-9999px;width:${w}px;height:${h}px;`
+  document.body.appendChild(div)
+  try {
+    const layout = {
+      ...CHART_LAYOUT_BASE,
+      ...layoutOverride,
+      xaxis: { ...CHART_LAYOUT_BASE.xaxis, ...(layoutOverride.xaxis || {}) },
+      yaxis: { ...CHART_LAYOUT_BASE.yaxis, ...(layoutOverride.yaxis || {}) },
+      ...(layoutOverride.yaxis2 ? { yaxis2: { ...CHART_LAYOUT_BASE.yaxis, ...layoutOverride.yaxis2 } } : {}),
+    }
+    await Plotly.newPlot(div, traces, layout, { staticPlot: true, responsive: false })
+    return await Plotly.toImage(div, { format: 'png', width: w, height: h })
+  } catch {
+    return null
+  } finally {
+    try { Plotly.purge(div) } catch {}
+    document.body.removeChild(div)
+  }
+}
+
+// ── jsPDF drawing helpers ────────────────────────────────────────────────────
+function makeHelpers(doc) {
+  const fc  = (...c) => doc.setFillColor(...c)
+  const tc  = (...c) => doc.setTextColor(...c)
+  const dc  = (...c) => doc.setDrawColor(...c)
+  const lw  = v => doc.setLineWidth(v)
+  const fs  = v => doc.setFontSize(v)
+  const ff  = (f, s) => doc.setFont('helvetica', s || 'normal')
+
+  const pageHeader = (title) => {
+    fc(...C.BLUE); doc.rect(0, 0, A4_W, 14, 'F')
+    fs(11); ff(null, 'bold'); tc(...C.WHITE)
+    doc.text(title, A4_W / 2, 9.5, { align: 'center' })
+  }
+
+  const sectionTitle = (txt, y) => {
+    fs(14); ff(null, 'bold'); tc(...C.BLUE)
+    doc.text(txt, MARGIN, y)
+    dc(...C.BLUE_LIGHT); lw(0.4)
+    doc.line(MARGIN, y + 1.5, A4_W - MARGIN, y + 1.5)
+    return y + 8
+  }
+
+  const body = (txt, x, y, opts = {}) => {
+    fs(opts.size || 10); ff(null, opts.bold ? 'bold' : 'normal')
+    tc(...(opts.color || C.DARK))
+    const lines = doc.splitTextToSize(txt, opts.maxW || CW)
+    doc.text(lines, x, y, opts.align ? { align: opts.align } : {})
+    return y + lines.length * (opts.lineH || 5.5)
+  }
+
+  const addFooter = (p) => {
+    fs(8); ff(null, 'normal'); tc(...C.GRAY)
+    doc.text(`Page ${p} of ${TOTAL_PAGES}`, A4_W / 2, A4_H - 7, { align: 'center' })
+  }
+
+  // Generic table: returns new y
+  const table = (headers, rows, x, y, colWidths) => {
+    const RH = 7, TW = colWidths.reduce((a, b) => a + b, 0)
+    // Header row
+    fc(...C.TH_BG); doc.rect(x, y, TW, RH, 'F')
+    dc(...C.GRAY); lw(0.2); doc.rect(x, y, TW, RH, 'S')
+    fs(9); ff(null, 'bold'); tc(...C.DARK)
+    let cx = x
+    headers.forEach((h, i) => { doc.text(String(h), cx + 2, y + 4.9); cx += colWidths[i] })
+    y += RH
+    rows.forEach((row, ri) => {
+      fc(...(ri % 2 === 0 ? C.WHITE : C.ROW_ALT)); doc.rect(x, y, TW, RH, 'F')
+      dc(...C.TH_BG); lw(0.1); doc.rect(x, y, TW, RH, 'S')
+      fs(9); ff(null, 'normal')
+      let cx = x
+      row.forEach((cell, ci) => {
+        const isObj = cell && typeof cell === 'object' && 'value' in cell
+        tc(...(isObj ? (cell.color || C.MED) : C.MED))
+        if (isObj && cell.bold) ff(null, 'bold')
+        doc.text(String(isObj ? cell.value : cell), cx + 2, y + 4.9)
+        if (isObj && cell.bold) ff(null, 'normal')
+        cx += colWidths[ci]
+      })
+      y += RH
+    })
+    return y + 3
+  }
+
+  // Add a chart image; returns new y
+  const addChart = (imgData, y, h) => {
+    if (imgData) { doc.addImage(imgData, 'PNG', MARGIN, y, CW, h); return y + h + 3 }
+    return y
+  }
+
+  return { pageHeader, sectionTitle, body, addFooter, table, addChart }
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 export async function generatePDF({ plant, criterion, optimizer, results }) {
   const { jsPDF } = await import('jspdf')
-
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-  const W = 210, H = 297
-  const margin = 18
-  const textW = W - margin * 2
+  const { pageHeader, sectionTitle, body, addFooter, table, addChart } = makeHelpers(doc)
 
-  // Colors
-  const DARK = [15, 17, 23]
-  const CARD = [26, 31, 46]
-  const ACCENT = [59, 130, 246]
-  const GREEN = [16, 185, 129]
-  const GRAY = [156, 163, 175]
-  const TEXT = [229, 231, 235]
+  const kp = results.kp ?? 0
+  const ki = results.ki ?? 0
+  const kd = results.kd ?? 0
+  const metrics  = results.metrics  || {}
+  const bodeData = results.freqData || {}
+  const conv     = results.convergence || []
 
-  const bg = (x, y, w, h, color) => {
-    doc.setFillColor(...color)
-    doc.rect(x, y, w, h, 'F')
+  const CRITERIA_LABELS = {
+    w1: 'ITAE', w2: 'IAE', w3: 'ISE', w4: 'ITSE',
+    w5: 'Overshoot', w6: 'Rise Time', w7: 'Settling Time', w8: 'Steady-state Error',
   }
 
-  const heading = (text, y, size = 14) => {
-    doc.setFontSize(size)
-    doc.setTextColor(...ACCENT)
-    doc.text(text, margin, y)
-    doc.setDrawColor(...ACCENT)
-    doc.setLineWidth(0.3)
-    doc.line(margin, y + 1.5, W - margin, y + 1.5)
-  }
-
-  const body = (text, y, size = 9, color = TEXT) => {
-    doc.setFontSize(size)
-    doc.setTextColor(...color)
-    doc.text(text, margin, y)
-  }
-
-  const tableRow = (cols, y, isHeader = false) => {
-    const colW = textW / cols.length
-    if (isHeader) {
-      doc.setFillColor(...CARD)
-      doc.rect(margin, y - 4, textW, 7, 'F')
-    }
-    cols.forEach((text, i) => {
-      doc.setFontSize(8)
-      doc.setTextColor(...(isHeader ? ACCENT : GRAY))
-      doc.text(String(text), margin + i * colW + 2, y)
-    })
-  }
-
-  const newPage = () => {
-    doc.addPage()
-    bg(0, 0, W, H, DARK)
-  }
-
-  // ─── Page 1: Title ───────────────────────────────────────────────────────────
-  bg(0, 0, W, H, DARK)
-  bg(0, 0, W, 60, CARD)
-
-  doc.setFontSize(26)
-  doc.setTextColor(...ACCENT)
-  doc.text('PID Controller Tuning Report', W / 2, 28, { align: 'center' })
-
-  doc.setFontSize(12)
-  doc.setTextColor(...TEXT)
-  doc.text('PID Optimal Tuner v1.0', W / 2, 40, { align: 'center' })
-
-  doc.setFontSize(9)
-  doc.setTextColor(...GRAY)
   const now = new Date()
-  doc.text(`Generated: ${now.toLocaleString()}`, W / 2, 50, { align: 'center' })
-  doc.text('Author: Yuriy Romasevych — romasevichyuriy@ukr.net', W / 2, 57, { align: 'center' })
+  const dateStr = `${pad2(now.getDate())}/${pad2(now.getMonth()+1)}/${now.getFullYear()} ${pad2(now.getHours())}:${pad2(now.getMinutes())}:${pad2(now.getSeconds())}`
+  const fileDate = `${now.getFullYear()}-${pad2(now.getMonth()+1)}-${pad2(now.getDate())}`
 
-  let y = 80
-  heading('Summary', y)
-  y += 10
+  // ── Pre-render all charts ──────────────────────────────────────────────────
 
-  const optimizerName = optimizer.selected
-  const metrics = results.metrics || {}
-  const kp = results.kp || 0, ki = results.ki || 0, kd = results.kd || 0
+  const LINE_STYLE = { xaxis: { title: { text: '' } }, yaxis: { title: { text: '' } }, legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom' } }
 
-  const summaryRows = [
-    ['Parameter', 'Value'],
-    ['Optimizer', optimizerName],
-    ['kp (parallel)', kp.toFixed(4)],
-    ['ki (parallel)', ki.toFixed(4)],
-    ['kd (parallel)', kd.toFixed(4)],
-    ['Kp (standard)', kp.toFixed(4)],
-    ['Ti (standard)', ki > 0 ? (kp / ki).toFixed(4) + ' s' : '∞'],
-    ['Td (standard)', kp > 0 ? (kd / kp).toFixed(4) + ' s' : '0'],
-    ['Final f_OF', (results.finalCost || 0).toExponential(6)],
-    ['All Constraints Met', results.allConstraintsMet ? 'Yes' : 'No'],
-  ]
-  summaryRows.forEach((row, i) => {
-    tableRow(row, y + i * 7, i === 0)
-  })
+  // Chart A: Open-loop step response
+  let imgOL = null
+  try {
+    const { dt, T } = computeSimParams(plant.den, plant.delay)
+    const olSim = simulate(plant.num, plant.den, plant.delay, 0, 0, 0, { dt, T, r: 1, openLoop: true })
+    imgOL = await renderChart([
+      { x: Array.from(olSim.t), y: Array.from(olSim.y), type: 'scatter', mode: 'lines', name: 'y(t)', line: { color: '#3b82f6', width: 2.5 } },
+      { x: [olSim.t[0], olSim.t[olSim.t.length-1]], y: [1, 1], type: 'scatter', mode: 'lines', name: 'r(t)', line: { color: '#ef4444', width: 1.5 } },
+    ], { xaxis: { title: { text: 'Time (s)' } }, yaxis: { title: { text: 'Output y(t)' } }, ...LINE_STYLE })
+  } catch {}
 
-  // ─── Page 2: System Model ────────────────────────────────────────────────────
-  newPage()
-  y = 25
-  heading('System Model', y, 14)
-  y += 12
+  // Chart B: Pole-zero map
+  let imgPZ = null
+  let openLoopStable = true
+  try {
+    const activeDen = plant.den.slice(0, plant.order + 1)
+    const n = activeDen.length - 1
+    if (n > 0) {
+      const an = activeDen[n]
+      const poly = Array.from({ length: n + 1 }, (_, i) => activeDen[n - i] / an)
+      const poles = polynomialRoots(poly)
+      openLoopStable = poles.length > 0 && poles.every(p => p.re < -1e-9)
+      const zeros = []
+      const b0 = plant.num[0] ?? 0, b1 = plant.num[1] ?? 0
+      if (Math.abs(b1) > 1e-12) zeros.push({ re: -b0 / b1, im: 0 })
+      const traces = [
+        { x: poles.map(p => p.re), y: poles.map(p => p.im), type: 'scatter', mode: 'markers', name: 'Poles', marker: { symbol: 'x', size: 14, color: '#ef4444', line: { width: 2.5 } } },
+      ]
+      if (zeros.length) traces.push({ x: zeros.map(z => z.re), y: zeros.map(z => z.im), type: 'scatter', mode: 'markers', name: 'Zeros', marker: { symbol: 'circle-open', size: 14, color: '#3b82f6', line: { width: 2.5 } } })
+      imgPZ = await renderChart(traces, {
+        xaxis: { title: { text: 'Real' }, zeroline: true, zerolinecolor: '#94a3b8', zerolinewidth: 1 },
+        yaxis: { title: { text: 'Imaginary' }, zeroline: true, zerolinecolor: '#94a3b8', zerolinewidth: 1 },
+        legend: { x: 0.99, y: 0.99, xanchor: 'right', yanchor: 'top' },
+        margin: { l: 70, r: 40, t: 20, b: 55 },
+      }, 1400, 480)
+    }
+  } catch {}
 
-  body(`Method: ${plant.method === 'tf' ? 'Manual Transfer Function' : 'System Identification'}`, y)
-  y += 8
-
-  const num = plant.num, den = plant.den
-  const numStr = num.map((v, i) => v !== 0 ? (i === 0 ? `${v}` : `${v}s^${i}`) : null).filter(Boolean).join(' + ') || '0'
-  const denStr = den.map((v, i) => v !== 0 ? (i === 0 ? `${v}` : `${v}s^${i}`) : null).filter(Boolean).join(' + ') || '0'
-
-  body(`Transfer Function G(s) = [${numStr}] / [${denStr}]${plant.delay > 0 ? ` · exp(-${plant.delay}s)` : ''}`, y, 8)
-  y += 10
-
-  const tfTable = [
-    ['Coefficient', 'Value'],
-    ['b0 (numerator)', String(num[0] || 0)],
-    ['b1', String(num[1] || 0)],
-    ['b2', String(num[2] || 0)],
-    ['a0 (denominator)', String(den[0] || 0)],
-    ['a1', String(den[1] || 0)],
-    ['a2', String(den[2] || 0)],
-    ['a3', String(den[3] || 0)],
-    ['a4', String(den[4] || 0)],
-    ['Delay L (s)', String(plant.delay || 0)],
-  ]
-  tfTable.forEach((row, i) => tableRow(row, y + i * 7, i === 0))
-
-  // ─── Page 3: Optimization Setup ─────────────────────────────────────────────
-  newPage()
-  y = 25
-  heading('Optimization Setup', y, 14)
-  y += 12
-
-  body('Active Criteria:', y, 10, ACCENT)
-  y += 8
-  const criteriaNames = { w1: 'ITAE', w2: 'IAE', w3: 'ISE', w4: 'ITSE', w5: 'Overshoot', w6: 'Rise Time', w7: 'Settling Time', w8: 'Steady-state Error' }
-  const activeCriteria = [['Criterion', 'Weight'], ...Object.entries(criterion.weights)
-    .filter(([k]) => criterion.enabled[k])
-    .map(([k, v]) => [criteriaNames[k], v.toFixed(3)])]
-  activeCriteria.forEach((row, i) => tableRow(row, y + i * 7, i === 0))
-  y += activeCriteria.length * 7 + 8
-
-  body('Constraints:', y, 10, ACCENT)
-  y += 8
-  const constraintRows = [
-    ['Constraint', 'Value'],
-    ['Overshoot limit', criterion.useOvershootConstraint ? `${criterion.overshootMax}%` : 'None'],
-    ['Control u_min', criterion.useControlConstraint ? String(criterion.uMin) : 'None'],
-    ['Control u_max', criterion.useControlConstraint ? String(criterion.uMax) : 'None'],
-  ]
-  constraintRows.forEach((row, i) => tableRow(row, y + i * 7, i === 0))
-  y += constraintRows.length * 7 + 8
-
-  body('Optimizer Parameters:', y, 10, ACCENT)
-  y += 8
-  const optRows = [
-    ['Parameter', 'Value'],
-    ['Algorithm', optimizer.selected],
-    ['Population', '25'],
-    ['Iterations', '200'],
-    ['kp bounds', '[0, 100]'],
-    ['ki bounds', '[0, 100]'],
-    ['kd bounds', '[0, 100]'],
-  ]
-  optRows.forEach((row, i) => tableRow(row, y + i * 7, i === 0))
-
-  // ─── Page 4: Convergence ─────────────────────────────────────────────────────
-  newPage()
-  y = 25
-  heading('Optimization Convergence', y, 14)
-  y += 12
-
-  const conv = results.convergence || []
+  // Chart C: Convergence
+  let imgConv = null
   if (conv.length > 0) {
-    // Render convergence chart to image
-    const convDiv = document.createElement('div')
-    convDiv.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:600px;height:250px;'
-    document.body.appendChild(convDiv)
-    try {
-      await Plotly.newPlot(convDiv, [{
-        x: conv.map((_, i) => i),
-        y: conv,
-        type: 'scatter',
-        mode: 'lines',
-        line: { color: '#3b82f6', width: 2 },
-      }], {
-        paper_bgcolor: '#1a1f2e',
-        plot_bgcolor: '#0f1117',
-        font: { color: '#9ca3af' },
-        margin: { l: 50, r: 20, t: 20, b: 40 },
-        xaxis: { title: { text: 'Iteration' }, gridcolor: '#2a3040' },
-        yaxis: { title: { text: 'f_OF' }, type: 'log', gridcolor: '#2a3040' },
-      }, { staticPlot: true })
-      const imgData = await Plotly.toImage(convDiv, { format: 'png', width: 600, height: 250 })
-      doc.addImage(imgData, 'PNG', margin, y, textW, 90)
-      y += 95
-    } catch {}
-    document.body.removeChild(convDiv)
-  }
-
-  body(`Final f_OF = ${(results.finalCost || 0).toExponential(6)}`, y, 9)
-  y += 7
-  body(`Status: ${results.statusMessage || 'N/A'}`, y, 8, results.allConstraintsMet ? GREEN : [245, 158, 11])
-
-  // ─── Page 5: Time Domain Results ─────────────────────────────────────────────
-  newPage()
-  y = 25
-  heading('Tuning Results — Time Domain', y, 14)
-  y += 12
-
-  // PID table
-  const pidTable = [
-    ['Parameter', 'Parallel Form', 'Standard Form'],
-    ['Kp / kp', kp.toFixed(4), kp.toFixed(4)],
-    ['Ki→Ti', ki.toFixed(4), ki > 0 ? `Ti = ${(kp / ki).toFixed(4)} s` : '∞'],
-    ['Kd→Td', kd.toFixed(4), kp > 0 ? `Td = ${(kd / kp).toFixed(4)} s` : '0'],
-  ]
-  pidTable.forEach((row, i) => {
-    const colW = textW / 3
-    if (i === 0) { doc.setFillColor(...CARD); doc.rect(margin, y - 4, textW, 7, 'F') }
-    row.forEach((text, j) => {
-      doc.setFontSize(8)
-      doc.setTextColor(...(i === 0 ? ACCENT : GRAY))
-      doc.text(String(text), margin + j * colW + 2, y)
+    const iters = conv.map((_, i) => i + 1)
+    imgConv = await renderChart([
+      { x: iters, y: conv, type: 'scatter', mode: 'markers', name: 'f<sub>OF</sub>', marker: { color: '#000000', size: 7 } },
+    ], {
+      xaxis: { title: { text: 'Iteration' } },
+      yaxis: { title: { text: 'Objective Function (log scale)' }, type: 'log' },
     })
-    y += 7
-  })
-  y += 5
-
-  // Step response chart
-  const simData = results.simData
-  if (simData) {
-    const chartDiv = document.createElement('div')
-    chartDiv.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:600px;height:200px;'
-    document.body.appendChild(chartDiv)
-    try {
-      await Plotly.newPlot(chartDiv, [
-        { x: simData.t, y: simData.y, type: 'scatter', mode: 'lines', name: 'y(t)', line: { color: '#3b82f6', width: 2 } },
-        { x: [simData.t[0], simData.t[simData.t.length - 1]], y: [1, 1], mode: 'lines', name: 'r', line: { color: '#10b981', dash: 'dash', width: 1 } },
-      ], {
-        paper_bgcolor: '#1a1f2e', plot_bgcolor: '#0f1117', font: { color: '#9ca3af' },
-        margin: { l: 50, r: 20, t: 15, b: 40 },
-        xaxis: { title: { text: 'Time (s)' }, gridcolor: '#2a3040' },
-        yaxis: { title: { text: 'y(t)' }, gridcolor: '#2a3040' },
-      }, { staticPlot: true })
-      const imgData = await Plotly.toImage(chartDiv, { format: 'png', width: 600, height: 200 })
-      doc.addImage(imgData, 'PNG', margin, y, textW, 65)
-      y += 68
-    } catch {}
-    document.body.removeChild(chartDiv)
   }
 
-  // Metrics table
-  const metricsTable = [
-    ['Metric', 'Value'],
-    ['ITAE', (metrics.ITAE || 0).toFixed(4)],
-    ['IAE', (metrics.IAE || 0).toFixed(4)],
-    ['ISE', (metrics.ISE || 0).toFixed(4)],
-    ['ITSE', (metrics.ITSE || 0).toFixed(4)],
-    ['Overshoot', `${(metrics.overshoot || 0).toFixed(2)}%`],
-    ['Rise Time', `${(metrics.riseTime || 0).toFixed(4)} s`],
-    ['Settling Time', `${(metrics.settlingTime || 0).toFixed(4)} s`],
-    ['Steady-state Error', (metrics.ess || 0).toFixed(6)],
-  ]
-  metricsTable.forEach((row, i) => tableRow(row, y + i * 7, i === 0))
+  // Charts D & E: Step response and control signal (side by side)
+  let imgStep = null, imgCtrl = null
+  if (results.simData) {
+    const sd = results.simData
+    const tArr = Array.from(sd.t), yArr = Array.from(sd.y), uArr = Array.from(sd.u)
+    imgStep = await renderChart([
+      { x: tArr, y: yArr, type: 'scatter', mode: 'lines', name: 'y(t)', line: { color: '#3b82f6', width: 2.5 } },
+      { x: [tArr[0], tArr[tArr.length-1]], y: [1, 1], type: 'scatter', mode: 'lines', name: 'Setpoint r(t)', line: { color: '#ef4444', width: 1.5 } },
+    ], { xaxis: { title: { text: 'Time (s)' } }, yaxis: { title: { text: 'Output y(t)' } }, ...LINE_STYLE }, 900, 480)
 
-  // ─── Page 6: Frequency Domain ────────────────────────────────────────────────
-  newPage()
-  y = 25
-  heading('Tuning Results — Frequency Domain', y, 14)
-  y += 12
-
-  const bode = results.freqData
-  if (bode) {
-    const bodeDiv = document.createElement('div')
-    bodeDiv.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:600px;height:280px;'
-    document.body.appendChild(bodeDiv)
-    try {
-      await Plotly.newPlot(bodeDiv, [
-        { x: bode.freqs, y: bode.mag, type: 'scatter', mode: 'lines', name: 'Mag (dB)', line: { color: '#3b82f6', width: 2 }, yaxis: 'y' },
-        { x: bode.freqs, y: bode.phase, type: 'scatter', mode: 'lines', name: 'Phase (°)', line: { color: '#f59e0b', width: 2 }, yaxis: 'y2' },
-      ], {
-        paper_bgcolor: '#1a1f2e', plot_bgcolor: '#0f1117', font: { color: '#9ca3af' },
-        margin: { l: 55, r: 55, t: 15, b: 40 },
-        xaxis: { type: 'log', title: { text: 'ω (rad/s)' }, gridcolor: '#2a3040' },
-        yaxis: { title: { text: 'Magnitude (dB)' }, gridcolor: '#2a3040' },
-        yaxis2: { title: { text: 'Phase (°)' }, overlaying: 'y', side: 'right' },
-      }, { staticPlot: true })
-      const imgData = await Plotly.toImage(bodeDiv, { format: 'png', width: 600, height: 280 })
-      doc.addImage(imgData, 'PNG', margin, y, textW, 95)
-      y += 100
-    } catch {}
-    document.body.removeChild(bodeDiv)
-
-    const stabilityTable = [
-      ['Stability Margin', 'Value', 'Status'],
-      ['Gain Margin', isFinite(bode.gainMargin) ? `${bode.gainMargin.toFixed(2)} dB` : '∞', bode.gainMargin > 6 ? 'OK (>6 dB)' : 'WARNING'],
-      ['Phase Margin', isFinite(bode.phaseMargin) ? `${bode.phaseMargin.toFixed(2)}°` : '∞', bode.phaseMargin > 30 ? 'OK (>30°)' : 'WARNING'],
-      ['Gain Crossover Freq', bode.phaseMarginFreq ? `${bode.phaseMarginFreq.toFixed(3)} rad/s` : 'N/A', ''],
-      ['Phase Crossover Freq', bode.gainMarginFreq ? `${bode.gainMarginFreq.toFixed(3)} rad/s` : 'N/A', ''],
+    const ctrlTraces = [
+      { x: tArr, y: uArr, type: 'scatter', mode: 'lines', name: 'u(t)', line: { color: '#8b5cf6', width: 2.5 } },
     ]
-    stabilityTable.forEach((row, i) => {
-      const colW = textW / 3
-      if (i === 0) { doc.setFillColor(...CARD); doc.rect(margin, y - 4, textW, 7, 'F') }
-      row.forEach((text, j) => {
-        doc.setFontSize(8)
-        const isWarning = text === 'WARNING'
-        doc.setTextColor(...(i === 0 ? ACCENT : isWarning ? [239, 68, 68] : GRAY))
-        doc.text(String(text), margin + j * colW + 2, y)
-      })
-      y += 7
+    if (criterion.useControlConstraint) {
+      ctrlTraces.push({ x: [tArr[0], tArr[tArr.length-1]], y: [criterion.uMax, criterion.uMax], type: 'scatter', mode: 'lines', name: 'u_max', line: { color: '#ef4444', width: 1.5, dash: 'dash' } })
+      ctrlTraces.push({ x: [tArr[0], tArr[tArr.length-1]], y: [criterion.uMin, criterion.uMin], type: 'scatter', mode: 'lines', name: 'u_min', line: { color: '#f59e0b', width: 1.5, dash: 'dash' } })
+    }
+    imgCtrl = await renderChart(ctrlTraces, {
+      xaxis: { title: { text: 'Time (s)' } },
+      yaxis: { title: { text: 'Control signal u(t)' } },
+      ...LINE_STYLE,
+    }, 900, 480)
+  }
+
+  // Chart F: Bode plot
+  let imgBode = null
+  if (bodeData.freqs) {
+    imgBode = await renderChart([
+      { x: bodeData.freqs, y: bodeData.magCL,   type: 'scatter', mode: 'lines', name: 'Magnitude (dB)', line: { color: '#3b82f6', width: 2.5 }, xaxis: 'x', yaxis: 'y' },
+      { x: bodeData.freqs, y: bodeData.phaseCL,  type: 'scatter', mode: 'lines', name: 'Phase (°)',      line: { color: '#f59e0b', width: 2.5 }, xaxis: 'x', yaxis: 'y2' },
+      { x: [bodeData.freqs[0], bodeData.freqs[bodeData.freqs.length-1]], y: [0, 0], mode: 'lines', line: { color: '#94a3b8', width: 1, dash: 'dot' }, xaxis: 'x', yaxis: 'y', showlegend: false },
+    ], {
+      margin: { l: 75, r: 75, t: 20, b: 55 },
+      xaxis:  { type: 'log', title: { text: 'Frequency (rad/s)' } },
+      yaxis:  { title: { text: 'Magnitude (dB)' }, side: 'left' },
+      yaxis2: { title: { text: 'Phase (°)' }, side: 'right', overlaying: 'y' },
+      legend: { x: 0.99, y: 0.99, xanchor: 'right', yanchor: 'top' },
+    }, 1400, 600)
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PAGE 1 — TITLE PAGE
+  // ════════════════════════════════════════════════════════════════════════════
+  doc.setFillColor(...C.WHITE); doc.rect(0, 0, A4_W, A4_H, 'F')
+
+  // Blue header band
+  doc.setFillColor(...C.BLUE); doc.rect(0, 0, A4_W, 55, 'F')
+
+  doc.setFontSize(22); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.WHITE)
+  doc.text('PID Controller Tuning Report', A4_W / 2, 24, { align: 'center' })
+
+  doc.setFontSize(13); doc.setFont('helvetica', 'normal'); doc.setTextColor(...C.BLUE_LIGHT)
+  doc.text('Generated by PID Optimal Tuner  v1.0', A4_W / 2, 35, { align: 'center' })
+
+  doc.setFontSize(10); doc.setTextColor(...C.BLUE_LIGHT)
+  doc.text(dateStr, A4_W / 2, 44, { align: 'center' })
+
+  // Divider
+  let y = 70
+  doc.setDrawColor(...C.BLUE); doc.setLineWidth(0.5)
+  doc.line(MARGIN, y, A4_W - MARGIN, y)
+
+  // Summary
+  y += 10
+  doc.setFontSize(13); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Summary', MARGIN, y); y += 8
+
+  const { dt: dt0, T: T0 } = computeSimParams(plant.den, plant.delay)
+  y = table(
+    ['Parameter', 'Value'],
+    [
+      ['Optimizer Algorithm',              optimizer.selected],
+      ['Population (Agents)',              String(optimizer.population ?? 25)],
+      ['Iterations',                       String(optimizer.iterations ?? 100)],
+      ['Final Objective Function fOF',     results.finalCost != null ? results.finalCost.toExponential(4) : 'N/A'],
+      ['Optimization Status',              results.allConstraintsMet ? 'All conditions satisfied' : 'Some conditions not met'],
+      ['kp (parallel form)',               kp.toFixed(6)],
+      ['ki (parallel form)',               ki.toFixed(6)],
+      ['kd (parallel form)',               kd.toFixed(6)],
+    ],
+    MARGIN, y, [100, 80]
+  )
+
+  addFooter(1)
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PAGE 2 — PLANT MODEL
+  // ════════════════════════════════════════════════════════════════════════════
+  doc.addPage()
+  doc.setFillColor(...C.WHITE); doc.rect(0, 0, A4_W, A4_H, 'F')
+  pageHeader('Plant Model')
+
+  y = 22
+  y = sectionTitle('Plant Model', y)
+
+  // Model source
+  doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.setTextColor(...C.DARK)
+  doc.text(`Model source: ${plant.method === 'tf' ? 'Transfer Function' : 'System Identification'}`, MARGIN, y)
+  y += 7
+
+  // G(s) symbolic
+  const buildPoly = (coeffs, ord) => {
+    const terms = []
+    coeffs.slice(0, ord + 1).forEach((v, i) => {
+      if (Math.abs(v) < 1e-12) return
+      const base = v.toString()
+      if (i === 0) terms.push(base)
+      else if (i === 1) terms.push(`${base}·s`)
+      else terms.push(`${base}·s^${i}`)
     })
+    return terms.length ? terms.join(' + ') : '0'
   }
+  const numOrd = plant.num.filter(v => Math.abs(v) > 1e-12).length > 0 ? plant.num.length - 1 : 0
+  const numStr = buildPoly(plant.num, numOrd)
+  const denStr = buildPoly(plant.den, plant.order)
+  const delayStr = plant.delay > 0 ? ` · e^(-${plant.delay}s)` : ''
 
-  // Footer on all pages
-  const totalPages = doc.internal.getNumberOfPages()
-  for (let p = 1; p <= totalPages; p++) {
-    doc.setPage(p)
-    doc.setFontSize(7)
-    doc.setTextColor(...GRAY)
-    doc.text(`PID Optimal Tuner — Page ${p} of ${totalPages}`, W / 2, H - 8, { align: 'center' })
-  }
+  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  const gLines = doc.splitTextToSize(`G(s) = (${numStr}) / (${denStr})${delayStr}`, CW)
+  doc.text(gLines, MARGIN, y); y += gLines.length * 5 + 5
 
-  doc.save('PID_Tuning_Report.pdf')
+  // TF Coefficients table
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Transfer Function Coefficients', MARGIN, y); y += 5
+
+  const tfRows = []
+  plant.num.slice(0, 3).forEach((v, i) => { if (i === 0 || Math.abs(v) > 1e-12) tfRows.push([`B${i}`, String(v)]) })
+  plant.den.slice(0, plant.order + 1).forEach((v, i) => tfRows.push([`A${i}`, String(v)]))
+  if (plant.delay > 0) tfRows.push(['L (delay)', `${plant.delay} s`])
+  y = table(['Parameter', 'Value'], tfRows, MARGIN, y, [60, 120])
+
+  // Simulation parameters
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Simulation Parameters', MARGIN, y); y += 5
+  y = table(['Parameter', 'Value'], [
+    ['Integration step dt', `${dt0.toFixed(6)} s`],
+    ['Simulation time T',   `${T0.toFixed(4)} s`],
+  ], MARGIN, y, [90, 90])
+
+  // Open-loop step response chart
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Open-loop Step Response', MARGIN, y); y += 3
+  y = addChart(imgOL, y, 57)
+
+  // Pole-zero map
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Pole-Zero Map', MARGIN, y); y += 3
+  y = addChart(imgPZ, y, 50)
+
+  // Stability indicator
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold')
+  doc.setTextColor(...(openLoopStable ? C.GREEN : C.RED))
+  doc.text(openLoopStable ? '✓ Stable open-loop system' : '⚠ Unstable open-loop system', MARGIN, y)
+
+  addFooter(2)
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PAGE 3 — OPTIMIZATION SETUP
+  // ════════════════════════════════════════════════════════════════════════════
+  doc.addPage()
+  doc.setFillColor(...C.WHITE); doc.rect(0, 0, A4_W, A4_H, 'F')
+  pageHeader('Optimization Setup')
+
+  y = 22
+  y = sectionTitle('Optimization Setup', y)
+
+  // Criterion formula
+  const activeTerms = Object.entries(criterion.weights)
+    .filter(([k]) => criterion.enabled[k] && criterion.weights[k] > 0)
+    .map(([k, v]) => `${v.toFixed(2)}·${CRITERIA_LABELS[k] || k}`)
+  const crFormula = activeTerms.length
+    ? `Cr = ${activeTerms.join(' + ')} + Stability Penalty + Constraints Penalty`
+    : 'Cr = 0 + Stability Penalty + Constraints Penalty'
+
+  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  const crLines = doc.splitTextToSize(crFormula, CW)
+  doc.text(crLines, MARGIN, y); y += crLines.length * 5 + 6
+
+  // Performance Metrics table
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Performance Metrics', MARGIN, y); y += 5
+  const metricRows = Object.entries(criterion.weights)
+    .filter(([k]) => criterion.enabled[k] && criterion.weights[k] > 0)
+    .map(([k, v]) => [CRITERIA_LABELS[k] || k, v.toFixed(3)])
+  if (!metricRows.length) metricRows.push(['(none selected)', '—'])
+  y = table(['Criterion', 'Weight δ'], metricRows, MARGIN, y, [110, 70])
+
+  // Constraints table
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Constraints', MARGIN, y); y += 5
+  const constraintRows = []
+  if (criterion.useOvershootConstraint) constraintRows.push(['Allowable Overshoot', `${criterion.overshootMax} %`])
+  if (criterion.useControlConstraint)  { constraintRows.push(['u_min', String(criterion.uMin)]); constraintRows.push(['u_max', String(criterion.uMax)]) }
+  if (!constraintRows.length) constraintRows.push(['(no constraints enabled)', '—'])
+  y = table(['Parameter', 'Value'], constraintRows, MARGIN, y, [110, 70])
+
+  // PID Gain Search Bounds table
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('PID Gain Search Bounds', MARGIN, y); y += 5
+  y = table(
+    ['Parameter', 'Lower Bound', 'Upper Bound'],
+    [
+      ['kp', '0', String(optimizer.kpMax ?? 50)],
+      ['ki', '0', String(optimizer.kiMax ?? 50)],
+      ['kd', '0', String(optimizer.kdMax ?? 50)],
+    ],
+    MARGIN, y, [60, 60, 60]
+  )
+
+  // Optimizer Configuration table
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Optimizer Configuration', MARGIN, y); y += 5
+  y = table(
+    ['Parameter', 'Value'],
+    [
+      ['Algorithm',          optimizer.selected],
+      ['Agents (Population)', String(optimizer.population ?? 25)],
+      ['Iterations',         String(optimizer.iterations ?? 100)],
+    ],
+    MARGIN, y, [110, 70]
+  )
+
+  addFooter(3)
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PAGE 4 — OPTIMIZATION CONVERGENCE
+  // ════════════════════════════════════════════════════════════════════════════
+  doc.addPage()
+  doc.setFillColor(...C.WHITE); doc.rect(0, 0, A4_W, A4_H, 'F')
+  pageHeader('Optimization Convergence')
+
+  y = 22
+  y = sectionTitle('Optimization Convergence', y)
+
+  // Chart
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Convergence Plot — Best Objective Function f₟OF vs. Iteration', MARGIN, y); y += 3
+  y = addChart(imgConv, y, 85)
+
+  // Results table
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Convergence Results', MARGIN, y); y += 5
+  y = table(
+    ['Parameter', 'Value'],
+    [
+      ['Final objective function fOF', results.finalCost != null ? results.finalCost.toExponential(6) : 'N/A'],
+      ['Optimization status',          results.allConstraintsMet ? 'Conditions satisfied' : 'Some conditions not met'],
+    ],
+    MARGIN, y, [110, 70]
+  )
+  y += 4
+
+  // Status text
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold')
+  doc.setTextColor(...(results.allConstraintsMet ? C.GREEN : C.RED))
+  const statusText = results.allConstraintsMet
+    ? '✓ Optimization complete. All tuning conditions satisfied.'
+    : `⚠ Optimization complete. Some conditions were not satisfied:\n${results.statusMessage || ''}`
+  const statusLines = doc.splitTextToSize(statusText, CW)
+  doc.text(statusLines, MARGIN, y)
+
+  addFooter(4)
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PAGE 5 — TUNING RESULTS: TIME DOMAIN
+  // ════════════════════════════════════════════════════════════════════════════
+  doc.addPage()
+  doc.setFillColor(...C.WHITE); doc.rect(0, 0, A4_W, A4_H, 'F')
+  pageHeader('Tuning Results — Time Domain')
+
+  y = 22
+  y = sectionTitle('Tuning Results — Time Domain', y)
+
+  // PID Gains — two tables side by side
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Optimized PID Gains', MARGIN, y); y += 5
+
+  const halfW = (CW - 5) / 2
+  const Ti = ki > 0 ? kp / ki : Infinity
+  const Td = kp > 0 ? kd / kp : 0
+  const RH = 7
+
+  // Parallel Form (left)
+  const parallelRows2 = [['kp', kp.toFixed(6)], ['ki', ki.toFixed(6)], ['kd', kd.toFixed(6)]]
+  const startY = y
+  doc.setFillColor(...C.TH_BG); doc.rect(MARGIN, y, halfW, RH, 'F')
+  doc.setDrawColor(...C.GRAY); doc.setLineWidth(0.2); doc.rect(MARGIN, y, halfW, RH, 'S')
+  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Parallel Form', MARGIN + 2, y + 4.9); y += RH
+  parallelRows2.forEach(([p, v], ri) => {
+    doc.setFillColor(...(ri % 2 === 0 ? C.WHITE : C.ROW_ALT)); doc.rect(MARGIN, y, halfW, RH, 'F')
+    doc.setDrawColor(...C.TH_BG); doc.setLineWidth(0.1); doc.rect(MARGIN, y, halfW, RH, 'S')
+    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(...C.MED)
+    doc.text(p, MARGIN + 2, y + 4.9); doc.text(v, MARGIN + 30, y + 4.9); y += RH
+  })
+
+  // Standard Form (right)
+  const rightX = MARGIN + halfW + 5
+  const standardRows2 = [['Kp', kp.toFixed(6)], ['Ti', isFinite(Ti) ? `${Ti.toFixed(6)} s` : '∞'], ['Td', `${Td.toFixed(6)} s`]]
+  let y2 = startY
+  doc.setFillColor(...C.TH_BG); doc.rect(rightX, y2, halfW, RH, 'F')
+  doc.setDrawColor(...C.GRAY); doc.setLineWidth(0.2); doc.rect(rightX, y2, halfW, RH, 'S')
+  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Standard Form', rightX + 2, y2 + 4.9); y2 += RH
+  standardRows2.forEach(([p, v], ri) => {
+    doc.setFillColor(...(ri % 2 === 0 ? C.WHITE : C.ROW_ALT)); doc.rect(rightX, y2, halfW, RH, 'F')
+    doc.setDrawColor(...C.TH_BG); doc.setLineWidth(0.1); doc.rect(rightX, y2, halfW, RH, 'S')
+    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(...C.MED)
+    doc.text(p, rightX + 2, y2 + 4.9); doc.text(v, rightX + 30, y2 + 4.9); y2 += RH
+  })
+  y = Math.max(y, y2) + 5
+
+  // Step response + control signal side by side
+  const chartHalf = (CW - 4) / 2
+  const CHART_H = 60
+  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Closed-loop Step Response y(t)', MARGIN, y); y += 2
+  if (imgStep) doc.addImage(imgStep, 'PNG', MARGIN, y, chartHalf, CHART_H)
+  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Control Signal u(t)', MARGIN + chartHalf + 4, y - 2)
+  if (imgCtrl) doc.addImage(imgCtrl, 'PNG', MARGIN + chartHalf + 4, y, chartHalf, CHART_H)
+  y += CHART_H + 5
+
+  // Performance Metrics table
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Performance Metrics', MARGIN, y); y += 5
+  y = table(
+    ['Metric', 'Value'],
+    [
+      ['ITAE',               (metrics.ITAE        ?? 0).toFixed(6)],
+      ['IAE',                (metrics.IAE         ?? 0).toFixed(6)],
+      ['ISE',                (metrics.ISE         ?? 0).toFixed(6)],
+      ['ITSE',               (metrics.ITSE        ?? 0).toFixed(6)],
+      ['Overshoot',          `${(metrics.overshoot   ?? 0).toFixed(2)} %`],
+      ['Rise Time',          `${(metrics.riseTime    ?? 0).toFixed(4)} s`],
+      ['Settling Time',      `${(metrics.settlingTime?? 0).toFixed(4)} s`],
+      ['Steady-state Error', (metrics.ess         ?? 0).toFixed(6)],
+    ],
+    MARGIN, y, [110, 70]
+  )
+
+  addFooter(5)
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PAGE 6 — FREQUENCY DOMAIN
+  // ════════════════════════════════════════════════════════════════════════════
+  doc.addPage()
+  doc.setFillColor(...C.WHITE); doc.rect(0, 0, A4_W, A4_H, 'F')
+  pageHeader('Frequency Domain Analysis')
+
+  y = 22
+  y = sectionTitle('Frequency Domain Analysis', y)
+
+  // Bode chart
+  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Closed-loop Bode Plot  H(jω) = C(jω)·G(jω) / (1 + C(jω)·G(jω))', MARGIN, y); y += 3
+  y = addChart(imgBode, y, 87)
+
+  // Stability Margins table
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.DARK)
+  doc.text('Stability Margins', MARGIN, y); y += 5
+
+  const gm = bodeData.gainMargin
+  const pm = bodeData.phaseMargin
+  const gmOk = isFinite(gm) ? gm > 6 : true
+  const pmGood = isFinite(pm) ? pm > 45 : true
+  const pmAccept = isFinite(pm) ? pm >= 30 : true
+
+  const gmStatus = gmOk ? { value: '✓', color: C.GREEN } : { value: '⚠', color: C.WARN }
+  const pmStatus = pmGood ? { value: '✓', color: C.GREEN } : pmAccept ? { value: '⚠', color: C.WARN } : { value: '✗', color: C.RED }
+
+  y = table(
+    ['Parameter', 'Value', 'Status'],
+    [
+      ['Gain Margin',     isFinite(gm) ? `${gm.toFixed(2)} dB` : '∞',           gmStatus],
+      ['Phase Margin',    isFinite(pm) ? `${pm.toFixed(2)} °`  : '∞',           pmStatus],
+      ['Crossover Freq',  bodeData.phaseMarginFreq ? `${bodeData.phaseMarginFreq.toFixed(3)} rad/s` : 'N/A', { value: '—', color: C.MED }],
+      ['Phase Crossover', bodeData.gainMarginFreq  ? `${bodeData.gainMarginFreq.toFixed(3)} rad/s`  : 'N/A', { value: '—', color: C.MED }],
+    ],
+    MARGIN, y, [80, 60, 40]
+  )
+  y += 3
+
+  // Phase margin comment
+  let pmComment, pmColor
+  if (!isFinite(pm) || pm > 45)  { pmColor = C.GREEN; pmComment = '✓ Good — adequate stability margin' }
+  else if (pm >= 30)              { pmColor = C.WARN;  pmComment = '⚠ Acceptable — consider re-tuning for better stability' }
+  else                            { pmColor = C.RED;   pmComment = '✗ Poor — system may be poorly damped, re-tuning recommended' }
+
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...pmColor)
+  doc.text(`Phase Margin: ${pmComment}`, MARGIN, y)
+
+  addFooter(6)
+
+  // ── Save ──────────────────────────────────────────────────────────────────
+  doc.save(`PID_Tuning_Report_${fileDate}.pdf`)
 }

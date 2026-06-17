@@ -18,6 +18,7 @@ export default function ResultsPage() {
   const [metrics, setMetrics] = useState(results.metrics)
   const [bode, setBode] = useState(results.freqData)
   const [recomputing, setRecomputing] = useState(false)
+  const [pdfGenerating, setPdfGenerating] = useState(false)
 
   const hasResults = results.kp !== null
 
@@ -49,6 +50,17 @@ export default function ResultsPage() {
     const timeout = setTimeout(() => recompute(kp, ki, kd), 150)
     return () => clearTimeout(timeout)
   }, [kp, ki, kd])
+
+  const handleExportPDF = async () => {
+    if (pdfGenerating) return
+    setPdfGenerating(true)
+    try {
+      const { generatePDF } = await import('../utils/pdfExport.js')
+      await generatePDF({ plant, criterion, optimizer, results: { ...results, kp, ki, kd, metrics, simData, freqData: bode } })
+    } finally {
+      setPdfGenerating(false)
+    }
+  }
 
   const resetToOptimal = () => {
     setKp(results.kp)
@@ -93,13 +105,11 @@ export default function ResultsPage() {
         <div className="flex gap-2">
           <button onClick={() => navigate('/optimizer')} className="btn-secondary text-sm">← Back to Optimizer</button>
           <button
-            onClick={async () => {
-              const { generatePDF } = await import('../utils/pdfExport.js')
-              generatePDF({ plant, criterion, optimizer, results: { ...results, kp, ki, kd, metrics, simData, freqData: bode } })
-            }}
-            className="btn-primary text-sm"
+            onClick={handleExportPDF}
+            disabled={pdfGenerating}
+            className="btn-primary text-sm disabled:opacity-60"
           >
-            📄 Export PDF
+            {pdfGenerating ? '⏳ Generating PDF…' : '📄 Export PDF'}
           </button>
         </div>
       </div>
@@ -272,13 +282,11 @@ export default function ResultsPage() {
       {/* Export buttons */}
       <div className="flex flex-wrap gap-3 justify-end pb-4">
         <button
-          onClick={async () => {
-            const { generatePDF } = await import('../utils/pdfExport.js')
-            generatePDF({ plant, criterion, optimizer, results: { ...results, kp, ki, kd, metrics, simData, freqData: bode } })
-          }}
-          className="btn-primary"
+          onClick={handleExportPDF}
+          disabled={pdfGenerating}
+          className="btn-primary disabled:opacity-60"
         >
-          📄 Output Report (PDF)
+          {pdfGenerating ? '⏳ Generating PDF…' : '📄 Output Report (PDF)'}
         </button>
       </div>
     </div>
