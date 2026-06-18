@@ -71,10 +71,11 @@ export default function Navigation() {
             <button
               onClick={handleCopyLink}
               title="Copy shareable link to current session"
-              className="flex items-center gap-2 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 text-gray-600 hover:text-accent-blue hover:bg-dark-hover"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl text-base font-medium transition-all duration-200 text-gray-600 hover:text-gray-900 hover:bg-dark-hover"
             >
-              <Link2 size={20} strokeWidth={1.75} />
-              <span className="hidden lg:block text-sm">Copy Link</span>
+              <Link2 size={20} strokeWidth={1.75} className="hidden lg:block" />
+              <span className="hidden md:block">Copy Link</span>
+              <span className="md:hidden text-sm">🔗</span>
             </button>
           </div>
         </div>
