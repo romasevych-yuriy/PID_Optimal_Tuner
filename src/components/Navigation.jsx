@@ -1,6 +1,9 @@
 import React from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { Home, Target, Cpu, BarChart2 } from 'lucide-react'
+import { Home, Target, Cpu, BarChart2, Link2 } from 'lucide-react'
+import useStore from '../store/useStore'
+import { useToast } from './Toast'
+import { buildShareURL } from '../utils/session'
 
 const steps = [
   { path: '/',          label: 'Home',      short: '1', Icon: Home      },
@@ -13,6 +16,18 @@ const steps = [
 export default function Navigation() {
   const location = useLocation()
   const currentIdx = steps.findIndex(s => s.path === location.pathname)
+  const showToast = useToast()
+
+  const handleCopyLink = async () => {
+    const url = buildShareURL(useStore.getState())
+    if (!url) { showToast('Failed to build link', 'error'); return }
+    try {
+      await navigator.clipboard.writeText(url)
+      showToast('Link copied to clipboard!', 'success')
+    } catch {
+      showToast('Copy failed — link: ' + url.slice(0, 60) + '…', 'error')
+    }
+  }
 
   return (
     <nav className="bg-dark-card border-b border-dark-border sticky top-0 z-50 backdrop-blur-sm shadow-sm">
@@ -24,7 +39,7 @@ export default function Navigation() {
             <span className="font-bold text-gray-800 text-xl hidden sm:block">PID Optimal Tuner</span>
           </div>
 
-          {/* Steps */}
+          {/* Steps + Copy Link */}
           <div className="flex items-center gap-2">
             {steps.map((step, idx) => {
               const isActive = location.pathname === step.path
@@ -51,6 +66,16 @@ export default function Navigation() {
                 </NavLink>
               )
             })}
+
+            {/* Copy Link */}
+            <button
+              onClick={handleCopyLink}
+              title="Copy shareable link to current session"
+              className="flex items-center gap-2 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 text-gray-600 hover:text-accent-blue hover:bg-dark-hover"
+            >
+              <Link2 size={20} strokeWidth={1.75} />
+              <span className="hidden lg:block text-sm">Copy Link</span>
+            </button>
           </div>
         </div>
       </div>
