@@ -111,6 +111,20 @@ export function computeOvershootPenalty(overshoot, overshootMax) {
 }
 
 /**
+ * Remove ±360° jumps from a phase array (degrees).
+ */
+function unwrapPhase(phases) {
+  const out = [...phases]
+  for (let i = 1; i < out.length; i++) {
+    let diff = out[i] - out[i - 1]
+    while (diff >  180) diff -= 360
+    while (diff < -180) diff += 360
+    out[i] = out[i - 1] + diff
+  }
+  return out
+}
+
+/**
  * Compute Bode plot data for open-loop transfer function C(jω)*G(jω).
  * @param {number[]} num - Plant numerator
  * @param {number[]} den - Plant denominator
@@ -118,11 +132,14 @@ export function computeOvershootPenalty(overshoot, overshootMax) {
  * @param {number} kp, ki, kd - PID gains
  */
 export function computeBode(num, den, delay, kp, ki, kd) {
-  const N = 500
-  const wMin = 1e-3, wMax = 1e3
+  const N = 2000
+  const wMin = 1e-3
+  // Limit upper frequency when delay is present to avoid dense aliasing
+  const wMax = delay > 0 ? Math.min(1e3, 10 / delay) : 1e3
+
   const freqs = []
-  const mag = [], phase = []
-  const magCL = [], phaseCL = []
+  const mag = [], phaseRaw = []
+  const magCL = [], phaseCLRaw = []
 
   for (let i = 0; i < N; i++) {
     const w = wMin * Math.pow(wMax / wMin, i / (N - 1))
@@ -139,47 +156,41 @@ export function computeBode(num, den, delay, kp, ki, kd) {
     const GjwD = complexMul(Gjw, delayVal)
 
     // PID: C(jw) = kp + ki/(jw) + kd*(jw)
-    // = kp + ki*(-j/w) + kd*jw
-    const Cjw = {
-      re: kp,
-      im: -ki / w + kd * w,
-    }
+    const Cjw = { re: kp, im: -ki / w + kd * w }
 
     // Open-loop L(jw) = C(jw) * G(jw)
     const Ljw = complexMul(Cjw, GjwD)
     const magVal = Math.sqrt(Ljw.re ** 2 + Ljw.im ** 2)
-    const phaseVal = Math.atan2(Ljw.im, Ljw.re) * 180 / Math.PI
     mag.push(20 * Math.log10(Math.max(magVal, 1e-20)))
-    phase.push(phaseVal)
+    phaseRaw.push(Math.atan2(Ljw.im, Ljw.re) * 180 / Math.PI)
 
     // Closed-loop H(jw) = L(jw) / (1 + L(jw))
     const Hjw = complexDiv(Ljw, { re: 1 + Ljw.re, im: Ljw.im })
     const magCLVal = Math.sqrt(Hjw.re ** 2 + Hjw.im ** 2)
-    const phaseCLVal = Math.atan2(Hjw.im, Hjw.re) * 180 / Math.PI
     magCL.push(20 * Math.log10(Math.max(magCLVal, 1e-20)))
-    phaseCL.push(phaseCLVal)
+    phaseCLRaw.push(Math.atan2(Hjw.im, Hjw.re) * 180 / Math.PI)
   }
 
-  // Gain margin: frequency where phase = -180°, margin = -mag at that freq
+  // Unwrap both open-loop and closed-loop phase
+  const phase   = unwrapPhase(phaseRaw)
+  const phaseCL = unwrapPhase(phaseCLRaw)
+
+  // Gain margin: first frequency where unwrapped open-loop phase crosses -180°
   let gainMargin = Infinity, gainMarginFreq = null
   for (let i = 1; i < N - 1; i++) {
     if (phase[i - 1] > -180 && phase[i] <= -180) {
-      const w = freqs[i]
-      const m = mag[i]
-      gainMargin = -m
-      gainMarginFreq = w
+      gainMargin = -mag[i]
+      gainMarginFreq = freqs[i]
       break
     }
   }
 
-  // Phase margin: frequency where mag = 0 dB, margin = phase + 180
+  // Phase margin: first frequency where open-loop mag crosses 0 dB from above
   let phaseMargin = Infinity, phaseMarginFreq = null
   for (let i = 1; i < N - 1; i++) {
     if (mag[i - 1] > 0 && mag[i] <= 0) {
-      const w = freqs[i]
-      const p = phase[i]
-      phaseMargin = p + 180
-      phaseMarginFreq = w
+      phaseMargin = phase[i] + 180
+      phaseMarginFreq = freqs[i]
       break
     }
   }
