@@ -6,6 +6,7 @@ import ModelPage from './pages/ModelPage'
 import CriterionPage from './pages/CriterionPage'
 import OptimizerPage from './pages/OptimizerPage'
 import ResultsPage from './pages/ResultsPage'
+import AnalysisPage from './pages/AnalysisPage'
 import { ToastProvider, useToast } from './components/Toast'
 import useStore from './store/useStore'
 import { saveSession, lastLoadSource } from './utils/session'
@@ -40,6 +41,7 @@ function AppInner() {
           <Route path="criterion" element={<CriterionPage />} />
           <Route path="optimizer" element={<OptimizerPage />} />
           <Route path="results" element={<ResultsPage />} />
+          <Route path="analysis" element={<AnalysisPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

@@ -11,6 +11,7 @@ const steps = [
   { path: '/criterion', label: 'Criterion', short: '3', Icon: Target    },
   { path: '/optimizer', label: 'Optimizer', short: '4', Icon: Cpu       },
   { path: '/results',   label: 'Results',   short: '5', Icon: BarChart2 },
+  { path: '/analysis',  label: 'Analysis',  short: '6', tablerIcon: 'ti-microscope' },
 ]
 
 export default function Navigation() {
