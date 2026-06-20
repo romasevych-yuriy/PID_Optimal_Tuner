@@ -403,7 +403,8 @@ export default function ModelPage() {
                     { type: 'line', x0: 0, x1: 1, y0: 0, y1: 0, xref: 'paper', yref: 'y', line: { color: '#9ca3af', dash: 'dash', width: 1.5 } },
                   ],
                   showlegend: true,
-                  legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', bgcolor: 'rgba(237,240,246,0.9)', bordercolor: '#b8c4d8', borderwidth: 1, font: { size: 15 } },
+                  legend: { orientation: 'h', y: -0.2, x: 0.5, xanchor: 'center', yanchor: 'top', bgcolor: 'rgba(255,255,255,0.8)', bordercolor: 'rgba(0,0,0,0.1)', borderwidth: 1, font: { size: 15 } },
+                  margin: { l: 60, r: 40, t: 50, b: 80 },
                   modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                   height: 360,
                 }}
@@ -415,7 +416,7 @@ export default function ModelPage() {
                     ? 'bg-green-300 border-green-500'
                     : 'bg-red-500 border-red-700'
                 }`}
-                style={{ top: 48, right: 52 }}
+                style={{ top: 58, left: '50%', transform: 'translateX(-50%)' }}
               >
                 {pzMap.stable ? '✓ Stable system' : '⚠ Unstable system'}
               </div>
