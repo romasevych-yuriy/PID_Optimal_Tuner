@@ -5,6 +5,13 @@ import PlotlyChart from '../components/PlotlyChart'
 import { simulate, computeSimParams } from '../math/simulation'
 import { DEFAULT_IDENT_DATA } from '../data/defaultIdentData'
 
+function roundSig(v, sig) {
+  if (!isFinite(v) || v === 0) return v
+  const d = Math.ceil(Math.log10(Math.abs(v)))
+  const magnitude = Math.pow(10, sig - d)
+  return Math.round(v * magnitude) / magnitude
+}
+
 export default function ModelPage() {
   const navigate = useNavigate()
   const { plant, setPlant } = useStore()
@@ -118,6 +125,9 @@ export default function ModelPage() {
       const identOrder = plant.identOrder
       const useDelay = plant.identDelay
       const result = identifyTF(tArr, yArr, identOrder, useDelay, uArr)
+      result.num = result.num.map(v => roundSig(v, 4))
+      result.den = result.den.map(v => roundSig(v, 4))
+      result.delay = roundSig(result.delay, 4)
       setIdentResult(result)
       setIdentPreviewData({ t: result.predicted.t, y: result.predicted.y, rawT: tArr, rawY: yArr, rawU: uArr })
     } catch (err) {
@@ -560,10 +570,10 @@ export default function ModelPage() {
               <div className="bg-dark-bg p-4 border border-accent-green/30 space-y-2 mt-4">
                 <p className="text-accent-green font-bold text-base">✓ Identification complete</p>
                 <p className="text-gray-700 font-bold text-sm">Mean Squared Error of Identification: <span className="text-accent-cyan font-mono">{identResult.mse.toExponential(3)}</span></p>
-                <p className="text-gray-700 font-bold text-sm">Numerator coefficients: <span className="font-mono">[{identResult.num.map(v => v.toFixed(4)).join(', ')}]</span></p>
-                <p className="text-gray-700 font-bold text-sm">Denominator coefficients: <span className="font-mono">[{identResult.den.map(v => v.toFixed(4)).join(', ')}]</span></p>
+                <p className="text-gray-700 font-bold text-sm">Numerator coefficients: <span className="font-mono">[{identResult.num.map(v => v.toPrecision(4)).join(', ')}]</span></p>
+                <p className="text-gray-700 font-bold text-sm">Denominator coefficients: <span className="font-mono">[{identResult.den.map(v => v.toPrecision(4)).join(', ')}]</span></p>
                 {identResult.delay > 0 && (
-                  <p className="text-gray-700 font-bold text-sm">Delay: <span className="font-mono text-accent-cyan">{identResult.delay.toFixed(3)} s</span></p>
+                  <p className="text-gray-700 font-bold text-sm">Delay: <span className="font-mono text-accent-cyan">{identResult.delay.toPrecision(4)} s</span></p>
                 )}
                 <button onClick={handlePassToTF} className="btn-primary w-full mt-2">
                   Pass identified coefficients to Transfer Function
