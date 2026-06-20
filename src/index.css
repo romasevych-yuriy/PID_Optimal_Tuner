@@ -69,7 +69,7 @@
   }
 
   .section-subtitle {
-    @apply text-gray-600 text-sm mb-6;
+    @apply text-gray-600 text-base font-bold mb-6;
   }
 
   .badge {
