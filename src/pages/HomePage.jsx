@@ -71,7 +71,7 @@ export default function HomePage() {
       {/* How It Works */}
       <section className="card">
         <h2 className="section-title text-center mb-8">How It Works</h2>
-        <div className="flex flex-col md:flex-row gap-6 items-center justify-center">
+        <div className="flex flex-row gap-3 items-start justify-center overflow-x-auto pb-2">
           {[
             { step: '1', label: 'Model',    desc: 'Define or identify your plant transfer function',                                             color: 'bg-accent-blue'   },
             { step: '2', label: 'Criterion',desc: 'Choose optimization criteria and set constraints',                                            color: 'bg-accent-purple' },
@@ -80,12 +80,12 @@ export default function HomePage() {
             { step: '5', label: 'Analyze',  desc: 'Disturbance rejection, parameter sensitivity, and robustness of the tuned PID controller.',   color: 'bg-accent-yellow' },
           ].map((s, i) => (
             <React.Fragment key={s.step}>
-              <div className="flex flex-col items-center text-center max-w-[160px]">
+              <div className="flex flex-col items-center text-center w-[145px] shrink-0">
                 <div className={`w-14 h-14 rounded-full ${s.color} flex items-center justify-center text-white font-bold text-xl mb-3 shadow-lg`}>{s.step}</div>
                 <div className="font-bold text-gray-800 text-base mb-2">{s.label}</div>
                 <div className="text-gray-500 text-sm leading-snug">{s.desc}</div>
               </div>
-              {i < 4 && <div className="text-gray-500 text-3xl hidden md:block">→</div>}
+              {i < 4 && <div className="text-gray-500 text-2xl shrink-0 mt-4">→</div>}
             </React.Fragment>
           ))}
         </div>
