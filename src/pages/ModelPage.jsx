@@ -12,6 +12,25 @@ function roundSig(v, sig) {
   return Math.round(v * magnitude) / magnitude
 }
 
+// Quadrants ordered by tie-break preference: bottomRight > bottomLeft > topRight > topLeft
+const LEGEND_QUADRANTS = [
+  { name: 'bottomRight', x: 0.98, y: 0.02, xanchor: 'right',  yanchor: 'bottom', check: (p, xm, ym) => p.re >= xm && p.im <= ym },
+  { name: 'bottomLeft',  x: 0.02, y: 0.02, xanchor: 'left',   yanchor: 'bottom', check: (p, xm, ym) => p.re <= xm && p.im <= ym },
+  { name: 'topRight',    x: 0.98, y: 0.98, xanchor: 'right',  yanchor: 'top',    check: (p, xm, ym) => p.re >= xm && p.im >= ym },
+  { name: 'topLeft',     x: 0.02, y: 0.98, xanchor: 'left',   yanchor: 'top',    check: (p, xm, ym) => p.re <= xm && p.im >= ym },
+]
+
+function findBestLegendPosition(poles, zeros, xMin, xMax, yMin, yMax) {
+  const allPoints = [...poles, ...zeros]
+  const xMid = (xMax + xMin) / 2
+  const yMid = (yMax + yMin) / 2
+  const counts = LEGEND_QUADRANTS.map(q => ({
+    ...q,
+    count: allPoints.filter(p => q.check(p, xMid, yMid)).length,
+  }))
+  return counts.reduce((best, cur) => cur.count < best.count ? cur : best)
+}
+
 export default function ModelPage() {
   const navigate = useNavigate()
   const { plant, setPlant } = useStore()
@@ -52,7 +71,20 @@ export default function ModelPage() {
     if (Math.abs(b1) > 1e-12) zeros.push({ re: -b0 / b1, im: 0 })
 
     const stable = poles.length > 0 && poles.every(p => p.re < -1e-9)
-    return { poles, zeros, stable }
+
+    const allPoints = [...poles, ...zeros]
+    let legendPos
+    if (allPoints.length === 0) {
+      legendPos = { x: 0.98, y: 0.02, xanchor: 'right', yanchor: 'bottom' }
+    } else {
+      const xMin = Math.min(...allPoints.map(p => p.re)) - 0.5
+      const xMax = Math.max(...allPoints.map(p => p.re)) + 0.5
+      const yMin = Math.min(...allPoints.map(p => p.im)) - 0.5
+      const yMax = Math.max(...allPoints.map(p => p.im)) + 0.5
+      legendPos = findBestLegendPosition(poles, zeros, xMin, xMax, yMin, yMax)
+    }
+
+    return { poles, zeros, stable, legendPos }
   }, [num, den, order])
 
   // Compute preview when TF changes
@@ -413,8 +445,8 @@ export default function ModelPage() {
                     { type: 'line', x0: 0, x1: 1, y0: 0, y1: 0, xref: 'paper', yref: 'y', line: { color: '#9ca3af', dash: 'dash', width: 1.5 } },
                   ],
                   showlegend: true,
-                  legend: { orientation: 'h', y: -0.2, x: 0.5, xanchor: 'center', yanchor: 'top', bgcolor: 'rgba(255,255,255,0.8)', bordercolor: 'rgba(0,0,0,0.1)', borderwidth: 1, font: { size: 15 } },
-                  margin: { l: 60, r: 40, t: 50, b: 80 },
+                  legend: { x: pzMap.legendPos.x, y: pzMap.legendPos.y, xanchor: pzMap.legendPos.xanchor, yanchor: pzMap.legendPos.yanchor, bgcolor: 'rgba(255,255,255,0.85)', bordercolor: 'rgba(0,0,0,0.1)', borderwidth: 1, font: { size: 15 } },
+                  margin: { l: 60, r: 40, t: 50, b: 40 },
                   modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                   height: 360,
                 }}
