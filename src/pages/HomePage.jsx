@@ -49,54 +49,45 @@ export default function HomePage() {
       </section>
 
       {/* Key Features */}
-      <section
-        className="bg-dark-card border-y border-dark-border py-10"
-        style={{ width: '100vw', marginLeft: 'calc((100% - 100vw) / 2)' }}
-      >
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="section-title text-center mb-8">Key Features</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {features.map(({ Icon, title, desc }, i) => (
-              <div
-                key={i}
-                className="card hover:border-accent-blue/40 transition-all duration-300 hover:-translate-y-1 group animate-slide-up"
-                style={{ animationDelay: `${i * 60}ms` }}
-              >
-                <div className="mb-4 group-hover:scale-110 transition-transform duration-200 w-fit">
-                  <Icon size={32} className="text-accent-blue" strokeWidth={1.5} />
-                </div>
-                <h3 className="font-semibold text-gray-700 mb-2 text-base">{title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
+      <section className="card">
+        <h2 className="section-title text-center mb-8">Key Features</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {features.map(({ Icon, title, desc }, i) => (
+            <div
+              key={i}
+              className="card hover:border-accent-blue/40 transition-all duration-300 hover:-translate-y-1 group animate-slide-up"
+              style={{ animationDelay: `${i * 60}ms` }}
+            >
+              <div className="mb-4 group-hover:scale-110 transition-transform duration-200 w-fit">
+                <Icon size={32} className="text-accent-blue" strokeWidth={1.5} />
               </div>
-            ))}
-          </div>
+              <h3 className="font-semibold text-gray-700 mb-2 text-base">{title}</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* How It Works */}
-      <section
-        className="bg-dark-card border-y border-dark-border py-10"
-        style={{ width: '100vw', marginLeft: 'calc((100% - 100vw) / 2)' }}
-      >
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="section-title text-center mb-8">How It Works</h2>
-          <div className="flex flex-col md:flex-row gap-6 items-center justify-center">
-            {[
-              { step: '1', label: 'Model',    desc: 'Define or identify your plant transfer function',  color: 'bg-accent-blue' },
-              { step: '2', label: 'Criterion',desc: 'Choose optimization criteria and set constraints', color: 'bg-accent-purple' },
-              { step: '3', label: 'Optimize', desc: 'Run a metaheuristic optimizer',                   color: 'bg-accent-cyan' },
-              { step: '4', label: 'Analyze',  desc: 'Inspect step response, Bode plot, export PDF',    color: 'bg-accent-green' },
-            ].map((s, i) => (
-              <React.Fragment key={s.step}>
-                <div className="flex flex-col items-center text-center max-w-[180px]">
-                  <div className={`w-14 h-14 rounded-full ${s.color} flex items-center justify-center text-white font-bold text-xl mb-3 shadow-lg`}>{s.step}</div>
-                  <div className="font-bold text-gray-800 text-base mb-2">{s.label}</div>
-                  <div className="text-gray-500 text-sm leading-snug">{s.desc}</div>
-                </div>
-                {i < 3 && <div className="text-gray-500 text-3xl hidden md:block">→</div>}
-              </React.Fragment>
-            ))}
-          </div>
+      <section className="card">
+        <h2 className="section-title text-center mb-8">How It Works</h2>
+        <div className="flex flex-col md:flex-row gap-6 items-center justify-center">
+          {[
+            { step: '1', label: 'Model',    desc: 'Define or identify your plant transfer function',                                             color: 'bg-accent-blue'   },
+            { step: '2', label: 'Criterion',desc: 'Choose optimization criteria and set constraints',                                            color: 'bg-accent-purple' },
+            { step: '3', label: 'Optimize', desc: 'Run a metaheuristic optimizer',                                                               color: 'bg-accent-cyan'   },
+            { step: '4', label: 'Results',  desc: 'Inspect step response, Bode plot, export PDF',                                                color: 'bg-accent-green'  },
+            { step: '5', label: 'Analyze',  desc: 'Disturbance rejection, parameter sensitivity, and robustness of the tuned PID controller.',   color: 'bg-accent-yellow' },
+          ].map((s, i) => (
+            <React.Fragment key={s.step}>
+              <div className="flex flex-col items-center text-center max-w-[160px]">
+                <div className={`w-14 h-14 rounded-full ${s.color} flex items-center justify-center text-white font-bold text-xl mb-3 shadow-lg`}>{s.step}</div>
+                <div className="font-bold text-gray-800 text-base mb-2">{s.label}</div>
+                <div className="text-gray-500 text-sm leading-snug">{s.desc}</div>
+              </div>
+              {i < 4 && <div className="text-gray-500 text-3xl hidden md:block">→</div>}
+            </React.Fragment>
+          ))}
         </div>
       </section>
 
@@ -108,7 +99,7 @@ export default function HomePage() {
         >
           Start Tuning →
         </button>
-        <p className="text-gray-500 text-xs mt-4">
+        <p className="text-gray-900 font-bold text-lg mt-4">
           All computations run in your browser. No data is sent to any server.
         </p>
       </section>
