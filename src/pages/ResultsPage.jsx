@@ -188,16 +188,16 @@ export default function ResultsPage() {
             <PlotlyChart
               id="step-response"
               data={[
-                { x: simData.t, y: simData.y, type: 'scatter', mode: 'lines', name: 'y(t)', line: { color: '#3b82f6', width: 3 } },
-                { x: [simData.t[0], simData.t[simData.t.length - 1]], y: [1, 1], type: 'scatter', mode: 'lines', name: 'Setpoint r(t)', line: { color: '#ef4444', width: 1.5 } },
+                { x: simData.t, y: simData.y, type: 'scatter', mode: 'lines', name: 'y(t)', line: { color: '#3b82f6', width: 3.5 } },
+                { x: [simData.t[0], simData.t[simData.t.length - 1]], y: [1, 1], type: 'scatter', mode: 'lines', name: 'Setpoint r(t)', line: { color: '#ef4444', width: 2 } },
               ]}
               layout={{
-                xaxis: { title: { text: 'Time (s)', font: { size: 14 } }, tickfont: { size: 13 }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
-                yaxis: { title: { text: 'Output y(t)', font: { size: 14 } }, tickfont: { size: 13 }, autorange: true, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
-                legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', font: { size: 15 } },
+                xaxis: { title: { text: 'Time (s)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                yaxis: { title: { text: 'Output y(t)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, autorange: true, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', font: { size: 18, weight: 'bold' } },
                 margin: { l: 70, r: 40, t: 10, b: 55 },
                 modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
-                height: 320,
+                height: 416,
               }}
             />
           ) : <div className="h-64 flex items-center justify-center text-gray-600">Computing...</div>}
@@ -209,17 +209,17 @@ export default function ResultsPage() {
             <PlotlyChart
               id="control-signal"
               data={[
-                { x: simData.t, y: simData.u, type: 'scatter', mode: 'lines', name: 'u(t)', line: { color: '#8b5cf6', width: 3 } },
-                criterion.useControlConstraint && { x: [simData.t[0], simData.t[simData.t.length - 1]], y: [criterion.uMax, criterion.uMax], type: 'scatter', mode: 'lines', name: 'u<sub>max</sub>', line: { color: '#ef4444', width: 1.5, dash: 'dash' } },
-                criterion.useControlConstraint && { x: [simData.t[0], simData.t[simData.t.length - 1]], y: [criterion.uMin, criterion.uMin], type: 'scatter', mode: 'lines', name: 'u<sub>min</sub>', line: { color: '#f59e0b', width: 1.5, dash: 'dash' } },
+                { x: simData.t, y: simData.u, type: 'scatter', mode: 'lines', name: 'u(t)', line: { color: '#8b5cf6', width: 3.5 } },
+                criterion.useControlConstraint && { x: [simData.t[0], simData.t[simData.t.length - 1]], y: [criterion.uMax, criterion.uMax], type: 'scatter', mode: 'lines', name: 'u<sub>max</sub>', line: { color: '#ef4444', width: 2, dash: 'dash' } },
+                criterion.useControlConstraint && { x: [simData.t[0], simData.t[simData.t.length - 1]], y: [criterion.uMin, criterion.uMin], type: 'scatter', mode: 'lines', name: 'u<sub>min</sub>', line: { color: '#f59e0b', width: 2, dash: 'dash' } },
               ].filter(Boolean)}
               layout={{
-                xaxis: { title: { text: 'Time (s)', font: { size: 14 } }, tickfont: { size: 13 }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
-                yaxis: { title: { text: 'u(t)', font: { size: 14 } }, tickfont: { size: 13 }, autorange: true, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
-                legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', font: { size: 15 } },
+                xaxis: { title: { text: 'Time (s)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                yaxis: { title: { text: 'u(t)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, autorange: true, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', font: { size: 18, weight: 'bold' } },
                 margin: { l: 70, r: 40, t: 10, b: 55 },
                 modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
-                height: 320,
+                height: 416,
               }}
             />
           ) : <div className="h-64 flex items-center justify-center text-gray-600">Computing...</div>}
@@ -248,15 +248,15 @@ export default function ResultsPage() {
             <PlotlyChart
               id="bode"
               data={[
-                { x: bode.freqs, y: bode.magCL, type: 'scatter', mode: 'lines', name: 'Magnitude (dB)', line: { color: '#3b82f6', width: 3 }, xaxis: 'x', yaxis: 'y' },
-                { x: bode.freqs, y: bode.phaseCL, type: 'scatter', mode: 'lines', name: 'Phase (°)', line: { color: '#f59e0b', width: 3 }, xaxis: 'x', yaxis: 'y2' },
-                { x: [bode.freqs[0], bode.freqs[bode.freqs.length - 1]], y: [0, 0], type: 'scatter', mode: 'lines', name: '0 dB', line: { color: '#4b5563', width: 1.5, dash: 'dot' }, xaxis: 'x', yaxis: 'y', showlegend: false },
+                { x: bode.freqs, y: bode.magCL, type: 'scatter', mode: 'lines', name: 'Magnitude (dB)', line: { color: '#3b82f6', width: 3.5 }, xaxis: 'x', yaxis: 'y' },
+                { x: bode.freqs, y: bode.phaseCL, type: 'scatter', mode: 'lines', name: 'Phase (°)', line: { color: '#f59e0b', width: 3.5 }, xaxis: 'x', yaxis: 'y2' },
+                { x: [bode.freqs[0], bode.freqs[bode.freqs.length - 1]], y: [0, 0], type: 'scatter', mode: 'lines', name: '0 dB', line: { color: '#4b5563', width: 2, dash: 'dot' }, xaxis: 'x', yaxis: 'y', showlegend: false },
               ]}
               layout={{
-                xaxis: { type: 'log', title: { text: 'Frequency (rad/s)', font: { size: 14 } }, tickfont: { size: 13 }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
-                yaxis: { title: { text: 'Magnitude (dB)', font: { size: 14 } }, tickfont: { size: 13 }, showline: true, linecolor: '#9ca3af', linewidth: 1.5, side: 'left' },
-                yaxis2: { title: { text: 'Phase (°)', font: { size: 14 } }, tickfont: { size: 13 }, side: 'right', overlaying: 'y' },
-                legend: { x: 0.99, y: 0.99, xanchor: 'right', yanchor: 'top', font: { size: 15 } },
+                xaxis: { type: 'log', title: { text: 'Frequency (rad/s)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                yaxis: { title: { text: 'Magnitude (dB)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, linecolor: '#9ca3af', linewidth: 1.5, side: 'left' },
+                yaxis2: { title: { text: 'Phase (°)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, side: 'right', overlaying: 'y' },
+                legend: { x: 0.99, y: 0.99, xanchor: 'right', yanchor: 'top', font: { size: 18, weight: 'bold' } },
                 margin: { l: 70, r: 70, t: 10, b: 55 },
                 modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                 height: 380,
