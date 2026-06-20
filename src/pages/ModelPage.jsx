@@ -31,6 +31,31 @@ function findBestLegendPosition(poles, zeros, xMin, xMax, yMin, yMax) {
   return counts.reduce((best, cur) => cur.count < best.count ? cur : best)
 }
 
+function findBestAnnotationPosition(poles, zeros, xMin, xMax, yMin, yMax, excludeName = null) {
+  const allPoints = [...poles, ...zeros]
+  const xMid = (xMax + xMin) / 2
+  const yMid = (yMax + yMin) / 2
+  const halfW = (xMax - xMin) * 0.25
+
+  const candidates = [
+    { name: 'topCenter',    x: 0.5,  y: 0.98, xanchor: 'center', yanchor: 'top',    check: p => Math.abs(p.re - xMid) < halfW && p.im > yMid },
+    { name: 'topLeft',      x: 0.02, y: 0.98, xanchor: 'left',   yanchor: 'top',    check: p => p.re <= xMid && p.im >= yMid },
+    { name: 'topRight',     x: 0.98, y: 0.98, xanchor: 'right',  yanchor: 'top',    check: p => p.re >= xMid && p.im >= yMid },
+    { name: 'bottomCenter', x: 0.5,  y: 0.02, xanchor: 'center', yanchor: 'bottom', check: p => Math.abs(p.re - xMid) < halfW && p.im < yMid },
+    { name: 'bottomLeft',   x: 0.02, y: 0.02, xanchor: 'left',   yanchor: 'bottom', check: p => p.re <= xMid && p.im <= yMid },
+    { name: 'bottomRight',  x: 0.98, y: 0.02, xanchor: 'right',  yanchor: 'bottom', check: p => p.re >= xMid && p.im <= yMid },
+  ]
+
+  const counts = candidates.map(c => ({ ...c, count: allPoints.filter(c.check).length }))
+
+  // Prefer topCenter if it has no markers (and it's not excluded)
+  const topCenter = counts.find(c => c.name === 'topCenter')
+  if (!excludeName && topCenter.count === 0) return topCenter
+
+  const pool = excludeName ? counts.filter(c => c.name !== excludeName) : counts
+  return (pool.length > 0 ? pool : counts).reduce((b, cur) => cur.count < b.count ? cur : b)
+}
+
 export default function ModelPage() {
   const navigate = useNavigate()
   const { plant, setPlant } = useStore()
@@ -73,18 +98,23 @@ export default function ModelPage() {
     const stable = poles.length > 0 && poles.every(p => p.re < -1e-9)
 
     const allPoints = [...poles, ...zeros]
-    let legendPos
+    let legendPos, annotPos
     if (allPoints.length === 0) {
-      legendPos = { x: 0.98, y: 0.02, xanchor: 'right', yanchor: 'bottom' }
+      legendPos = { name: 'bottomRight', x: 0.98, y: 0.02, xanchor: 'right',  yanchor: 'bottom' }
+      annotPos  = { name: 'topCenter',   x: 0.5,  y: 0.98, xanchor: 'center', yanchor: 'top'    }
     } else {
       const xMin = Math.min(...allPoints.map(p => p.re)) - 0.5
       const xMax = Math.max(...allPoints.map(p => p.re)) + 0.5
       const yMin = Math.min(...allPoints.map(p => p.im)) - 0.5
       const yMax = Math.max(...allPoints.map(p => p.im)) + 0.5
       legendPos = findBestLegendPosition(poles, zeros, xMin, xMax, yMin, yMax)
+      annotPos  = findBestAnnotationPosition(poles, zeros, xMin, xMax, yMin, yMax)
+      if (annotPos.name === legendPos.name) {
+        annotPos = findBestAnnotationPosition(poles, zeros, xMin, xMax, yMin, yMax, legendPos.name)
+      }
     }
 
-    return { poles, zeros, stable, legendPos }
+    return { poles, zeros, stable, legendPos, annotPos }
   }, [num, den, order])
 
   // Compute preview when TF changes
@@ -446,22 +476,23 @@ export default function ModelPage() {
                   ],
                   showlegend: true,
                   legend: { x: pzMap.legendPos.x, y: pzMap.legendPos.y, xanchor: pzMap.legendPos.xanchor, yanchor: pzMap.legendPos.yanchor, bgcolor: 'rgba(255,255,255,0.85)', bordercolor: 'rgba(0,0,0,0.1)', borderwidth: 1, font: { size: 15 } },
+                  annotations: [{
+                    text: pzMap.stable ? '✓ Stable system' : '⚠ Unstable open-loop system',
+                    xref: 'paper', yref: 'paper',
+                    x: pzMap.annotPos.x, y: pzMap.annotPos.y,
+                    xanchor: pzMap.annotPos.xanchor, yanchor: pzMap.annotPos.yanchor,
+                    showarrow: false,
+                    bgcolor: pzMap.stable ? 'rgba(34,197,94,0.9)' : 'rgba(239,68,68,0.9)',
+                    bordercolor: 'transparent',
+                    borderwidth: 0,
+                    borderpad: 6,
+                    font: { color: 'white', size: 12, weight: 'bold' },
+                  }],
                   margin: { l: 60, r: 40, t: 50, b: 40 },
                   modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                   height: 360,
                 }}
               />
-              {/* Stability badge — HTML overlay to avoid Plotly bgcolor transparency bug */}
-              <div
-                className={`absolute font-bold text-sm text-black px-3 py-1.5 rounded border-2 pointer-events-none ${
-                  pzMap.stable
-                    ? 'bg-green-300 border-green-500'
-                    : 'bg-red-500 border-red-700'
-                }`}
-                style={{ top: 58, left: '50%', transform: 'translateX(-50%)' }}
-              >
-                {pzMap.stable ? '✓ Stable system' : '⚠ Unstable system'}
-              </div>
             </div>
           </div>
         </div>
