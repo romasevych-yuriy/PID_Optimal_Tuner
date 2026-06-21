@@ -9,7 +9,7 @@ export default function AppTabs({ tabs, activeIndex, onChange }) {
           <button
             key={i}
             onClick={() => onChange(i)}
-            style={{ fontSize: '1.4rem' }}
+            style={{ fontSize: '0.93rem' }}
             className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md transition-all duration-200 ${
               isActive
                 ? 'bg-blue-500 text-white font-medium'
