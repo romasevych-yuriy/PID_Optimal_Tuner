@@ -150,7 +150,7 @@ function DisturbanceTab({ plant, criterion, results }) {
                   onChange={e => setAmplitude(parseFloat(e.target.value))} className="flex-1"/>
                 <input type="number" value={amplitude} step={0.05}
                   onChange={e => setAmplitude(parseFloat(e.target.value) || 0)}
-                  className="input-field w-20 text-center text-sm"/>
+                  className="input-field w-20 text-center text-base"/>
               </div>
             </div>
             <div>
@@ -160,7 +160,7 @@ function DisturbanceTab({ plant, criterion, results }) {
                   onChange={e => setTOnset(parseFloat(e.target.value))} className="flex-1"/>
                 <input type="number" value={tOnset} step={0.5} min={0.5}
                   onChange={e => setTOnset(parseFloat(e.target.value) || 5)}
-                  className="input-field w-20 text-center text-sm"/>
+                  className="input-field w-20 text-center text-base"/>
               </div>
             </div>
             {distType === 'sine' && (
@@ -171,7 +171,7 @@ function DisturbanceTab({ plant, criterion, results }) {
                     onChange={e => setSineFreq(parseFloat(e.target.value))} className="flex-1"/>
                   <input type="number" value={sineFreq} step={0.1} min={0.01}
                     onChange={e => setSineFreq(parseFloat(e.target.value) || 1)}
-                    className="input-field w-20 text-center text-sm"/>
+                    className="input-field w-20 text-center text-base"/>
                 </div>
               </div>
             )}
@@ -643,7 +643,7 @@ function RobustnessTab({ plant, criterion, results }) {
                   onChange={e => setNSamples(parseInt(e.target.value))} className="flex-1"/>
                 <input type="number" value={nSamples} min={20} max={200} step={10}
                   onChange={e => setNSamples(Math.max(20, Math.min(200, parseInt(e.target.value) || 50)))}
-                  className="input-field w-20 text-center text-sm"/>
+                  className="input-field w-20 text-center text-base"/>
               </div>
             </div>
           </div>
