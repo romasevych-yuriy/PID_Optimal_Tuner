@@ -486,7 +486,7 @@ export default function ModelPage() {
                     bordercolor: 'transparent',
                     borderwidth: 0,
                     borderpad: 6,
-                    font: { color: 'white', size: 12, weight: 'bold' },
+                    font: { color: 'black', size: 12, weight: 'bold' },
                   }],
                   margin: { l: 60, r: 40, t: 50, b: 40 },
                   modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
