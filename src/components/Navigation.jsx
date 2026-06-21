@@ -75,7 +75,7 @@ export default function Navigation() {
               className="appearance-none border-0 flex items-center gap-2 px-6 py-3 rounded-xl text-base font-medium transition-all duration-200 text-gray-600 hover:text-gray-900 hover:bg-dark-hover"
             >
               <Link2 size={20} strokeWidth={1.75} className="hidden lg:block" />
-              <span className="hidden md:block">Copy Link</span>
+              <span className="hidden md:block whitespace-nowrap">Copy Link</span>
               <span className="md:hidden text-sm">🔗</span>
             </button>
           </div>
