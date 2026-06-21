@@ -33,20 +33,26 @@ function findBestLegendPosition(poles, zeros, xMin, xMax, yMin, yMax) {
 
 function findBestAnnotationPosition(poles, zeros, xMin, xMax, yMin, yMax, excludeName = null) {
   const allPoints = [...poles, ...zeros]
-  const xMid = (xMax + xMin) / 2
-  const yMid = (yMax + yMin) / 2
-  const halfW = (xMax - xMin) * 0.25
+  const rangeX = xMax - xMin || 1
+  const rangeY = yMax - yMin || 1
 
+  // Convert markers to paper coordinates [0,1] so thresholds match actual pixel positions
+  const pts = allPoints.map(p => ({
+    px: (p.re - xMin) / rangeX,
+    py: (p.im - yMin) / rangeY,
+  }))
+
+  // Zones cover the area around each badge corner/edge (in paper space)
   const candidates = [
-    { name: 'topCenter',    x: 0.5,  y: 0.98, xanchor: 'center', yanchor: 'top',    check: p => Math.abs(p.re - xMid) < halfW && p.im > yMid },
-    { name: 'topLeft',      x: 0.02, y: 0.98, xanchor: 'left',   yanchor: 'top',    check: p => p.re <= xMid && p.im >= yMid },
-    { name: 'topRight',     x: 0.98, y: 0.98, xanchor: 'right',  yanchor: 'top',    check: p => p.re >= xMid && p.im >= yMid },
-    { name: 'bottomCenter', x: 0.5,  y: 0.02, xanchor: 'center', yanchor: 'bottom', check: p => Math.abs(p.re - xMid) < halfW && p.im < yMid },
-    { name: 'bottomLeft',   x: 0.02, y: 0.02, xanchor: 'left',   yanchor: 'bottom', check: p => p.re <= xMid && p.im <= yMid },
-    { name: 'bottomRight',  x: 0.98, y: 0.02, xanchor: 'right',  yanchor: 'bottom', check: p => p.re >= xMid && p.im <= yMid },
+    { name: 'topCenter',    x: 0.5,  y: 0.98, xanchor: 'center', yanchor: 'top',    check: p => p.px > 0.25 && p.px < 0.75 && p.py > 0.65 },
+    { name: 'topLeft',      x: 0.02, y: 0.98, xanchor: 'left',   yanchor: 'top',    check: p => p.px < 0.40 && p.py > 0.65 },
+    { name: 'topRight',     x: 0.98, y: 0.98, xanchor: 'right',  yanchor: 'top',    check: p => p.px > 0.60 && p.py > 0.65 },
+    { name: 'bottomCenter', x: 0.5,  y: 0.02, xanchor: 'center', yanchor: 'bottom', check: p => p.px > 0.25 && p.px < 0.75 && p.py < 0.35 },
+    { name: 'bottomLeft',   x: 0.02, y: 0.02, xanchor: 'left',   yanchor: 'bottom', check: p => p.px < 0.40 && p.py < 0.35 },
+    { name: 'bottomRight',  x: 0.98, y: 0.02, xanchor: 'right',  yanchor: 'bottom', check: p => p.px > 0.60 && p.py < 0.35 },
   ]
 
-  const counts = candidates.map(c => ({ ...c, count: allPoints.filter(c.check).length }))
+  const counts = candidates.map(c => ({ ...c, count: pts.filter(c.check).length }))
 
   // Prefer topCenter if it has no markers (and it's not excluded)
   const topCenter = counts.find(c => c.name === 'topCenter')
@@ -98,7 +104,7 @@ export default function ModelPage() {
     const stable = poles.length > 0 && poles.every(p => p.re < -1e-9)
 
     const allPoints = [...poles, ...zeros]
-    let legendPos, annotPos
+    let legendPos, annotPos, axisRange = null
     if (allPoints.length === 0) {
       legendPos = { name: 'bottomRight', x: 0.98, y: 0.02, xanchor: 'right',  yanchor: 'bottom' }
       annotPos  = { name: 'topCenter',   x: 0.5,  y: 0.98, xanchor: 'center', yanchor: 'top'    }
@@ -107,6 +113,7 @@ export default function ModelPage() {
       const xMax = Math.max(...allPoints.map(p => p.re)) + 0.5
       const yMin = Math.min(...allPoints.map(p => p.im)) - 0.5
       const yMax = Math.max(...allPoints.map(p => p.im)) + 0.5
+      axisRange = { x: [xMin, xMax], y: [yMin, yMax] }
       legendPos = findBestLegendPosition(poles, zeros, xMin, xMax, yMin, yMax)
       annotPos  = findBestAnnotationPosition(poles, zeros, xMin, xMax, yMin, yMax)
       if (annotPos.name === legendPos.name) {
@@ -114,7 +121,7 @@ export default function ModelPage() {
       }
     }
 
-    return { poles, zeros, stable, legendPos, annotPos }
+    return { poles, zeros, stable, legendPos, annotPos, axisRange }
   }, [num, den, order])
 
   // Compute preview when TF changes
@@ -463,12 +470,14 @@ export default function ModelPage() {
                     tickfont: { size: 13 },
                     zeroline: false,
                     showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
+                    ...(pzMap.axisRange && { range: pzMap.axisRange.x }),
                   },
                   yaxis: {
                     title: { text: 'Imaginary (Im)', font: { size: 14 } },
                     tickfont: { size: 13 },
                     zeroline: false,
                     showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
+                    ...(pzMap.axisRange && { range: pzMap.axisRange.y }),
                   },
                   shapes: [
                     { type: 'line', x0: 0, x1: 0, y0: 0, y1: 1, xref: 'x', yref: 'paper', line: { color: '#9ca3af', dash: 'dash', width: 1.5 } },
