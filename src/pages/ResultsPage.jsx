@@ -97,21 +97,9 @@ export default function ResultsPage() {
 
   return (
     <div className="animate-fade-in space-y-6 max-w-6xl mx-auto">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="section-title text-2xl">Tuning Results</h1>
-          <p className="section-subtitle">Inspect, adjust, and export your PID design.</p>
-        </div>
-        <div className="flex gap-2">
-          <button onClick={() => navigate('/optimizer')} className="btn-secondary text-sm">← Back to Optimizer</button>
-          <button
-            onClick={handleExportPDF}
-            disabled={pdfGenerating}
-            className="btn-primary text-sm disabled:opacity-60"
-          >
-            {pdfGenerating ? '⏳ Generating PDF…' : '📄 Export PDF'}
-          </button>
-        </div>
+      <div>
+        <h1 className="section-title text-2xl">Tuning Results</h1>
+        <p className="section-subtitle">Inspect, adjust, and export your PID design.</p>
       </div>
 
       {/* Status */}
@@ -279,15 +267,10 @@ export default function ResultsPage() {
         ) : <div className="h-48 flex items-center justify-center text-gray-600">Computing Bode plot...</div>}
       </div>
 
-      {/* Export buttons */}
-      <div className="flex flex-wrap gap-3 justify-end pb-4">
-        <button
-          onClick={handleExportPDF}
-          disabled={pdfGenerating}
-          className="btn-primary disabled:opacity-60"
-        >
-          {pdfGenerating ? '⏳ Generating PDF…' : '📄 Output Report (PDF)'}
-        </button>
+      {/* Navigation */}
+      <div className="flex justify-between pt-2 pb-4">
+        <button onClick={() => navigate('/optimizer')} className="btn-secondary">← Back to Optimizer</button>
+        <button onClick={() => navigate('/analysis')} className="btn-primary px-8">Advanced Analysis →</button>
       </div>
     </div>
   )

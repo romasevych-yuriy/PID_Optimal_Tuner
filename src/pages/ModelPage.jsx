@@ -259,18 +259,18 @@ export default function ModelPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 border-b border-dark-border pb-0">
         <button
           onClick={() => { setTab('tf'); setPlant({ method: 'tf' }) }}
-          className={`px-5 py-2 rounded-lg font-bold transition-all ${tab === 'tf' ? 'tab-active' : 'tab-inactive'}`}
-          style={{ fontSize: '1.05rem' }}
+          className={`px-5 py-2.5 rounded-t-lg border border-b-0 font-bold transition-colors duration-200 ${tab === 'tf' ? 'bg-dark-card border-dark-border text-accent-blue' : 'bg-transparent border-transparent text-gray-500 hover:text-gray-700'}`}
+          style={{ fontSize: '1.4rem' }}
         >
           <span className="flex items-center gap-1.5"><i className="ti ti-math-function" /> Transfer Function</span>
         </button>
         <button
           onClick={() => { setTab('ident'); setPlant({ method: 'ident' }) }}
-          className={`px-5 py-2 rounded-lg font-bold transition-all ${tab === 'ident' ? 'tab-active' : 'tab-inactive'}`}
-          style={{ fontSize: '1.05rem' }}
+          className={`px-5 py-2.5 rounded-t-lg border border-b-0 font-bold transition-colors duration-200 ${tab === 'ident' ? 'bg-dark-card border-dark-border text-accent-blue' : 'bg-transparent border-transparent text-gray-500 hover:text-gray-700'}`}
+          style={{ fontSize: '1.4rem' }}
         >
           <span className="flex items-center gap-1.5"><i className="ti ti-chart-dots" /> System Identification</span>
         </button>
@@ -392,49 +392,51 @@ export default function ModelPage() {
             </div>
             {previewError && <p className="text-red-400 text-sm mb-3">{previewError}</p>}
             {previewData ? (
-              <PlotlyChart
-                id="tf-preview"
-                data={[
-                  {
-                    x: previewData.t,
-                    y: previewData.y,
-                    type: 'scatter',
-                    mode: 'lines',
-                    name: '<b>y(t) — step response</b>',
-                    line: { color: '#3b82f6', width: 3 },
-                    cliponaxis: false,
-                  },
-                  {
-                    x: previewData.t,
-                    y: previewData.t.map(ti => ti < 0.7 * tCalc ? 1.0 : 0.75),
-                    type: 'scatter',
-                    mode: 'lines',
-                    name: '<b>r(t) — setpoint</b>',
-                    line: { color: '#ef4444', width: 3, shape: 'hv' },
-                    cliponaxis: false,
-                  },
-                ]}
-                layout={{
-                  title: { text: '<b>Open-loop Step Response</b>', font: { size: 16 } },
-                  xaxis: {
-                    title: { text: 'Time (s)', font: { size: 17, weight: 'bold' } },
-                    tickfont: { size: 16, weight: 'bold' },
-                    range: [0, tCalc],
-                    showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
-                  },
-                  yaxis: {
-                    title: { text: 'Output y(t) / Setpoint r(t)', font: { size: 17, weight: 'bold' } },
-                    tickfont: { size: 16, weight: 'bold' },
-                    autorange: true,
-                    rangemode: 'normal',
-                    showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
-                  },
-                  legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', font: { size: 18, weight: 'bold' } },
-                  margin: { l: 70, r: 40, t: 50, b: 55 },
-                  modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
-                  height: 420,
-                }}
-              />
+              <>
+                <h4 className="font-semibold text-gray-900 mb-2">Open-loop Step Response</h4>
+                <PlotlyChart
+                  id="tf-preview"
+                  data={[
+                    {
+                      x: previewData.t,
+                      y: previewData.y,
+                      type: 'scatter',
+                      mode: 'lines',
+                      name: '<b>y(t) — step response</b>',
+                      line: { color: '#3b82f6', width: 3 },
+                      cliponaxis: false,
+                    },
+                    {
+                      x: previewData.t,
+                      y: previewData.t.map(ti => ti < 0.7 * tCalc ? 1.0 : 0.75),
+                      type: 'scatter',
+                      mode: 'lines',
+                      name: '<b>r(t) — setpoint</b>',
+                      line: { color: '#ef4444', width: 3, shape: 'hv' },
+                      cliponaxis: false,
+                    },
+                  ]}
+                  layout={{
+                    xaxis: {
+                      title: { text: 'Time (s)', font: { size: 17, weight: 'bold' } },
+                      tickfont: { size: 16, weight: 'bold' },
+                      range: [0, tCalc],
+                      showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
+                    },
+                    yaxis: {
+                      title: { text: 'Output y(t) / Setpoint r(t)', font: { size: 17, weight: 'bold' } },
+                      tickfont: { size: 16, weight: 'bold' },
+                      autorange: true,
+                      rangemode: 'normal',
+                      showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
+                    },
+                    legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', font: { size: 18, weight: 'bold' } },
+                    margin: { l: 70, r: 40, t: 10, b: 55 },
+                    modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
+                    height: 420,
+                  }}
+                />
+              </>
             ) : (
               <div className="flex items-center justify-center h-64 text-gray-600 text-sm">
                 Click "Preview" to show step response
@@ -442,7 +444,8 @@ export default function ModelPage() {
             )}
 
             {/* Pole-Zero Map */}
-            <div className="mt-4 relative">
+            <h4 className="font-semibold text-gray-900 mb-2 mt-4">Pole-Zero Map</h4>
+            <div className="relative">
               <PlotlyChart
                 id="pz-map"
                 data={[
@@ -464,7 +467,6 @@ export default function ModelPage() {
                   },
                 ]}
                 layout={{
-                  title: { text: '<b>Pole-Zero Map</b>', font: { size: 16 } },
                   xaxis: {
                     title: { text: 'Real (Re)', font: { size: 17, weight: 'bold' } },
                     tickfont: { size: 16, weight: 'bold' },
@@ -485,7 +487,7 @@ export default function ModelPage() {
                   ],
                   showlegend: true,
                   legend: { x: pzMap.legendPos.x, y: pzMap.legendPos.y, xanchor: pzMap.legendPos.xanchor, yanchor: pzMap.legendPos.yanchor, bgcolor: 'rgba(255,255,255,0.85)', bordercolor: 'rgba(0,0,0,0.1)', borderwidth: 1, font: { size: 18, weight: 'bold' } },
-                  margin: { l: 60, r: 40, t: 50, b: 40 },
+                  margin: { l: 60, r: 40, t: 10, b: 40 },
                   modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                   height: 360,
                 }}
@@ -585,8 +587,10 @@ export default function ModelPage() {
           <div className="card flex-1 min-w-0">
             <h2 className="font-semibold text-gray-900 mb-3">Identification Result</h2>
             {identPreviewData && identPreviewData.rawT ? (
-              <PlotlyChart
-                id="ident-preview"
+              <>
+                <h4 className="font-semibold text-gray-900 mb-2">Data vs Identified Model</h4>
+                <PlotlyChart
+                  id="ident-preview"
                 data={[
                   {
                     x: identPreviewData.rawT,
@@ -618,23 +622,23 @@ export default function ModelPage() {
                   },
                 ]}
                 layout={{
-                  title: { text: '<b>Data vs Identified Model</b>', font: { size: 16 } },
                   xaxis: {
-                    title: { text: 'Time (s)', font: { size: 14 } },
-                    tickfont: { size: 13 },
+                    title: { text: 'Time (s)', font: { size: 17, weight: 'bold' } },
+                    tickfont: { size: 16, weight: 'bold' },
                     showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
                   },
                   yaxis: {
-                    title: { text: 'Signal', font: { size: 14 } },
-                    tickfont: { size: 13 },
+                    title: { text: 'Signal', font: { size: 17, weight: 'bold' } },
+                    tickfont: { size: 16, weight: 'bold' },
                     showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
                   },
-                  legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', font: { size: 15 } },
-                  margin: { l: 70, r: 40, t: 50, b: 55 },
+                  legend: { x: 0.99, y: 0.01, xanchor: 'right', yanchor: 'bottom', font: { size: 18, weight: 'bold' } },
+                  margin: { l: 70, r: 40, t: 10, b: 55 },
                   modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                   height: 420,
                 }}
               />
+              </>
             ) : (
               <div className="flex items-center justify-center h-64 text-gray-600 text-sm">
                 Run identification to see results

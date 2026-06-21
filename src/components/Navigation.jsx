@@ -37,7 +37,7 @@ export default function Navigation() {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-accent-blue flex items-center justify-center text-white font-bold text-xl">P</div>
-            <span className="font-bold text-gray-800 text-xl hidden sm:block">PID Optimal Tuner</span>
+            <span className="font-bold text-gray-800 text-base whitespace-nowrap hidden sm:block">PID Optimal Tuner</span>
           </div>
 
           {/* Steps + Copy Link */}

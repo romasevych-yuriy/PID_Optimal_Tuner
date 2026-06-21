@@ -13,11 +13,11 @@ function Card({ children, className = '' }) {
 }
 
 function Label({ children }) {
-  return <p className="text-sm font-semibold text-gray-700 mb-1">{children}</p>
+  return <p className="text-lg font-semibold text-gray-700 mb-2">{children}</p>
 }
 
 function SectionTitle({ children }) {
-  return <h3 className="font-semibold text-gray-900 mb-3" style={{ fontSize: '1.05rem' }}>{children}</h3>
+  return <h3 className="font-semibold text-gray-900 text-lg mb-3">{children}</h3>
 }
 
 function RunBtn({ onClick, running, disabled, children }) {
@@ -43,8 +43,8 @@ function RunBtn({ onClick, running, disabled, children }) {
 function MetricRow({ label, value, unit = '' }) {
   return (
     <div className="flex justify-between items-center py-1.5 border-b border-dark-border last:border-0">
-      <span className="text-gray-600 text-sm">{label}</span>
-      <span className="font-semibold text-gray-900 text-sm tabular-nums">
+      <span className="text-gray-600 text-base">{label}</span>
+      <span className="font-semibold text-gray-900 text-base tabular-nums">
         {value === null || value === undefined ? '—' : `${value}${unit ? ' ' + unit : ''}`}
       </span>
     </div>
@@ -214,11 +214,11 @@ function DisturbanceTab({ plant, criterion, results }) {
                 id="dist-y"
                 data={yData}
                 layout={{
-                  xaxis: { title: { text: 'Time (s)' } },
-                  yaxis: { title: { text: 'Output' } },
+                  xaxis: { title: { text: 'Time (s)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
+                  yaxis: { title: { text: 'Output', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
                   shapes: [onsetShape],
                   annotations: [onsetAnnotation],
-                  legend: { orientation: 'h', y: 1.12 },
+                  legend: { orientation: 'h', y: 1.12, font: { size: 18, weight: 'bold' } },
                 }}
                 style={{ minHeight: 280 }}
               />
@@ -229,8 +229,8 @@ function DisturbanceTab({ plant, criterion, results }) {
                 id="dist-u"
                 data={uData}
                 layout={{
-                  xaxis: { title: { text: 'Time (s)' } },
-                  yaxis: { title: { text: 'Control signal' } },
+                  xaxis: { title: { text: 'Time (s)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
+                  yaxis: { title: { text: 'Control signal', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
                   shapes: [onsetShape],
                   annotations: [onsetAnnotation],
                 }}
@@ -384,7 +384,7 @@ function SensitivityTab({ plant, criterion, results }) {
                 <input type="checkbox" checked={checkedParams.has(idx)}
                   onChange={() => toggleParam(idx)}
                   className="rounded border-dark-border text-accent-blue"/>
-                <span className="text-sm text-gray-700">
+                <span className="text-base text-gray-700">
                   A<sub>{idx}</sub> = {(plant.den[idx] ?? 0).toFixed(4)}
                 </span>
               </label>
@@ -420,7 +420,7 @@ function SensitivityTab({ plant, criterion, results }) {
                 <input type="checkbox" checked={selectedMetrics.has(key)}
                   onChange={() => toggleMetric(key)}
                   className="rounded border-dark-border text-accent-blue"/>
-                <span className="text-sm text-gray-700">{label}</span>
+                <span className="text-base text-gray-700">{label}</span>
               </label>
             ))}
           </div>
@@ -459,9 +459,9 @@ function SensitivityTab({ plant, criterion, results }) {
                 data={tornadoData}
                 layout={{
                   barmode: 'overlay',
-                  xaxis: { title: { text: '% change in f_OF' } },
-                  yaxis: { title: { text: '' }, automargin: true },
-                  legend: { orientation: 'h', y: 1.1 },
+                  xaxis: { title: { text: '% change in f_OF', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
+                  yaxis: { title: { text: '' }, automargin: true, tickfont: { size: 16, weight: 'bold' } },
+                  legend: { orientation: 'h', y: 1.1, font: { size: 18, weight: 'bold' } },
                   margin: { l: 70, r: 20, t: 30, b: 50 },
                 }}
                 style={{ minHeight: 260 }}
@@ -487,9 +487,9 @@ function SensitivityTab({ plant, criterion, results }) {
                   id="sens-metrics"
                   data={metricsChartData}
                   layout={{
-                    xaxis: { title: { text: 'Parameter variation (%)' } },
-                    yaxis: { title: { text: '% change from nominal' } },
-                    legend: { orientation: 'h', y: 1.12 },
+                    xaxis: { title: { text: 'Parameter variation (%)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
+                    yaxis: { title: { text: '% change from nominal', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
+                    legend: { orientation: 'h', y: 1.12, font: { size: 18, weight: 'bold' } },
                     shapes: [{ type: 'line', x0: 0, x1: 0, y0: 0, y1: 1, yref: 'paper', line: { color: '#6b7280', dash: 'dot', width: 1 } }],
                   }}
                   style={{ minHeight: 260 }}
@@ -500,7 +500,7 @@ function SensitivityTab({ plant, criterion, results }) {
             <Card>
               <SectionTitle>Sensitivity Summary</SectionTitle>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-base">
                   <thead>
                     <tr className="border-b border-dark-border">
                       <th className="text-left py-2 pr-4 font-semibold text-gray-700">Parameter</th>
@@ -717,8 +717,8 @@ function RobustnessTab({ plant, criterion, results }) {
                   id="rob-hist"
                   data={pmHistData}
                   layout={{
-                    xaxis: { title: { text: 'Phase Margin (deg)' } },
-                    yaxis: { title: { text: 'Count' } },
+                    xaxis: { title: { text: 'Phase Margin (deg)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
+                    yaxis: { title: { text: 'Count', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
                     showlegend: false,
                   }}
                   style={{ minHeight: 240 }}
@@ -732,8 +732,8 @@ function RobustnessTab({ plant, criterion, results }) {
                   id="rob-scatter"
                   data={scatterData}
                   layout={{
-                    xaxis: { title: { text: 'Avg variation (%)' } },
-                    yaxis: { title: { text: 'Phase Margin (deg)' } },
+                    xaxis: { title: { text: 'Avg variation (%)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
+                    yaxis: { title: { text: 'Phase Margin (deg)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
                     showlegend: false,
                     shapes: [
                       { type: 'line', x0: 0, x1: 1, xref: 'paper', y0: 45, y1: 45, line: { color: '#22c55e', dash: 'dash', width: 1.5 } },
@@ -750,7 +750,7 @@ function RobustnessTab({ plant, criterion, results }) {
             <Card>
               <SectionTitle>Robustness Summary Table</SectionTitle>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-base">
                   <thead>
                     <tr className="border-b border-dark-border">
                       {['Criterion', 'Stable', 'PM &gt; 45° (good)', 'PM 30–45° (acceptable)', 'PM &lt; 30° (poor)'].map((h, i) => (
@@ -824,7 +824,8 @@ export default function AnalysisPage() {
       <div className="flex gap-2 border-b border-dark-border pb-0">
         {TABS.map((tab, i) => (
           <button key={i} onClick={() => setActiveTab(i)}
-            className={`px-5 py-2.5 text-sm font-semibold rounded-t-lg border border-b-0 transition-colors duration-200 ${
+            style={{ fontSize: '1.4rem' }}
+            className={`px-5 py-2.5 font-bold rounded-t-lg border border-b-0 transition-colors duration-200 ${
               activeTab === i
                 ? 'bg-dark-card border-dark-border text-accent-blue'
                 : 'bg-transparent border-transparent text-gray-500 hover:text-gray-700'

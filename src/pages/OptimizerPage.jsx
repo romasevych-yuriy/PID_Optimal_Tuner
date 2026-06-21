@@ -308,8 +308,7 @@ export default function OptimizerPage() {
       {/* Convergence chart */}
       {convergence.length > 0 && (
         <div className="card animate-slide-up">
-          <h2 className="font-semibold text-gray-900 mb-2">Convergence Plot</h2>
-          <p className="text-gray-700 font-bold mb-3" style={{ fontSize: '1.2rem' }}>Best Objective Function value vs. Iteration</p>
+          <h2 className="font-semibold text-gray-900 mb-3">Best Objective Function value vs. Iteration</h2>
           <PlotlyChart
             id="convergence"
             data={convData}
