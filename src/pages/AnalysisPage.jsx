@@ -130,7 +130,7 @@ function DisturbanceTab({ plant, criterion, results }) {
           <div className="space-y-4">
             <div>
               <Label>Disturbance Type</Label>
-              <select value={distType} onChange={e => setDistType(e.target.value)} className="input-field">
+              <select value={distType} onChange={e => setDistType(e.target.value)} className="input-field text-base">
                 <option value="step">Step</option>
                 <option value="impulse">Impulse</option>
                 <option value="sine">Sine</option>
@@ -138,7 +138,7 @@ function DisturbanceTab({ plant, criterion, results }) {
             </div>
             <div>
               <Label>Application Point</Label>
-              <select value={distPoint} onChange={e => setDistPoint(e.target.value)} className="input-field">
+              <select value={distPoint} onChange={e => setDistPoint(e.target.value)} className="input-field text-base">
                 <option value="output">Output (measurement noise)</option>
                 <option value="input">Input (actuator noise)</option>
               </select>
@@ -403,7 +403,7 @@ function SensitivityTab({ plant, criterion, results }) {
             </div>
             <div>
               <Label>Points per Parameter</Label>
-              <select value={nPoints} onChange={e => setNPoints(parseInt(e.target.value))} className="input-field">
+              <select value={nPoints} onChange={e => setNPoints(parseInt(e.target.value))} className="input-field text-base">
                 <option value={5}>5</option>
                 <option value={9}>9</option>
                 <option value={13}>13</option>
@@ -476,7 +476,7 @@ function SensitivityTab({ plant, criterion, results }) {
                     Metrics vs Variation — Parameter{' '}
                     <select value={chartParam}
                       onChange={e => setChartParam(parseInt(e.target.value))}
-                      className="ml-1 text-sm border border-dark-border rounded px-2 py-0.5">
+                      className="ml-1 text-base border border-dark-border rounded px-2 py-0.5">
                       {sensResult.params.map(p => (
                         <option key={p.idx} value={p.idx}>A{p.idx}</option>
                       ))}
