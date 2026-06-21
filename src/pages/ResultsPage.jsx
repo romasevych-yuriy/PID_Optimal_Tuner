@@ -253,7 +253,7 @@ export default function ResultsPage() {
                 { x: [bode.freqs[0], bode.freqs[bode.freqs.length - 1]], y: [0, 0], type: 'scatter', mode: 'lines', name: '0 dB', line: { color: '#4b5563', width: 2, dash: 'dot' }, xaxis: 'x', yaxis: 'y', showlegend: false },
               ]}
               layout={{
-                xaxis: { type: 'log', title: { text: 'Frequency (rad/s)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                xaxis: { type: 'log', dtick: 1, title: { text: 'Frequency (rad/s)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
                 yaxis: { title: { text: 'Magnitude (dB)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, linecolor: '#9ca3af', linewidth: 1.5, side: 'left' },
                 yaxis2: { title: { text: 'Phase (°)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, side: 'right', overlaying: 'y' },
                 legend: { x: 0.99, y: 0.99, xanchor: 'right', yanchor: 'top', font: { size: 18, weight: 'bold' } },
