@@ -315,18 +315,18 @@ export default function OptimizerPage() {
             data={convData}
             layout={{
               xaxis: {
-                title: { text: 'Iteration', font: { size: 14 } },
-                tickfont: { size: 13 },
+                title: { text: 'Iteration', font: { size: 17, weight: 'bold' } },
+                tickfont: { size: 16, weight: 'bold' },
                 showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
               },
               yaxis: {
-                title: { text: 'f<sub>OF</sub> (logarithmic scale)', font: { size: 14 } },
-                tickfont: { size: 13 },
+                title: { text: 'f<sub>OF</sub> (logarithmic scale)', font: { size: 17, weight: 'bold' } },
+                tickfont: { size: 16, weight: 'bold' },
                 type: 'log',
                 autorange: true,
                 showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5,
               },
-              legend: { x: 0.99, y: 0.99, xanchor: 'right', yanchor: 'top', font: { size: 15 } },
+              legend: { x: 0.99, y: 0.99, xanchor: 'right', yanchor: 'top', font: { size: 18, weight: 'bold' } },
               margin: { l: 70, r: 40, t: 10, b: 55 },
               modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
               height: 300,
