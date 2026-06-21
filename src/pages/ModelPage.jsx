@@ -476,23 +476,25 @@ export default function ModelPage() {
                   ],
                   showlegend: true,
                   legend: { x: pzMap.legendPos.x, y: pzMap.legendPos.y, xanchor: pzMap.legendPos.xanchor, yanchor: pzMap.legendPos.yanchor, bgcolor: 'rgba(255,255,255,0.85)', bordercolor: 'rgba(0,0,0,0.1)', borderwidth: 1, font: { size: 15 } },
-                  annotations: [{
-                    text: pzMap.stable ? '✓ Stable system' : '⚠ Unstable open-loop system',
-                    xref: 'paper', yref: 'paper',
-                    x: pzMap.annotPos.x, y: pzMap.annotPos.y,
-                    xanchor: pzMap.annotPos.xanchor, yanchor: pzMap.annotPos.yanchor,
-                    showarrow: false,
-                    bgcolor: pzMap.stable ? 'rgba(34,197,94,0.9)' : 'rgba(239,68,68,0.9)',
-                    bordercolor: 'transparent',
-                    borderwidth: 0,
-                    borderpad: 6,
-                    font: { color: 'black', size: 12, weight: 'bold' },
-                  }],
                   margin: { l: 60, r: 40, t: 50, b: 40 },
                   modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                   height: 360,
                 }}
               />
+              {/* Stability badge — HTML overlay (Plotly annotation bgcolor broken in SVG mode) */}
+              <div
+                className={`absolute font-bold text-sm text-black px-3 py-1.5 rounded pointer-events-none ${ pzMap.stable ? 'bg-green-300' : 'bg-red-400' }`}
+                style={{
+                  topCenter:    { top: 58, left: '50%', transform: 'translateX(-50%)' },
+                  topLeft:      { top: 58, left: 68 },
+                  topRight:     { top: 58, right: 48 },
+                  bottomCenter: { bottom: 48, left: '50%', transform: 'translateX(-50%)' },
+                  bottomLeft:   { bottom: 48, left: 68 },
+                  bottomRight:  { bottom: 48, right: 48 },
+                }[pzMap.annotPos.name] ?? { top: 58, left: '50%', transform: 'translateX(-50%)' }}
+              >
+                {pzMap.stable ? '✓ Stable system' : '⚠ Unstable open-loop system'}
+              </div>
             </div>
           </div>
         </div>
