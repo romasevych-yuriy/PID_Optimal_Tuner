@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useStore from '../store/useStore'
 import PlotlyChart from '../components/PlotlyChart'
+import AppTabs from '../components/AppTabs'
 import { computeSimParams } from '../math/simulation'
 
 const TABS = ['Disturbance Response', 'Sensitivity Analysis', 'Robustness Check']
@@ -821,19 +822,11 @@ export default function AnalysisPage() {
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-2 border-b border-dark-border pb-0">
-        {TABS.map((tab, i) => (
-          <button key={i} onClick={() => setActiveTab(i)}
-            style={{ fontSize: '1.4rem' }}
-            className={`px-5 py-2.5 font-bold rounded-t-lg border border-b-0 transition-colors duration-200 ${
-              activeTab === i
-                ? 'bg-dark-card border-dark-border text-accent-blue'
-                : 'bg-transparent border-transparent text-gray-500 hover:text-gray-700'
-            }`}>
-            {tab}
-          </button>
-        ))}
-      </div>
+      <AppTabs
+        tabs={TABS.map(label => ({ label }))}
+        activeIndex={activeTab}
+        onChange={setActiveTab}
+      />
 
       <div className="pt-2">
         {activeTab === 0 && <DisturbanceTab plant={plant} criterion={criterion} results={results} />}

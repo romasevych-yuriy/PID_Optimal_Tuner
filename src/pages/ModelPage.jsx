@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useStore, { polynomialRoots } from '../store/useStore'
 import PlotlyChart from '../components/PlotlyChart'
+import AppTabs from '../components/AppTabs'
 import { simulate, computeSimParams } from '../math/simulation'
 import { DEFAULT_IDENT_DATA } from '../data/defaultIdentData'
 
@@ -259,22 +260,18 @@ export default function ModelPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-dark-border pb-0">
-        <button
-          onClick={() => { setTab('tf'); setPlant({ method: 'tf' }) }}
-          className={`px-5 py-2.5 rounded-t-lg border border-b-0 font-bold transition-colors duration-200 ${tab === 'tf' ? 'bg-dark-card border-dark-border text-accent-blue' : 'bg-transparent border-transparent text-gray-500 hover:text-gray-700'}`}
-          style={{ fontSize: '1.4rem' }}
-        >
-          <span className="flex items-center gap-1.5"><i className="ti ti-math-function" /> Transfer Function</span>
-        </button>
-        <button
-          onClick={() => { setTab('ident'); setPlant({ method: 'ident' }) }}
-          className={`px-5 py-2.5 rounded-t-lg border border-b-0 font-bold transition-colors duration-200 ${tab === 'ident' ? 'bg-dark-card border-dark-border text-accent-blue' : 'bg-transparent border-transparent text-gray-500 hover:text-gray-700'}`}
-          style={{ fontSize: '1.4rem' }}
-        >
-          <span className="flex items-center gap-1.5"><i className="ti ti-chart-dots" /> System Identification</span>
-        </button>
-      </div>
+      <AppTabs
+        tabs={[
+          { label: 'Transfer Function', icon: 'ti-math-function' },
+          { label: 'System Identification', icon: 'ti-chart-dots' },
+        ]}
+        activeIndex={tab === 'tf' ? 0 : 1}
+        onChange={i => {
+          const method = i === 0 ? 'tf' : 'ident'
+          setTab(method)
+          setPlant({ method })
+        }}
+      />
 
       {tab === 'tf' && (
         <div className="flex flex-col lg:flex-row gap-6 animate-slide-up">
