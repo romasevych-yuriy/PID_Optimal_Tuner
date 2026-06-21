@@ -502,7 +502,7 @@ export default function ModelPage() {
                   bottomRight:  { bottom: 48, right: 48 },
                 }[pzMap.annotPos.name] ?? { top: 58, left: '50%', transform: 'translateX(-50%)' }}
               >
-                {pzMap.stable ? '✓ Stable system' : '⚠ Unstable open-loop system'}
+                {pzMap.stable ? '✓ Stable system' : '⚠ Unstable system'}
               </div>
             </div>
           </div>
