@@ -12,8 +12,8 @@ export default function AppTabs({ tabs, activeIndex, onChange }) {
             style={{ fontSize: '0.93rem' }}
             className={`flex items-center gap-1.5 px-4 py-1.5 rounded-md transition-all duration-200 ${
               isActive
-                ? 'bg-blue-500 text-white font-medium'
-                : 'bg-transparent text-gray-500 font-normal border border-gray-200 hover:bg-blue-50 hover:text-blue-500 hover:border-blue-200'
+                ? 'bg-blue-500 text-white font-medium border border-blue-600'
+                : 'bg-transparent text-gray-500 font-normal border border-gray-400 hover:bg-blue-50 hover:text-blue-500 hover:border-blue-400'
             }`}
           >
             {tab.icon && <i className={`ti ${tab.icon}`} style={{ fontSize: 16 }} />}
