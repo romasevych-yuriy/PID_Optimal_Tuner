@@ -128,7 +128,7 @@ function DisturbanceTab({ plant, criterion, results }) {
     <div className="flex gap-6">
       {/* Left panel */}
       <div className="w-72 xl:w-80 shrink-0 space-y-4">
-        <Card>
+        <Card className="!rounded-none">
           <SectionTitle>Disturbance Settings</SectionTitle>
           <div className="space-y-4">
             <div>
@@ -183,7 +183,7 @@ function DisturbanceTab({ plant, criterion, results }) {
         <RunBtn onClick={handleRun} running={running}>Run Simulation</RunBtn>
 
         {metrics && (
-          <Card>
+          <Card className="!rounded-none">
             <SectionTitle>Disturbance Rejection Metrics</SectionTitle>
             <MetricRow label="Max Deviation" value={fmt(metrics.maxDeviation, 4)} unit=""/>
             <MetricRow label="Recovery Time" value={fmt(metrics.recoveryTime, 4)} unit="s"/>
@@ -212,7 +212,7 @@ function DisturbanceTab({ plant, criterion, results }) {
         )}
         {simResult && (
           <>
-            <Card>
+            <Card className="!rounded-none">
               <h4 className="font-semibold text-gray-800 mb-2">Output Response y(t)</h4>
               <PlotlyChart
                 id="dist-y"
@@ -229,7 +229,7 @@ function DisturbanceTab({ plant, criterion, results }) {
                 }}
               />
             </Card>
-            <Card>
+            <Card className="!rounded-none">
               <h4 className="font-semibold text-gray-800 mb-2">Control Signal u(t)</h4>
               <PlotlyChart
                 id="dist-u"
