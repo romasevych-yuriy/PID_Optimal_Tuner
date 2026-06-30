@@ -120,7 +120,7 @@ function DisturbanceTab({ plant, criterion, results }) {
     line: { color: '#6b7280', dash: 'dot', width: 2.5 }
   }
   const onsetAnnotation = {
-    x: tOnset, y: 0.96, yref: 'paper', xanchor: 'left', showarrow: false,
+    x: tOnset, y: 0.04, yref: 'paper', xanchor: 'left', yanchor: 'bottom', showarrow: false,
     text: '<b>Disturbance onset</b>', font: { color: '#6b7280', size: 15 }
   }
 
