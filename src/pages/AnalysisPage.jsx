@@ -105,12 +105,12 @@ function DisturbanceTab({ plant, criterion, results }) {
   const tEnd = simT ? simT[simT.length - 1] : 30
 
   const yData = simT ? [
-    { x: simT, y: simY, name: 'y(t)', line: { color: '#3b82f6', width: 3.5 }, type: 'scatter', mode: 'lines' },
+    { x: simT, y: simY, name: 'y(t)', line: { color: '#3b82f6', width: 5.25 }, type: 'scatter', mode: 'lines' },
     { x: [0, tEnd], y: [1, 1], name: 'r(t)', line: { color: '#ef4444', width: 2 }, type: 'scatter', mode: 'lines' },
   ] : []
 
   const uData = simT ? [
-    { x: simT, y: simU, name: 'u(t)', line: { color: '#8b5cf6', width: 3.5 }, type: 'scatter', mode: 'lines' },
+    { x: simT, y: simU, name: 'u(t)', line: { color: '#8b5cf6', width: 5.25 }, type: 'scatter', mode: 'lines' },
     criterion.useControlConstraint && { x: [0, tEnd], y: [criterion.uMax, criterion.uMax], type: 'scatter', mode: 'lines', name: 'u<sub>max</sub>', line: { color: '#ef4444', width: 2, dash: 'dash' } },
     criterion.useControlConstraint && { x: [0, tEnd], y: [criterion.uMin, criterion.uMin], type: 'scatter', mode: 'lines', name: 'u<sub>min</sub>', line: { color: '#f59e0b', width: 2, dash: 'dash' } },
   ].filter(Boolean) : []
