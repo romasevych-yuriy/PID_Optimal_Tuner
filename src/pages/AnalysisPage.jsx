@@ -384,7 +384,7 @@ function SensitivityTab({ plant, criterion, results }) {
     <div className="flex gap-6">
       {/* Left panel */}
       <div className="w-72 xl:w-80 shrink-0 space-y-4">
-        <Card>
+        <Card className="!rounded-none">
           <SectionTitle>Parameters to Vary</SectionTitle>
           <p className="text-xs text-gray-500 mb-2">Active denominator coefficients</p>
           <div className="space-y-1.5">
@@ -401,7 +401,7 @@ function SensitivityTab({ plant, criterion, results }) {
           </div>
         </Card>
 
-        <Card>
+        <Card className="!rounded-none">
           <SectionTitle>Analysis Settings</SectionTitle>
           <div className="space-y-4">
             <div>
@@ -421,7 +421,7 @@ function SensitivityTab({ plant, criterion, results }) {
           </div>
         </Card>
 
-        <Card>
+        <Card className="!rounded-none">
           <SectionTitle>Metrics to Track</SectionTitle>
           <div className="space-y-1.5">
             {METRIC_OPTIONS.map(({ key, label }) => (
@@ -460,7 +460,7 @@ function SensitivityTab({ plant, criterion, results }) {
         )}
         {sensResult && (
           <>
-            <Card>
+            <Card className="!rounded-none">
               <h4 className="font-semibold text-gray-800 mb-1">Tornado Chart — Parameter Influence on f<sub>OF</sub></h4>
               <p className="text-xs text-gray-500 mb-2">% change in objective function (bars to right = increase, left = decrease)</p>
               <PlotlyChart
@@ -478,7 +478,7 @@ function SensitivityTab({ plant, criterion, results }) {
             </Card>
 
             {displayedParam && (
-              <Card>
+              <Card className="!rounded-none">
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-semibold text-gray-800">
                     Metrics vs Variation — Parameter{' '}
@@ -506,7 +506,7 @@ function SensitivityTab({ plant, criterion, results }) {
               </Card>
             )}
 
-            <Card>
+            <Card className="!rounded-none">
               <SectionTitle>Sensitivity Summary</SectionTitle>
               <div className="overflow-x-auto">
                 <table className="w-full text-base">
@@ -635,7 +635,7 @@ function RobustnessTab({ plant, criterion, results }) {
     <div className="flex gap-6">
       {/* Left panel */}
       <div className="w-72 xl:w-80 shrink-0 space-y-4">
-        <Card>
+        <Card className="!rounded-none">
           <SectionTitle>Robustness Settings</SectionTitle>
           <div className="space-y-4">
             <div>
@@ -669,7 +669,7 @@ function RobustnessTab({ plant, criterion, results }) {
         )}
 
         {summary && (
-          <Card>
+          <Card className="!rounded-none">
             <SectionTitle>Summary</SectionTitle>
             <div className="space-y-1">
               <MetricRow label="Mean Phase Margin" value={summary.meanPM} unit="deg"/>
@@ -705,7 +705,7 @@ function RobustnessTab({ plant, criterion, results }) {
                 { label: 'Max Overshoot', value: `${summary.maxOvershoot}%`, sub: `min: ${summary.minOvershoot}%`, color: '#8b5cf6' },
                 { label: 'Critical Variation', value: String(summary.criticalVariation).startsWith('>') ? `${summary.criticalVariation}%` : `±${summary.criticalVariation}%`, sub: 'first instability', color: '#f59e0b' },
               ].map((card, i) => (
-                <div key={i} className="bg-dark-card border border-dark-border rounded-xl p-4 text-center">
+                <div key={i} className="bg-dark-card border border-dark-border p-4 text-center">
                   <p className="text-xs text-gray-500 mb-1">{card.label}</p>
                   <p className="text-2xl font-bold" style={{ color: card.color }}>{card.value}</p>
                   <p className="text-xs text-gray-500 mt-0.5">{card.sub}</p>
@@ -714,7 +714,7 @@ function RobustnessTab({ plant, criterion, results }) {
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-              <Card>
+              <Card className="!rounded-none">
                 <h4 className="font-semibold text-gray-800 mb-2">Phase Margin Distribution</h4>
                 <p className="text-xs text-gray-500 mb-2">
                   <span style={{ color: '#22c55e' }}>■</span> PM &gt; 45°&nbsp;
@@ -734,7 +734,7 @@ function RobustnessTab({ plant, criterion, results }) {
                 />
               </Card>
 
-              <Card>
+              <Card className="!rounded-none">
                 <h4 className="font-semibold text-gray-800 mb-2">Stability Map</h4>
                 <p className="text-xs text-gray-500 mb-2">X = average parameter variation, Y = phase margin</p>
                 <PlotlyChart
@@ -756,7 +756,7 @@ function RobustnessTab({ plant, criterion, results }) {
             </div>
 
             {/* Robustness table */}
-            <Card>
+            <Card className="!rounded-none">
               <SectionTitle>Robustness Summary Table</SectionTitle>
               <div className="overflow-x-auto">
                 <table className="w-full text-base">
