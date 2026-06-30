@@ -68,6 +68,7 @@ function DisturbanceTab({ plant, criterion, results }) {
   const [running, setRunning] = useState(false)
   const [simResult, setSimResult] = useState(null)
   const workerRef = useRef(null)
+  const { T: simDuration } = computeSimParams(plant.den, plant.delay)
 
   const handleRun = useCallback(() => {
     if (running) return
@@ -104,12 +105,12 @@ function DisturbanceTab({ plant, criterion, results }) {
   const tEnd = simT ? simT[simT.length - 1] : 30
 
   const yData = simT ? [
-    { x: simT, y: simY, name: 'y(t)', line: { color: '#3b82f6', width: 2.5 }, type: 'scatter', mode: 'lines' },
+    { x: simT, y: simY, name: 'y(t)', line: { color: '#3b82f6', width: 3.5 }, type: 'scatter', mode: 'lines' },
     { x: [0, tEnd], y: [1, 1], name: 'r(t)', line: { color: '#ef4444', width: 2 }, type: 'scatter', mode: 'lines' },
   ] : []
 
   const uData = simT ? [
-    { x: simT, y: simU, name: 'u(t)', line: { color: '#8b5cf6', width: 2.5 }, type: 'scatter', mode: 'lines' },
+    { x: simT, y: simU, name: 'u(t)', line: { color: '#8b5cf6', width: 3.5 }, type: 'scatter', mode: 'lines' },
     criterion.useControlConstraint && { x: [0, tEnd], y: [criterion.uMax, criterion.uMax], type: 'scatter', mode: 'lines', name: 'u<sub>max</sub>', line: { color: '#ef4444', width: 2, dash: 'dash' } },
     criterion.useControlConstraint && { x: [0, tEnd], y: [criterion.uMin, criterion.uMin], type: 'scatter', mode: 'lines', name: 'u<sub>min</sub>', line: { color: '#f59e0b', width: 2, dash: 'dash' } },
   ].filter(Boolean) : []
@@ -132,7 +133,7 @@ function DisturbanceTab({ plant, criterion, results }) {
           <div className="space-y-4">
             <div>
               <Label>Disturbance Type</Label>
-              <select value={distType} onChange={e => setDistType(e.target.value)} className="input-field text-base rounded-none">
+              <select value={distType} onChange={e => setDistType(e.target.value)} className="input-field text-base !rounded-none">
                 <option value="step">Step</option>
                 <option value="impulse">Impulse</option>
                 <option value="sine">Sine</option>
@@ -140,7 +141,7 @@ function DisturbanceTab({ plant, criterion, results }) {
             </div>
             <div>
               <Label>Application Point</Label>
-              <select value={distPoint} onChange={e => setDistPoint(e.target.value)} className="input-field text-base rounded-none">
+              <select value={distPoint} onChange={e => setDistPoint(e.target.value)} className="input-field text-base !rounded-none">
                 <option value="output">Output (measurement noise)</option>
                 <option value="input">Input (actuator noise)</option>
               </select>
@@ -152,17 +153,17 @@ function DisturbanceTab({ plant, criterion, results }) {
                   onChange={e => setAmplitude(parseFloat(e.target.value))} className="flex-1"/>
                 <input type="number" value={amplitude} step={0.01}
                   onChange={e => setAmplitude(parseFloat(e.target.value) || 0)}
-                  className="input-field w-20 text-center text-base rounded-none"/>
+                  className="input-field w-20 text-center text-base !rounded-none"/>
               </div>
             </div>
             <div>
               <Label>Onset Time (s)</Label>
               <div className="flex gap-2 items-center">
-                <input type="range" min={0.5} max={30} step={0.01} value={tOnset}
+                <input type="range" min={0.5} max={simDuration} step={0.01} value={tOnset}
                   onChange={e => setTOnset(parseFloat(e.target.value))} className="flex-1"/>
                 <input type="number" value={tOnset} step={0.01} min={0.5}
                   onChange={e => setTOnset(parseFloat(e.target.value) || 5)}
-                  className="input-field w-20 text-center text-base rounded-none"/>
+                  className="input-field w-20 text-center text-base !rounded-none"/>
               </div>
             </div>
             {distType === 'sine' && (
@@ -173,7 +174,7 @@ function DisturbanceTab({ plant, criterion, results }) {
                     onChange={e => setSineFreq(parseFloat(e.target.value))} className="flex-1"/>
                   <input type="number" value={sineFreq} step={0.1} min={0.01}
                     onChange={e => setSineFreq(parseFloat(e.target.value) || 1)}
-                    className="input-field w-20 text-center text-base rounded-none"/>
+                    className="input-field w-20 text-center text-base !rounded-none"/>
                 </div>
               </div>
             )}
@@ -410,7 +411,7 @@ function SensitivityTab({ plant, criterion, results }) {
             </div>
             <div>
               <Label>Points per Parameter</Label>
-              <select value={nPoints} onChange={e => setNPoints(parseInt(e.target.value))} className="input-field text-base rounded-none">
+              <select value={nPoints} onChange={e => setNPoints(parseInt(e.target.value))} className="input-field text-base !rounded-none">
                 <option value={5}>5</option>
                 <option value={9}>9</option>
                 <option value={13}>13</option>
@@ -483,7 +484,7 @@ function SensitivityTab({ plant, criterion, results }) {
                     Metrics vs Variation — Parameter{' '}
                     <select value={chartParam}
                       onChange={e => setChartParam(parseInt(e.target.value))}
-                      className="ml-1 text-base border border-dark-border rounded-none px-2 py-0.5">
+                      className="ml-1 text-base border border-dark-border !rounded-none px-2 py-0.5">
                       {sensResult.params.map(p => (
                         <option key={p.idx} value={p.idx}>A{p.idx}</option>
                       ))}
@@ -650,7 +651,7 @@ function RobustnessTab({ plant, criterion, results }) {
                   onChange={e => setNSamples(parseInt(e.target.value))} className="flex-1"/>
                 <input type="number" value={nSamples} min={20} max={200} step={10}
                   onChange={e => setNSamples(Math.max(20, Math.min(200, parseInt(e.target.value) || 50)))}
-                  className="input-field w-20 text-center text-base rounded-none"/>
+                  className="input-field w-20 text-center text-base !rounded-none"/>
               </div>
             </div>
           </div>
