@@ -601,7 +601,7 @@ function RobustnessTab({ plant, criterion, results }) {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-700 mb-1">Sample Count: {nSamples}</p>
-              <input type="range" min={20} max={500} step={10} value={nSamples}
+              <input type="range" min={20} max={1000} step={10} value={nSamples}
                 onChange={e => setNSamples(parseInt(e.target.value))} className="w-full"/>
             </div>
           </div>
@@ -688,12 +688,11 @@ function RobustnessTab({ plant, criterion, results }) {
 
               <Card className="!rounded-none">
                 <h4 className="font-semibold text-gray-800 mb-2">Stability Map</h4>
-                <p className="text-xs text-gray-500 mb-2">X = average parameter variation, Y = phase margin</p>
                 <PlotlyChart
                   id="rob-scatter"
                   data={scatterData}
                   layout={{
-                    xaxis: { title: { text: 'Avg variation (%)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                    xaxis: { title: { text: 'Average parameter variation (%)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
                     yaxis: { title: { text: 'Phase Margin (deg)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
                     showlegend: false,
                     margin: { l: 70, r: 40, t: 10, b: 55 },
