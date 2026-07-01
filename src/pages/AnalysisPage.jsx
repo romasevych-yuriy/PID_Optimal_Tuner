@@ -576,7 +576,7 @@ function RobustnessTab({ plant, criterion, results }) {
     y: samples.map(s => s.pm > 900 ? null : s.pm < -900 ? null : s.pm),
     marker: {
       color: samples.map(s =>
-        s.stable ? (s.pm > 45 ? '#22c55e' : '#f59e0b') : '#ef4444'
+        s.pm > 45 ? '#22c55e' : s.pm > 30 ? '#f59e0b' : s.pm > 0 ? '#ef4444' : '#7f1d1d'
       ),
       size: 8, opacity: 0.85,
     },
