@@ -466,7 +466,10 @@ function SensitivityTab({ plant, criterion, results }) {
                     <tr className="border-b border-dark-border">
                       <th className="text-left py-2 pr-4 font-semibold text-gray-700">Parameter</th>
                       <th className="text-right py-2 pr-4 font-semibold text-gray-700">Nominal Value</th>
-                      <th className="text-right py-2 pr-4 font-semibold text-gray-700">Influence on f<sub>OF</sub> (%)</th>
+                      <th className="text-right py-2 pr-4 font-semibold text-gray-700">
+                        Δf<sub>OF</sub> Range (%)
+                        <div className="text-xs font-normal text-gray-400">(+) rises · (−) falls</div>
+                      </th>
                       <th className="text-right py-2 font-semibold text-gray-700">Status</th>
                     </tr>
                   </thead>
