@@ -467,7 +467,6 @@ function SensitivityTab({ plant, criterion, results }) {
                       <th className="text-left py-2 pr-4 font-semibold text-gray-700">Parameter</th>
                       <th className="text-right py-2 pr-4 font-semibold text-gray-700">Nominal Value</th>
                       <th className="text-right py-2 pr-4 font-semibold text-gray-700">Influence on f<sub>OF</sub> (%)</th>
-                      <th className="text-right py-2 pr-4 font-semibold text-gray-700">Range (%)</th>
                       <th className="text-right py-2 font-semibold text-gray-700">Status</th>
                     </tr>
                   </thead>
@@ -476,12 +475,14 @@ function SensitivityTab({ plant, criterion, results }) {
                       <tr key={p.idx} className="border-b border-dark-border last:border-0">
                         <td className="py-2 pr-4 font-medium">A<sub>{p.idx}</sub></td>
                         <td className="py-2 pr-4 text-right tabular-nums">{fmt(p.nomVal, 4)}</td>
-                        <td className="py-2 pr-4 text-right tabular-nums font-semibold"
-                            style={{ color: p.influence > 50 ? '#ef4444' : p.influence > 20 ? '#f59e0b' : '#10b981' }}>
-                          {fmt(p.influence, 2)}%
-                        </td>
-                        <td className="py-2 pr-4 text-right tabular-nums text-gray-700">
-                          {fmt(Math.min(...(p.fofDeltas ?? [0])), 1)}…{fmt(Math.max(...(p.fofDeltas ?? [0])), 1)}
+                        <td className="py-2 pr-4 text-right tabular-nums">
+                          <span className="font-semibold" style={{ color: p.influence > 50 ? '#ef4444' : p.influence > 20 ? '#f59e0b' : '#10b981' }}>
+                            {fmt(p.influence, 2)}%
+                          </span>
+                          <br/>
+                          <span className="text-xs text-gray-500">
+                            {fmt(Math.min(...(p.fofDeltas ?? [0])), 1)}…{fmt(Math.max(...(p.fofDeltas ?? [0])), 1)}
+                          </span>
                         </td>
                         <td className="py-2 text-right">
                           {p.influence > 50
