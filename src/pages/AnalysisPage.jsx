@@ -601,7 +601,7 @@ function RobustnessTab({ plant, criterion, results }) {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-700 mb-1">Sample Count: {nSamples}</p>
-              <input type="range" min={20} max={200} step={10} value={nSamples}
+              <input type="range" min={20} max={500} step={10} value={nSamples}
                 onChange={e => setNSamples(parseInt(e.target.value))} className="w-full"/>
             </div>
           </div>
