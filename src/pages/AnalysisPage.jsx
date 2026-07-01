@@ -594,20 +594,15 @@ function RobustnessTab({ plant, criterion, results }) {
           <SectionTitle>Robustness Settings</SectionTitle>
           <div className="space-y-4">
             <div>
-              <Label>Parameter Variation: ±{variation}%</Label>
-              <input type="range" min={5} max={50} step={5} value={variation}
+              <p className="text-sm font-medium text-gray-700 mb-1">Parameter Variation: ±{variation}%</p>
+              <input type="range" min={5} max={50} step={1} value={variation}
                 onChange={e => setVariation(parseInt(e.target.value))} className="w-full"/>
               <p className="text-xs text-gray-500 mt-1">All plant coefficients varied simultaneously</p>
             </div>
             <div>
-              <Label>Sample Count</Label>
-              <div className="flex gap-2 items-center">
-                <input type="range" min={20} max={200} step={10} value={nSamples}
-                  onChange={e => setNSamples(parseInt(e.target.value))} className="flex-1"/>
-                <input type="number" value={nSamples} min={20} max={200} step={10}
-                  onChange={e => setNSamples(Math.max(20, Math.min(200, parseInt(e.target.value) || 50)))}
-                  className="input-field w-20 text-center text-base !rounded-none"/>
-              </div>
+              <p className="text-sm font-medium text-gray-700 mb-1">Sample Count: {nSamples}</p>
+              <input type="range" min={20} max={200} step={10} value={nSamples}
+                onChange={e => setNSamples(parseInt(e.target.value))} className="w-full"/>
             </div>
           </div>
         </Card>
@@ -681,9 +676,11 @@ function RobustnessTab({ plant, criterion, results }) {
                   id="rob-hist"
                   data={pmHistData}
                   layout={{
-                    xaxis: { title: { text: 'Phase Margin (deg)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
-                    yaxis: { title: { text: 'Count', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
+                    xaxis: { title: { text: 'Phase Margin (deg)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                    yaxis: { title: { text: 'Count', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
                     showlegend: false,
+                    margin: { l: 70, r: 40, t: 10, b: 55 },
+                    modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                   }}
                   style={{ minHeight: 240 }}
                 />
@@ -696,9 +693,11 @@ function RobustnessTab({ plant, criterion, results }) {
                   id="rob-scatter"
                   data={scatterData}
                   layout={{
-                    xaxis: { title: { text: 'Avg variation (%)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
-                    yaxis: { title: { text: 'Phase Margin (deg)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
+                    xaxis: { title: { text: 'Avg variation (%)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                    yaxis: { title: { text: 'Phase Margin (deg)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
                     showlegend: false,
+                    margin: { l: 70, r: 40, t: 10, b: 55 },
+                    modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                     shapes: [
                       { type: 'line', x0: 0, x1: 1, xref: 'paper', y0: 45, y1: 45, line: { color: '#22c55e', dash: 'dash', width: 1.5 } },
                       { type: 'line', x0: 0, x1: 1, xref: 'paper', y0: 30, y1: 30, line: { color: '#f59e0b', dash: 'dot', width: 1.5 } },
