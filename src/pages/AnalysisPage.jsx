@@ -273,8 +273,7 @@ function SensitivityTab({ plant, criterion, results }) {
   const [checkedParams, setCheckedParams] = useState(
     new Set(allParamIndices.slice(0, Math.min(3, allParamIndices.length)))
   )
-  const [variation, setVariation] = useState(30)
-  const [nPoints, setNPoints] = useState(9)
+  const [variation, setVariation] = useState(20)
   const [selectedMetrics, setSelectedMetrics] = useState(new Set(['overshoot', 'settlingTime', 'phaseMargin']))
   const [running, setRunning] = useState(false)
   const [sensResult, setSensResult] = useState(null)
@@ -328,12 +327,12 @@ function SensitivityTab({ plant, criterion, results }) {
         kd: results.kdAdj ?? results.kd,
         dt, T, uMin, uMax,
         paramIndices: Array.from(checkedParams).sort(),
-        variation, nPoints,
+        variation, nPoints: 2 * variation + 1,
         criterion: crit,
         includeMetrics: Array.from(selectedMetrics),
       }
     })
-  }, [plant, criterion, results, checkedParams, variation, nPoints, selectedMetrics, running])
+  }, [plant, criterion, results, checkedParams, variation, selectedMetrics, running])
 
   useEffect(() => () => { workerRef.current?.terminate() }, [])
 
@@ -350,12 +349,12 @@ function SensitivityTab({ plant, criterion, results }) {
     return [
       {
         type: 'bar', orientation: 'h', name: 'Positive effect',
-        y: sorted.map(p => p.name), x: posBars,
+        y: sorted.map(p => `A<sub>${p.idx}</sub>`), x: posBars,
         marker: { color: '#3b82f6' }, width: 0.5,
       },
       {
         type: 'bar', orientation: 'h', name: 'Negative effect',
-        y: sorted.map(p => p.name), x: negBars.map(v => -v),
+        y: sorted.map(p => `A<sub>${p.idx}</sub>`), x: negBars.map(v => -v),
         marker: { color: '#ef4444' }, width: 0.5,
       }
     ]
@@ -369,9 +368,10 @@ function SensitivityTab({ plant, criterion, results }) {
       const mData = paramData.metricsData[mKey] ?? []
       const label = METRIC_OPTIONS.find(o => o.key === mKey)?.label ?? mKey
       return {
-        type: 'scatter', mode: 'markers', name: label,
+        type: 'scatter', mode: 'lines+markers', name: label,
         x: sensResult.vars,
         y: mData,
+        line: { color: LINE_COLORS[mi % LINE_COLORS.length], width: 2 },
         marker: { color: LINE_COLORS[mi % LINE_COLORS.length], size: 7.5 }
       }
     })
@@ -385,7 +385,7 @@ function SensitivityTab({ plant, criterion, results }) {
       <div className="w-72 xl:w-80 shrink-0 space-y-4">
         <Card className="!rounded-none">
           <SectionTitle>Parameters to Vary</SectionTitle>
-          <p className="text-lg font-bold text-gray-500 mb-2">Active denominator coefficients</p>
+          <p className="text-sm font-bold text-gray-900 mb-2">Active denominator coefficients</p>
           <div className="space-y-1.5">
             {allParamIndices.map(idx => (
               <label key={idx} className="flex items-center gap-2 cursor-pointer">
@@ -404,14 +404,9 @@ function SensitivityTab({ plant, criterion, results }) {
           <SectionTitle>Analysis Settings</SectionTitle>
           <div className="space-y-4">
             <div>
-              <p className="text-lg font-bold text-gray-700 mb-1">Variation Range: ±{variation}%</p>
+              <Label>Variation Range: ±{variation}%</Label>
               <input type="range" min={1} max={20} step={1} value={variation}
                 onChange={e => setVariation(parseInt(e.target.value))} className="w-full"/>
-            </div>
-            <div>
-              <Label>Points per Parameter: {nPoints}</Label>
-              <input type="range" min={1} max={20} step={1} value={nPoints}
-                onChange={e => setNPoints(parseInt(e.target.value))} className="w-full"/>
             </div>
           </div>
         </Card>
@@ -457,7 +452,7 @@ function SensitivityTab({ plant, criterion, results }) {
           <>
             <Card className="!rounded-none">
               <h4 className="font-semibold text-gray-800 mb-1">Tornado Chart — Parameter Influence on f<sub>OF</sub></h4>
-              <p className="text-lg font-medium text-gray-500 mb-2">% change in objective function (bars to right = increase, left = decrease)</p>
+              <p className="text-sm font-bold text-gray-900 mb-2">% change in objective function (bars to right = increase, left = decrease)</p>
               <PlotlyChart
                 id="tornado"
                 data={tornadoData}
@@ -465,7 +460,7 @@ function SensitivityTab({ plant, criterion, results }) {
                   barmode: 'overlay',
                   xaxis: { title: { text: '% change in f<sub>OF</sub>', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
                   yaxis: { title: { text: '' }, automargin: true, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
-                  legend: { orientation: 'h', y: 1.1, font: { size: 18, weight: 'bold' } },
+                  legend: { x: 0.99, y: 0.99, xanchor: 'right', yanchor: 'top', font: { size: 15, weight: 'bold' } },
                   margin: { l: 70, r: 20, t: 30, b: 50 },
                   modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                 }}
@@ -487,7 +482,7 @@ function SensitivityTab({ plant, criterion, results }) {
                     </select>
                   </h4>
                 </div>
-                <p className="text-xs text-gray-500 mb-2">% change relative to nominal value</p>
+                <p className="text-sm text-gray-500 mb-2">% change relative to nominal value</p>
                 <PlotlyChart
                   id="sens-metrics"
                   data={metricsChartData}
