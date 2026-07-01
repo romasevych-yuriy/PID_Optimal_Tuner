@@ -475,14 +475,9 @@ function SensitivityTab({ plant, criterion, results }) {
                       <tr key={p.idx} className="border-b border-dark-border last:border-0">
                         <td className="py-2 pr-4 font-medium">A<sub>{p.idx}</sub></td>
                         <td className="py-2 pr-4 text-right tabular-nums">{fmt(p.nomVal, 4)}</td>
-                        <td className="py-2 pr-4 text-right tabular-nums">
-                          <span className="font-semibold" style={{ color: p.influence > 50 ? '#ef4444' : p.influence > 20 ? '#f59e0b' : '#10b981' }}>
-                            {fmt(p.influence, 2)}%
-                          </span>
-                          <br/>
-                          <span className="text-xs text-gray-500">
-                            {fmt(Math.min(...(p.fofDeltas ?? [0])), 1)}…{fmt(Math.max(...(p.fofDeltas ?? [0])), 1)}
-                          </span>
+                        <td className="py-2 pr-4 text-right tabular-nums font-semibold"
+                            style={{ color: p.influence > 50 ? '#ef4444' : p.influence > 20 ? '#f59e0b' : '#10b981' }}>
+                          {fmt(Math.min(...(p.fofDeltas ?? [0])), 1)}…{fmt(Math.max(...(p.fofDeltas ?? [0])), 1)}
                         </td>
                         <td className="py-2 text-right">
                           {p.influence > 50
