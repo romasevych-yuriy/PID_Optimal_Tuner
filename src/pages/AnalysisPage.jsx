@@ -380,7 +380,7 @@ function SensitivityTab({ plant, criterion, results }) {
           <SectionTitle>Analysis Settings</SectionTitle>
           <div className="space-y-4">
             <div>
-              <p className="text-xs font-medium text-gray-700 mb-1">Coefficients Variation Range: ±{variation}%</p>
+              <p className="text-sm font-medium text-gray-700 mb-1">Coefficients Variation Range: ±{variation}%</p>
               <input type="range" min={1} max={20} step={1} value={variation}
                 onChange={e => setVariation(parseInt(e.target.value))} className="w-full"/>
             </div>
