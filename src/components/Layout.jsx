@@ -11,7 +11,7 @@ export default function Layout() {
       </main>
       <footer className="border-t border-dark-border py-5 text-center text-gray-700 text-sm">
         <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
-          <span className="font-medium">PID Optimal Tuner v1.0</span>
+          <span className="font-medium">PID Optimal Tuner v1.2</span>
           <span className="text-gray-400">·</span>
           <span>Author: Yuriy Romasevych</span>
           <span className="text-gray-400">·</span>

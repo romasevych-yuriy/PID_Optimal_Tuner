@@ -351,12 +351,12 @@ function SensitivityTab({ plant, criterion, results }) {
       {
         type: 'bar', orientation: 'h', name: 'Positive effect',
         y: sorted.map(p => p.name), x: posBars,
-        marker: { color: '#3b82f6' },
+        marker: { color: '#3b82f6' }, width: 0.5,
       },
       {
         type: 'bar', orientation: 'h', name: 'Negative effect',
         y: sorted.map(p => p.name), x: negBars.map(v => -v),
-        marker: { color: '#ef4444' },
+        marker: { color: '#ef4444' }, width: 0.5,
       }
     ]
   })() : []
@@ -369,11 +369,10 @@ function SensitivityTab({ plant, criterion, results }) {
       const mData = paramData.metricsData[mKey] ?? []
       const label = METRIC_OPTIONS.find(o => o.key === mKey)?.label ?? mKey
       return {
-        type: 'scatter', mode: 'lines+markers', name: label,
+        type: 'scatter', mode: 'markers', name: label,
         x: sensResult.vars,
         y: mData,
-        line: { color: LINE_COLORS[mi % LINE_COLORS.length], width: 2 },
-        marker: { color: LINE_COLORS[mi % LINE_COLORS.length], size: 5 }
+        marker: { color: LINE_COLORS[mi % LINE_COLORS.length], size: 7.5 }
       }
     })
   })() : []
@@ -386,7 +385,7 @@ function SensitivityTab({ plant, criterion, results }) {
       <div className="w-72 xl:w-80 shrink-0 space-y-4">
         <Card className="!rounded-none">
           <SectionTitle>Parameters to Vary</SectionTitle>
-          <p className="text-xs text-gray-500 mb-2">Active denominator coefficients</p>
+          <p className="text-lg font-bold text-gray-500 mb-2">Active denominator coefficients</p>
           <div className="space-y-1.5">
             {allParamIndices.map(idx => (
               <label key={idx} className="flex items-center gap-2 cursor-pointer">
@@ -405,18 +404,14 @@ function SensitivityTab({ plant, criterion, results }) {
           <SectionTitle>Analysis Settings</SectionTitle>
           <div className="space-y-4">
             <div>
-              <Label>Variation Range: ±{variation}%</Label>
-              <input type="range" min={5} max={50} step={5} value={variation}
+              <p className="text-lg font-bold text-gray-700 mb-1">Variation Range: ±{variation}%</p>
+              <input type="range" min={1} max={20} step={1} value={variation}
                 onChange={e => setVariation(parseInt(e.target.value))} className="w-full"/>
             </div>
             <div>
-              <Label>Points per Parameter</Label>
-              <select value={nPoints} onChange={e => setNPoints(parseInt(e.target.value))} className="input-field text-base !rounded-none">
-                <option value={5}>5</option>
-                <option value={9}>9</option>
-                <option value={13}>13</option>
-                <option value={17}>17</option>
-              </select>
+              <Label>Points per Parameter: {nPoints}</Label>
+              <input type="range" min={1} max={20} step={1} value={nPoints}
+                onChange={e => setNPoints(parseInt(e.target.value))} className="w-full"/>
             </div>
           </div>
         </Card>
@@ -462,16 +457,17 @@ function SensitivityTab({ plant, criterion, results }) {
           <>
             <Card className="!rounded-none">
               <h4 className="font-semibold text-gray-800 mb-1">Tornado Chart — Parameter Influence on f<sub>OF</sub></h4>
-              <p className="text-xs text-gray-500 mb-2">% change in objective function (bars to right = increase, left = decrease)</p>
+              <p className="text-lg font-medium text-gray-500 mb-2">% change in objective function (bars to right = increase, left = decrease)</p>
               <PlotlyChart
                 id="tornado"
                 data={tornadoData}
                 layout={{
                   barmode: 'overlay',
-                  xaxis: { title: { text: '% change in f_OF', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
-                  yaxis: { title: { text: '' }, automargin: true, tickfont: { size: 16, weight: 'bold' } },
+                  xaxis: { title: { text: '% change in f<sub>OF</sub>', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                  yaxis: { title: { text: '' }, automargin: true, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
                   legend: { orientation: 'h', y: 1.1, font: { size: 18, weight: 'bold' } },
                   margin: { l: 70, r: 20, t: 30, b: 50 },
+                  modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                 }}
                 style={{ minHeight: 260 }}
               />
@@ -496,10 +492,12 @@ function SensitivityTab({ plant, criterion, results }) {
                   id="sens-metrics"
                   data={metricsChartData}
                   layout={{
-                    xaxis: { title: { text: 'Parameter variation (%)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
-                    yaxis: { title: { text: '% change from nominal', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' } },
+                    xaxis: { title: { text: 'Parameter variation (%)', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
+                    yaxis: { title: { text: '% change from nominal', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
                     legend: { orientation: 'h', y: 1.12, font: { size: 18, weight: 'bold' } },
                     shapes: [{ type: 'line', x0: 0, x1: 0, y0: 0, y1: 1, yref: 'paper', line: { color: '#6b7280', dash: 'dot', width: 1 } }],
+                    margin: { l: 70, r: 40, t: 10, b: 55 },
+                    modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
                   }}
                   style={{ minHeight: 260 }}
                 />
