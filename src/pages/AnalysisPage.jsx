@@ -336,30 +336,6 @@ function SensitivityTab({ plant, criterion, results }) {
 
   useEffect(() => () => { workerRef.current?.terminate() }, [])
 
-  // Build tornado chart data
-  const tornadoData = sensResult ? (() => {
-    const sorted = [...sensResult.params].sort((a, b) => b.influence - a.influence)
-    const maxInfl = Math.max(...sorted.map(p => p.influence), 0.01)
-    const posBars = sorted.map(p => p.influence > 0 ? p.influence : 0)
-    const negBars = sorted.map(p => {
-      // find max negative delta
-      const maxNeg = Math.max(...(p.fofDeltas?.map(v => v < 0 ? Math.abs(v) : 0) ?? [0]))
-      return maxNeg
-    })
-    return [
-      {
-        type: 'bar', orientation: 'h', name: 'Positive effect',
-        y: sorted.map(p => `A<sub>${p.idx}</sub>`), x: posBars,
-        marker: { color: '#3b82f6' }, width: 0.5,
-      },
-      {
-        type: 'bar', orientation: 'h', name: 'Negative effect',
-        y: sorted.map(p => `A<sub>${p.idx}</sub>`), x: negBars.map(v => -v),
-        marker: { color: '#ef4444' }, width: 0.5,
-      }
-    ]
-  })() : []
-
   // Metrics vs variation chart for selected parameter
   const metricsChartData = (sensResult && chartParam !== null) ? (() => {
     const paramData = sensResult.params.find(p => p.idx === chartParam)
@@ -404,7 +380,7 @@ function SensitivityTab({ plant, criterion, results }) {
           <SectionTitle>Analysis Settings</SectionTitle>
           <div className="space-y-4">
             <div>
-              <Label>Variation Range: ±{variation}%</Label>
+              <p className="text-xs font-medium text-gray-700 mb-1">Coefficients Variation Range: ±{variation}%</p>
               <input type="range" min={1} max={20} step={1} value={variation}
                 onChange={e => setVariation(parseInt(e.target.value))} className="w-full"/>
             </div>
@@ -450,24 +426,6 @@ function SensitivityTab({ plant, criterion, results }) {
         )}
         {sensResult && (
           <>
-            <Card className="!rounded-none">
-              <h4 className="font-semibold text-gray-800 mb-1">Tornado Chart — Parameter Influence on f<sub>OF</sub></h4>
-              <p className="text-sm font-bold text-gray-900 mb-2">% change in objective function (bars to right = increase, left = decrease)</p>
-              <PlotlyChart
-                id="tornado"
-                data={tornadoData}
-                layout={{
-                  barmode: 'overlay',
-                  xaxis: { title: { text: '% change in f<sub>OF</sub>', font: { size: 17, weight: 'bold' } }, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
-                  yaxis: { title: { text: '' }, automargin: true, tickfont: { size: 16, weight: 'bold' }, showline: true, mirror: true, linecolor: '#9ca3af', linewidth: 1.5 },
-                  legend: { x: 0.99, y: 0.99, xanchor: 'right', yanchor: 'top', font: { size: 15, weight: 'bold' } },
-                  margin: { l: 70, r: 20, t: 30, b: 50 },
-                  modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
-                }}
-                style={{ minHeight: 260 }}
-              />
-            </Card>
-
             {displayedParam && (
               <Card className="!rounded-none">
                 <div className="flex items-center justify-between mb-2">
@@ -482,7 +440,7 @@ function SensitivityTab({ plant, criterion, results }) {
                     </select>
                   </h4>
                 </div>
-                <p className="text-sm text-gray-500 mb-2">% change relative to nominal value</p>
+                <p className="text-sm font-bold text-gray-900 mb-2">% change relative to nominal value</p>
                 <PlotlyChart
                   id="sens-metrics"
                   data={metricsChartData}
@@ -493,8 +451,9 @@ function SensitivityTab({ plant, criterion, results }) {
                     shapes: [{ type: 'line', x0: 0, x1: 0, y0: 0, y1: 1, yref: 'paper', line: { color: '#6b7280', dash: 'dot', width: 1 } }],
                     margin: { l: 70, r: 40, t: 10, b: 55 },
                     modebar: { orientation: 'v', bgcolor: 'rgba(255,255,255,0.8)' },
+                    height: 390,
                   }}
-                  style={{ minHeight: 260 }}
+                  style={{ minHeight: 390 }}
                 />
               </Card>
             )}
@@ -508,6 +467,7 @@ function SensitivityTab({ plant, criterion, results }) {
                       <th className="text-left py-2 pr-4 font-semibold text-gray-700">Parameter</th>
                       <th className="text-right py-2 pr-4 font-semibold text-gray-700">Nominal Value</th>
                       <th className="text-right py-2 pr-4 font-semibold text-gray-700">Influence on f<sub>OF</sub> (%)</th>
+                      <th className="text-right py-2 pr-4 font-semibold text-gray-700">Range (%)</th>
                       <th className="text-right py-2 font-semibold text-gray-700">Status</th>
                     </tr>
                   </thead>
@@ -519,6 +479,9 @@ function SensitivityTab({ plant, criterion, results }) {
                         <td className="py-2 pr-4 text-right tabular-nums font-semibold"
                             style={{ color: p.influence > 50 ? '#ef4444' : p.influence > 20 ? '#f59e0b' : '#10b981' }}>
                           {fmt(p.influence, 2)}%
+                        </td>
+                        <td className="py-2 pr-4 text-right tabular-nums text-gray-700">
+                          {fmt(Math.min(...(p.fofDeltas ?? [0])), 1)}…{fmt(Math.max(...(p.fofDeltas ?? [0])), 1)}
                         </td>
                         <td className="py-2 text-right">
                           {p.influence > 50
